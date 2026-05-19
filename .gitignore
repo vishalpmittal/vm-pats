@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-server
+.env
+
+# Data folder
+data/jobs/*
+!data/jobs/.gitkeep
+data/resumes/*
+!data/resumes/.gitkeep
