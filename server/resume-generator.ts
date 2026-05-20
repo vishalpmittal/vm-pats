@@ -45,7 +45,8 @@ ${ctx.feedback || "(None)"}
 6. Reframe and reword existing experience to match the role's language and priorities.
 7. Include: Contact Info, Summary, Professional Experience (most relevant roles only), Technical Skills, Education, Certifications.
 8. Keep it to 2 pages max worth of content.
-9. Output ONLY the resume markdown — no explanations, no commentary.`;
+9. For URLs (LinkedIn, GitHub, etc.), use plain URLs — not markdown links. Example: "linkedin.com/in/vishalpmittal | github.com/vishalpmittal", not "[LinkedIn](url)".
+10. Output ONLY the resume markdown — no explanations, no commentary.`;
 
   return runClaude(prompt);
 }

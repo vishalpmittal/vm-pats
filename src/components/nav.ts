@@ -3,21 +3,12 @@ import { el } from "../utils/dom";
 interface NavItem {
   label: string;
   hash: string;
-  children?: NavItem[];
 }
 
-const NAV_ITEMS: NavItem[] = [
+const STATIC_ITEMS: NavItem[] = [
   { label: "Job Applications", hash: "#/" },
-  {
-    label: "Guidelines",
-    hash: "",
-    children: [
-      { label: "Director of Engineering", hash: "#/guidelines/director" },
-      { label: "Sr. Manager of Engineering", hash: "#/guidelines/senior-manager" },
-      { label: "Resume Gaps", hash: "#/gaps" },
-      { label: "AI Transformation Leadership", hash: "#/guidelines/ai-transformation" },
-    ],
-  },
+  { label: "Master Resume", hash: "#/master-resume" },
+  { label: "Resume Gaps", hash: "#/gaps" },
 ];
 
 function isActive(hash: string): boolean {
@@ -26,7 +17,17 @@ function isActive(hash: string): boolean {
   return current.startsWith(hash);
 }
 
-export function renderNav(container: HTMLElement): void {
+async function fetchGuidelines(): Promise<NavItem[]> {
+  try {
+    const resp = await fetch("/api/guidelines");
+    const data: { slug: string; title: string }[] = await resp.json();
+    return data.map(g => ({ label: g.title, hash: `#/guidelines/${g.slug}` }));
+  } catch {
+    return [];
+  }
+}
+
+export async function renderNav(container: HTMLElement): Promise<void> {
   container.innerHTML = "";
 
   const layout = document.getElementById("layout")!;
@@ -46,21 +47,27 @@ export function renderNav(container: HTMLElement): void {
 
   const list = el("ul", { className: "nav-list" });
 
-  for (const item of NAV_ITEMS) {
-    if (item.children) {
-      const sectionLabel = el("li", { className: "nav-section" }, item.label);
-      list.appendChild(sectionLabel);
+  for (const item of STATIC_ITEMS) {
+    const link = el("a", { href: item.hash, className: "nav-link" }, item.label);
+    const li = el("li", { className: `nav-item${isActive(item.hash) ? " active" : ""}` }, link);
+    list.appendChild(li);
+  }
 
-      for (const child of item.children) {
-        const link = el("a", { href: child.hash, className: "nav-link" }, child.label);
-        const li = el("li", { className: `nav-item nav-sub${isActive(child.hash) ? " active" : ""}` }, link);
-        list.appendChild(li);
-      }
-    } else {
-      const link = el("a", { href: item.hash, className: "nav-link" }, item.label);
-      const li = el("li", { className: `nav-item${isActive(item.hash) ? " active" : ""}` }, link);
-      list.appendChild(li);
-    }
+  const addBtn = el("button", { className: "nav-add-btn", title: "Add guideline" }, "+");
+  addBtn.addEventListener("click", () => { window.location.hash = "#/guidelines/new"; });
+
+  const sectionLink = el("a", { href: "#/guidelines", className: "nav-section-link" }, "Guidelines");
+  const sectionLabel = el("li", { className: `nav-section${window.location.hash === "#/guidelines" ? " nav-section-active" : ""}` },
+    sectionLink,
+    addBtn
+  );
+  list.appendChild(sectionLabel);
+
+  const guidelines = await fetchGuidelines();
+  for (const g of guidelines) {
+    const link = el("a", { href: g.hash, className: "nav-link" }, g.label);
+    const li = el("li", { className: `nav-item nav-sub${isActive(g.hash) ? " active" : ""}` }, link);
+    list.appendChild(li);
   }
 
   container.appendChild(list);

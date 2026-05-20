@@ -6,6 +6,7 @@ import { extractJobDetails } from "./extractor.js";
 import { scrapeJobDescription } from "./scraper.js";
 import { analyzeResume } from "./job-analyzer.js";
 import { generateResumeContent, generateResumeFilename, findResumesForJob } from "./resume-generator.js";
+import { runClaude } from "./claude.js";
 
 interface JobApplication {
   id: string;
@@ -39,12 +40,33 @@ const PORT = parseInt(process.env.PORT ?? "3001", 10);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, "..", "dist");
-const dataFile = path.join(__dirname, "..", "data", "jobs", "jobs.json");
-const reviewsFile = path.join(__dirname, "..", "data", "jobs", "reviews.json");
-const resumeFile = path.join(__dirname, "..", "data", "resumes", "master-resume.md");
-const gapFile = path.join(__dirname, "..", "data", "resumes", "resume-gap.md");
-const resumesDir = path.join(__dirname, "..", "data", "resumes");
-const guidelinesDir = path.join(__dirname, "..", "data", "guidelines");
+const dataDir = path.resolve(process.env.PATS_DATA_DIR ?? path.join(__dirname, "..", "data"));
+const dataFile = path.join(dataDir, "jobs", "jobs.json");
+const reviewsFile = path.join(dataDir, "jobs", "reviews.json");
+const resumeFile = path.join(dataDir, "resumes", "master-resume.md");
+const gapFile = path.join(dataDir, "resumes", "resume-gap.md");
+const resumesDir = path.join(dataDir, "resumes");
+const guidelinesDir = path.join(dataDir, "guidelines");
+
+function initDataDir(): void {
+  fs.mkdirSync(path.join(dataDir, "jobs"), { recursive: true });
+  fs.mkdirSync(path.join(dataDir, "resumes"), { recursive: true });
+  fs.mkdirSync(guidelinesDir, { recursive: true });
+  if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]\n");
+  if (!fs.existsSync(reviewsFile)) fs.writeFileSync(reviewsFile, "{}\n");
+
+  const repoGuidelinesDir = path.join(__dirname, "..", "data", "guidelines");
+  if (fs.existsSync(repoGuidelinesDir) && repoGuidelinesDir !== guidelinesDir) {
+    for (const file of fs.readdirSync(repoGuidelinesDir).filter(f => f.endsWith(".md"))) {
+      const dest = path.join(guidelinesDir, file);
+      if (!fs.existsSync(dest)) {
+        fs.copyFileSync(path.join(repoGuidelinesDir, file), dest);
+      }
+    }
+  }
+}
+
+initDataDir();
 
 app.use(express.json());
 
@@ -80,17 +102,51 @@ function writeReview(jobId: string, review: string): void {
   fs.writeFileSync(reviewsFile, JSON.stringify(reviews, null, 2) + "\n");
 }
 
-function appendGaps(company: string, title: string, analysis: string): void {
+const GAP_REGEX = /##\s*\d+\.\s*Key Gaps\s*\n([\s\S]*?)(?=\n##\s*\d+\.|$)/i;
+
+function extractGapsFromReview(review: string): string {
+  const match = review.match(GAP_REGEX);
+  return match ? match[1].trim() : "";
+}
+
+async function consolidateGaps(): Promise<void> {
   try {
-    const gapMatch = analysis.match(/##\s*\d+\.\s*Key Gaps\s*\n([\s\S]*?)(?=\n##\s*\d+\.|$)/i);
-    if (!gapMatch) return;
-    const gaps = gapMatch[1].trim();
-    if (!gaps) return;
-    const date = new Date().toISOString().slice(0, 10);
-    const entry = `\n## ${company} — ${title}\nDate: ${date}\n\n${gaps}\n\n---\n`;
-    fs.appendFileSync(gapFile, entry);
-  } catch {
-    // best-effort
+    const reviews = readReviews();
+    const jobs = readJobs();
+    const jobById = new Map(jobs.map(j => [j.id, j]));
+
+    const allGaps: string[] = [];
+    for (const [jobId, entry] of Object.entries(reviews)) {
+      const gaps = extractGapsFromReview(entry.text);
+      if (!gaps) continue;
+      const job = jobById.get(jobId);
+      const label = job ? `${job.company} — ${job.title}` : jobId;
+      allGaps.push(`### ${label}\n${gaps}`);
+    }
+
+    if (allGaps.length === 0) {
+      fs.writeFileSync(gapFile, "# Resume Gaps\n\nNo gaps identified yet.\n");
+      return;
+    }
+
+    const prompt = `You are a career advisor. Below are resume gap analyses from multiple job applications. Consolidate them into a single, deduplicated document organized by category.
+
+## Raw Gaps from Reviews
+
+${allGaps.join("\n\n")}
+
+## Instructions
+1. Group all gaps into thematic categories such as: Technical Skills, Leadership & Management, Domain Knowledge, Certifications & Education, Communication & Soft Skills, and any other relevant categories.
+2. Deduplicate — if the same gap appears across multiple roles, list it once and note how many roles flagged it in parentheses (e.g., "(3 roles)").
+3. Within each category, list gaps as bullet points, most frequently cited first.
+4. Do NOT include role-specific headers — this is a consolidated view.
+5. Output clean markdown starting with "# Resume Gaps" as the title.
+6. Output ONLY the markdown — no explanations or commentary.`;
+
+    const consolidated = await runClaude(prompt);
+    fs.writeFileSync(gapFile, consolidated + "\n");
+  } catch (err) {
+    console.error("Gap consolidation error:", err);
   }
 }
 
@@ -193,9 +249,9 @@ app.post("/api/analyze", async (req, res) => {
       description,
     });
     writeReview(jobId, analysis);
-    appendGaps(job.company, job.title, analysis);
     job.hasAiReview = true;
     writeJobs(jobs);
+    consolidateGaps().catch(err => console.error("Gap consolidation error:", err));
     res.json({ analysis, reviewedAt: new Date().toISOString() });
   } catch (err) {
     console.error("Analysis error:", err);
@@ -214,19 +270,136 @@ app.get("/api/reviews/:id", (req, res) => {
 
 // --- Guidelines ---
 
-const guidelinesMap: Record<string, string> = {
-  director: "build-guideline-director-of-eng.md",
-  "senior-manager": "build-guideline-senior-manager.md",
-  "ai-transformation": "build-guideline-ai-transformation.md",
-};
+function guidelineTitleFromContent(content: string, filename: string): string {
+  const match = content.match(/^#\s+(.+)$/m);
+  if (match) return match[1].trim();
+  return filename.replace(/\.md$/, "").replace(/[-_]/g, " ");
+}
 
-app.get("/api/guidelines/:level", (req, res) => {
-  const filename = guidelinesMap[req.params.level];
-  if (!filename) { res.status(404).json({ error: "unknown level" }); return; }
-  const filePath = path.join(guidelinesDir, filename);
+function guidelineSlugFromFilename(filename: string): string {
+  return filename.replace(/\.md$/, "");
+}
+
+function slugify(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+const guidelinesConfigFile = path.join(guidelinesDir, "config.json");
+
+function readGuidelinesConfig(): { enabled: string[] } | null {
+  if (!fs.existsSync(guidelinesConfigFile)) return null;
+  try { return JSON.parse(fs.readFileSync(guidelinesConfigFile, "utf-8")); } catch { return null; }
+}
+
+app.get("/api/guidelines", (_req, res) => {
+  if (!fs.existsSync(guidelinesDir)) { res.json([]); return; }
+  const files = fs.readdirSync(guidelinesDir).filter(f => f.endsWith(".md")).sort();
+  const config = readGuidelinesConfig();
+  const guidelines = files.map(f => {
+    const content = fs.readFileSync(path.join(guidelinesDir, f), "utf-8");
+    const slug = guidelineSlugFromFilename(f);
+    const enabled = config ? config.enabled.includes(slug) : true;
+    return { slug, title: guidelineTitleFromContent(content, f), enabled };
+  });
+  res.json(guidelines);
+});
+
+app.put("/api/guidelines/config", (req, res) => {
+  const { enabled } = req.body;
+  if (!Array.isArray(enabled)) { res.status(400).json({ error: "enabled must be an array of slugs" }); return; }
+  fs.mkdirSync(guidelinesDir, { recursive: true });
+  fs.writeFileSync(guidelinesConfigFile, JSON.stringify({ enabled }, null, 2) + "\n");
+  res.json({ enabled });
+});
+
+app.get("/api/guidelines/:slug", (req, res) => {
+  const filePath = path.join(guidelinesDir, `${req.params.slug}.md`);
   if (!fs.existsSync(filePath)) { res.status(404).json({ error: "guidelines not found" }); return; }
   const content = fs.readFileSync(filePath, "utf-8");
+  const title = guidelineTitleFromContent(content, `${req.params.slug}.md`);
+  res.json({ title, content });
+});
+
+app.post("/api/guidelines", (req, res) => {
+  const { title, content } = req.body;
+  if (!title) { res.status(400).json({ error: "title is required" }); return; }
+  const slug = slugify(title);
+  if (!slug) { res.status(400).json({ error: "invalid title" }); return; }
+  const filePath = path.join(guidelinesDir, `${slug}.md`);
+  if (fs.existsSync(filePath)) { res.status(409).json({ error: "guideline already exists" }); return; }
+  fs.mkdirSync(guidelinesDir, { recursive: true });
+  const md = `# ${title}\n\n${content ?? ""}`;
+  fs.writeFileSync(filePath, md + "\n");
+  res.status(201).json({ slug });
+});
+
+app.delete("/api/guidelines/:slug", (req, res) => {
+  const filePath = path.join(guidelinesDir, `${req.params.slug}.md`);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "guidelines not found" }); return; }
+  fs.unlinkSync(filePath);
+  res.status(204).end();
+});
+
+app.post("/api/guidelines/generate", async (req, res) => {
+  const { prompt: userPrompt } = req.body;
+  if (!userPrompt || typeof userPrompt !== "string" || !userPrompt.trim()) {
+    res.status(400).json({ error: "prompt is required" });
+    return;
+  }
+
+  try {
+    const content = await runClaude(`You are an expert resume writing coach. Generate a resume writing guideline based on the following request:
+
+${userPrompt.trim()}
+
+## Instructions
+1. Write a practical, actionable guideline that helps someone write better resumes.
+2. Use markdown formatting with clear sections and bullet points.
+3. Include specific examples and before/after comparisons where helpful.
+4. Keep the tone professional but approachable.
+5. Do NOT include a top-level heading — the title is handled separately.
+6. Output ONLY the guideline content — no preamble or commentary.`);
+    res.json({ content });
+  } catch (err) {
+    console.error("Guideline generation error:", err);
+    res.status(500).json({ error: "Failed to generate guideline" });
+  }
+});
+
+// --- Master Resume ---
+
+app.get("/api/master-resume", (_req, res) => {
+  if (!fs.existsSync(resumeFile)) { res.json({ content: "" }); return; }
+  const content = fs.readFileSync(resumeFile, "utf-8");
   res.json({ content });
+});
+
+app.post("/api/master-resume", async (req, res) => {
+  const { content, filename } = req.body;
+  if (!content || typeof content !== "string" || !content.trim()) {
+    res.status(400).json({ error: "content is required" });
+    return;
+  }
+
+  try {
+    let md: string;
+    if (typeof filename === "string" && filename.endsWith(".md")) {
+      md = content;
+    } else {
+      md = await runClaude(`Convert the following resume content to clean, well-structured markdown. Preserve all information exactly — do not add, remove, or rephrase anything. Just format it as proper markdown with appropriate headings, bullet points, and sections.
+
+${content}
+
+Output ONLY the markdown — no explanations or commentary.`);
+    }
+
+    fs.mkdirSync(path.dirname(resumeFile), { recursive: true });
+    fs.writeFileSync(resumeFile, md + "\n");
+    res.json({ content: md });
+  } catch (err) {
+    console.error("Master resume upload error:", err);
+    res.status(500).json({ error: "Failed to process resume" });
+  }
 });
 
 // --- Resume Gaps ---
@@ -239,10 +412,12 @@ app.get("/api/gaps", (_req, res) => {
 
 // --- Resume Generation ---
 
-function readAllGuidelines(): string {
+function readEnabledGuidelines(): string {
   if (!fs.existsSync(guidelinesDir)) return "";
+  const config = readGuidelinesConfig();
   return fs.readdirSync(guidelinesDir)
     .filter(f => f.endsWith(".md"))
+    .filter(f => config ? config.enabled.includes(guidelineSlugFromFilename(f)) : true)
     .map(f => fs.readFileSync(path.join(guidelinesDir, f), "utf-8"))
     .join("\n\n---\n\n");
 }
@@ -256,7 +431,7 @@ app.post("/api/generate-resume", async (req, res) => {
   if (!job) { res.status(404).json({ error: "job not found" }); return; }
 
   const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
-  const guidelines = readAllGuidelines();
+  const guidelines = readEnabledGuidelines();
   const reviews = readReviews();
   const aiReview = reviews[jobId]?.text ?? "";
 
@@ -318,4 +493,5 @@ app.get("/{*path}", (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`PATS server running on http://localhost:${PORT}`);
+  console.log(`Data directory: ${dataDir}`);
 });

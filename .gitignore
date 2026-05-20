@@ -3,8 +3,9 @@ dist
 dist-server
 .env
 
-# Data folder
+# Data folder — user data is gitignored, bundled seed files are tracked
 data/jobs/*
 !data/jobs/.gitkeep
 data/resumes/*
 !data/resumes/.gitkeep
+data/guidelines/config.json

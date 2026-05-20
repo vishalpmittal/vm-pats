@@ -129,12 +129,50 @@ body {
 }
 
 .nav-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
   padding: 16px 12px 4px;
+}
+
+.nav-add-btn {
+  background: none;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-add-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text);
+}
+
+.nav-section-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-section-link:hover {
+  color: var(--text);
+}
+
+.nav-section-active .nav-section-link {
+  color: var(--accent);
 }
 
 #app {
@@ -536,6 +574,85 @@ h3 {
   min-height: 40px;
 }
 
+.guideline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.guideline-form .btn-primary {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.guideline-textarea {
+  min-height: 300px;
+}
+
+.guideline-help-text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.guideline-list {
+  padding: 8px 0;
+}
+
+.guideline-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.guideline-table th {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 6px 20px 10px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.guideline-col-enabled {
+  text-align: center !important;
+  width: 80px;
+}
+
+.guideline-list-item td {
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.guideline-list-item:last-child td {
+  border-bottom: none;
+}
+
+.guideline-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.guideline-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.guideline-list-link {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.guideline-list-link:hover {
+  text-decoration: underline;
+}
+
 .add-form .btn-primary {
   margin-top: 8px;
   align-self: flex-start;
@@ -811,6 +928,10 @@ h3 {
   .resume-viewer-body blockquote {
     margin: 2pt 0;
     padding: 2pt 8pt;
+  }
+  .resume-viewer-body a {
+    color: #0563C1;
+    text-decoration: underline;
   }
 }
 

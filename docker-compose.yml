@@ -4,6 +4,6 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/app/data
+      - ${PATS_DATA_DIR:-./data}:/app/data
     env_file:
       - .env

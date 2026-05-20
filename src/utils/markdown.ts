@@ -76,5 +76,8 @@ function applyInline(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/`(.+?)`/g, "<code>$1</code>");
+    .replace(/`(.+?)`/g, "<code>$1</code>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/(?<!")(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+    .replace(/(?<!["\/])\b((?:linkedin\.com|github\.com)\/[^\s<|]+)/gi, '<a href="https://$1" target="_blank" rel="noopener">$1</a>');
 }
