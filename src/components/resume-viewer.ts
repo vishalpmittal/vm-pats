@@ -12,9 +12,12 @@ export function showResumeViewer(title: string, content: string): void {
   const exportBtn = el("button", { className: "btn btn-secondary btn-sm", title: "Export PDF" }, "Export PDF");
 
   exportBtn.addEventListener("click", () => {
+    const prevTitle = document.title;
+    document.title = title.replace(/\.md$/, "");
     pane.classList.add("resume-viewer-printing");
     window.print();
     pane.classList.remove("resume-viewer-printing");
+    document.title = prevTitle;
   });
 
   const header = el("div", { className: "resume-viewer-header" },

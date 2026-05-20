@@ -456,7 +456,7 @@ app.post("/api/generate-resume", async (req, res) => {
       aiReview,
       feedback: feedback ?? "",
     });
-    const filename = generateResumeFilename(job.company, job.title, resumesDir);
+    const filename = generateResumeFilename(job.company, job.title, resumesDir, masterResume);
     fs.mkdirSync(resumesDir, { recursive: true });
     fs.writeFileSync(path.join(resumesDir, filename), content + "\n");
     res.json({ filename, content });
@@ -471,7 +471,8 @@ app.get("/api/generated-resumes/:jobId", (req, res) => {
   const job = jobs.find((j) => j.id === req.params.jobId);
   if (!job) { res.status(404).json({ error: "job not found" }); return; }
 
-  const resumes = findResumesForJob(job.company, job.title, resumesDir);
+  const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
+  const resumes = findResumesForJob(job.company, job.title, resumesDir, masterResume);
 
   res.json({ resumes });
 });

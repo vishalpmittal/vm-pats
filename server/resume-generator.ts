@@ -51,7 +51,15 @@ ${ctx.feedback || "(None)"}
   return runClaude(prompt);
 }
 
-function resumePrefix(company: string, title: string): string {
+function extractShortName(masterResume: string): string {
+  const match = masterResume.match(/^#\s+(.+?)(?:\s*--.*)?\s*$/m);
+  if (!match) return "resume";
+  const parts = match[1].trim().split(/\s+/);
+  if (parts.length < 2) return parts[0];
+  return parts[0] + parts[parts.length - 1][0];
+}
+
+function resumePrefix(company: string, title: string, masterResume: string): string {
   const comp = company.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const abbrev = title
     .replace(/[,/]/g, " ")
@@ -59,12 +67,13 @@ function resumePrefix(company: string, title: string): string {
     .filter(Boolean)
     .map(w => w[0].toLowerCase())
     .join("");
-  return `${comp}-${abbrev}-VishalM-resume`;
+  const shortName = extractShortName(masterResume);
+  return `${comp}-${abbrev}-${shortName}-resume`;
 }
 
-export function generateResumeFilename(company: string, title: string, resumesDir: string): string {
+export function generateResumeFilename(company: string, title: string, resumesDir: string, masterResume: string): string {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const prefix = resumePrefix(company, title);
+  const prefix = resumePrefix(company, title, masterResume);
   let version = 1;
   if (fs.existsSync(resumesDir)) {
     const existing = fs.readdirSync(resumesDir).filter(f => f.includes(prefix) && f.endsWith(".md"));
@@ -73,9 +82,9 @@ export function generateResumeFilename(company: string, title: string, resumesDi
   return `${date}-${prefix}-v${version}.md`;
 }
 
-export function findResumesForJob(company: string, title: string, resumesDir: string): { filename: string; version: number; timestamp: string }[] {
+export function findResumesForJob(company: string, title: string, resumesDir: string, masterResume: string): { filename: string; version: number; timestamp: string }[] {
   if (!fs.existsSync(resumesDir)) return [];
-  const prefix = resumePrefix(company, title);
+  const prefix = resumePrefix(company, title, masterResume);
   return fs.readdirSync(resumesDir)
     .filter(f => f.includes(prefix) && f.endsWith(".md"))
     .map(f => {
