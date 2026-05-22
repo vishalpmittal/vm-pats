@@ -8,4 +8,8 @@ data/jobs/*
 !data/jobs/.gitkeep
 data/resumes/*
 !data/resumes/.gitkeep
+data/referral-blurbs/*
+!data/referral-blurbs/.gitkeep
+data/cover-letters/*
+!data/cover-letters/.gitkeep
 data/guidelines/config.json

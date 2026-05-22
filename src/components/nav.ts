@@ -9,6 +9,7 @@ const STATIC_ITEMS: NavItem[] = [
   { label: "Job Applications", hash: "#/" },
   { label: "Master Resume", hash: "#/master-resume" },
   { label: "Resume Gaps", hash: "#/gaps" },
+  { label: "Companies", hash: "#/companies" },
 ];
 
 function isActive(hash: string): boolean {

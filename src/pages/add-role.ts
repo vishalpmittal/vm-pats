@@ -143,7 +143,45 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     placeholder: "Company name",
     className: "input",
     value: existing?.company ?? "",
+    autocomplete: "off",
   }) as HTMLInputElement;
+
+  const companyDropdown = el("div", { className: "autocomplete-dropdown hidden" });
+  let companiesList: { company: string }[] = [];
+
+  fetch("/api/companies").then(r => r.json()).then((data: { company: string }[]) => {
+    companiesList = data;
+  }).catch(() => {});
+
+  function updateDropdown() {
+    companyDropdown.innerHTML = "";
+    const query = companyInput.value.trim().toLowerCase();
+    if (!query) { companyDropdown.classList.add("hidden"); return; }
+
+    const matches = companiesList
+      .filter(c => c.company.toLowerCase().includes(query))
+      .slice(0, 8);
+
+    if (matches.length === 0) { companyDropdown.classList.add("hidden"); return; }
+
+    for (const m of matches) {
+      const item = el("div", { className: "autocomplete-item" }, m.company);
+      item.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        companyInput.value = m.company;
+        companyDropdown.classList.add("hidden");
+        companyInput.dispatchEvent(new Event("input"));
+      });
+      companyDropdown.appendChild(item);
+    }
+    companyDropdown.classList.remove("hidden");
+  }
+
+  companyInput.addEventListener("input", updateDropdown);
+  companyInput.addEventListener("focus", updateDropdown);
+  companyInput.addEventListener("blur", () => {
+    setTimeout(() => companyDropdown.classList.add("hidden"), 150);
+  });
 
   const titleInput = el("input", {
     type: "text",
@@ -250,21 +288,64 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     return wrap;
   };
 
+  const companyField = field("Company", companyInput);
+  companyField.style.position = "relative";
+  companyField.appendChild(companyDropdown);
+
   form.append(
     field("Job Link", linkInput, true),
     extractStatus,
-    field("Company", companyInput),
+    companyField,
     field("Job Title", titleInput),
     dupWarning,
     field("Location", locationInput),
     field("Posting Date", postingDateInput),
     field("Application Date", appDateInput),
     field("Notes", notesInput),
+    ...((isEdit && existing?.addedDate) ? [(() => {
+      const addedInput = el("input", { type: "date", className: "input", value: existing.addedDate, disabled: "true" }) as HTMLInputElement;
+      return field("Added", addedInput);
+    })()] : []),
     submitBtn
   );
 
   extractStatus.classList.add("form-field-full");
   dupWarning.classList.add("form-field-full");
+
+  const referralNameInput = el("input", {
+    type: "text",
+    name: "referralName",
+    placeholder: "Referrer's name",
+    className: "input",
+    value: existing?.referralName ?? "",
+  }) as HTMLInputElement;
+
+  const referralLinkedInInput = el("input", {
+    type: "url",
+    name: "referralLinkedIn",
+    placeholder: "LinkedIn profile URL",
+    className: "input",
+    value: existing?.referralLinkedIn ?? "",
+  }) as HTMLInputElement;
+
+  const referralRelationSelect = el("select", {
+    name: "referralRelation",
+    className: "input",
+  }) as HTMLSelectElement;
+  const relationOptions = ["", "Ex-colleague", "College together", "Close friend", "Know via common friend"];
+  for (const opt of relationOptions) {
+    const option = el("option", { value: opt }, opt || "Select relation...");
+    if (opt === (existing?.referralRelation ?? "")) (option as HTMLOptionElement).selected = true;
+    referralRelationSelect.appendChild(option);
+  }
+
+  const referralContextInput = el("textarea", {
+    name: "referralContext",
+    placeholder: "Additional context about the referrer (e.g., worked together on X project, met at Y conference)",
+    className: "input input-textarea",
+    rows: "3",
+  }) as HTMLTextAreaElement;
+  if (existing?.referralContext) referralContextInput.value = existing.referralContext;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -272,14 +353,42 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
       alert("Company and Title are required.");
       return;
     }
+
+    let companyName = companyInput.value.trim();
+    const match = companiesList.find(c => c.company.toLowerCase() === companyName.toLowerCase());
+    if (match) {
+      companyName = match.company;
+    } else {
+      submitBtn.textContent = "Adding company...";
+      (submitBtn as HTMLButtonElement).disabled = true;
+      try {
+        const lookupResp = await fetch("/api/companies/lookup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ company: companyName }),
+        });
+        if (lookupResp.ok) {
+          const added = await lookupResp.json();
+          companyName = added.company;
+          companiesList.push(added);
+        }
+      } catch { /* proceed with typed name */ }
+      submitBtn.textContent = isEdit ? "Update Application" : "Save Application";
+      (submitBtn as HTMLButtonElement).disabled = false;
+    }
+
     const fields = {
-      company: companyInput.value.trim(),
+      company: companyName,
       title: titleInput.value.trim(),
       jobLink: linkInput.value.trim(),
       location: locationInput.value.trim(),
       postingDate: postingDateInput.value,
       applicationDate: appDateInput.value,
       notes: notesInput.value.trim(),
+      referralName: referralNameInput.value.trim(),
+      referralLinkedIn: referralLinkedInInput.value.trim(),
+      referralRelation: referralRelationSelect.value,
+      referralContext: referralContextInput.value.trim(),
     };
     if (isEdit) {
       await update(editId!, fields);
@@ -431,6 +540,366 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
     loadPastResumes();
   }
+
+  // --- Referral section ---
+  const referralSection = el("details", { className: "collapsible-section glass-card" });
+  const referralBody = el("div", { className: "collapsible-body referral-fields" });
+
+  const blurbContent = el("div", { className: "guidelines-content" });
+  const pastBlurbs = el("div", { className: "past-resumes" });
+
+  const loadPastBlurbs = async () => {
+    pastBlurbs.innerHTML = "";
+    if (!isEdit || !editId) return;
+    try {
+      const resp = await fetch(`/api/referral-blurbs/${editId}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data.blurbs.length === 0) return;
+
+      const table = el("table", { className: "md-table resume-table" });
+      const thead = el("thead", {},
+        el("tr", {},
+          el("th", {}, "Generated"),
+          el("th", {}, "Blurb"),
+          el("th", {}, "")
+        )
+      );
+      const tbody = el("tbody", {});
+
+      for (const b of data.blurbs as { filename: string; version: number; timestamp: string }[]) {
+        const viewBtn = el("a", { href: "#", className: "past-resume-link" }, "View");
+        viewBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const resp2 = await fetch(`/api/referral-blurbs/${editId}/${b.filename}`);
+          if (resp2.ok) {
+            const d = await resp2.json();
+            showResumeViewer(b.filename, d.content);
+          }
+        });
+        const localTime = b.timestamp ? new Date(b.timestamp).toLocaleString() : "—";
+        tbody.appendChild(
+          el("tr", {},
+            el("td", {}, localTime),
+            el("td", {}, b.filename),
+            el("td", {}, viewBtn)
+          )
+        );
+      }
+
+      table.append(thead, tbody);
+      pastBlurbs.appendChild(table);
+    } catch { /* ignore */ }
+  };
+
+  referralBody.append(
+    field("Name", referralNameInput),
+    field("LinkedIn URL", referralLinkedInInput),
+    field("Relation", referralRelationSelect),
+    field("Context", referralContextInput, true),
+    blurbContent,
+    pastBlurbs,
+  );
+
+  const blurbSpinner = el("span", { className: "section-spinner" });
+  const generateBlurbBtn = el("button", { className: "btn btn-primary btn-sm" }, "Generate Blurb") as HTMLButtonElement;
+
+  if (isEdit && editId) {
+    generateBlurbBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      generateBlurbBtn.textContent = "Generating...";
+      generateBlurbBtn.setAttribute("disabled", "true");
+      blurbSpinner.classList.add("active");
+      try {
+        await update(editId!, {
+          referralName: referralNameInput.value.trim(),
+          referralLinkedIn: referralLinkedInInput.value.trim(),
+          referralRelation: referralRelationSelect.value,
+          referralContext: referralContextInput.value.trim(),
+        });
+        const resp = await fetch("/api/generate-referral-blurb", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jobId: editId }),
+        });
+        if (!resp.ok) {
+          const err = await resp.json();
+          blurbContent.textContent = err.error || "Generation failed.";
+          return;
+        }
+        const data = await resp.json();
+        showResumeViewer(data.filename, data.content);
+        await loadPastBlurbs();
+      } catch {
+        blurbContent.textContent = "Failed to connect to server.";
+      } finally {
+        generateBlurbBtn.textContent = "Generate Blurb";
+        generateBlurbBtn.removeAttribute("disabled");
+        blurbSpinner.classList.remove("active");
+      }
+    });
+
+    loadPastBlurbs();
+  } else {
+    generateBlurbBtn.setAttribute("disabled", "true");
+    generateBlurbBtn.title = "Save the application first to generate a blurb";
+  }
+
+  const referralSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Referral", blurbSpinner),
+    generateBlurbBtn,
+  );
+  referralSection.appendChild(referralSummary);
+  referralSection.appendChild(referralBody);
+
+  if (existing?.referralName) referralSection.setAttribute("open", "");
+
+  container.appendChild(referralSection);
+
+  // --- Cover Letter section ---
+  const coverLetterSection = el("details", { className: "collapsible-section glass-card" });
+  const coverLetterBody = el("div", { className: "collapsible-body" });
+
+  const coverLetterNotesInput = el("textarea", {
+    placeholder: "Additional notes for the cover letter (e.g., specific points to emphasize, company values that resonate with you)",
+    className: "input input-textarea",
+    rows: "3",
+  }) as HTMLTextAreaElement;
+
+  const coverLetterContent = el("div", { className: "guidelines-content" });
+  const pastCoverLetters = el("div", { className: "past-resumes" });
+
+  const loadPastCoverLetters = async () => {
+    pastCoverLetters.innerHTML = "";
+    if (!isEdit || !editId) return;
+    try {
+      const resp = await fetch(`/api/cover-letters/${editId}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data.coverLetters.length === 0) return;
+
+      const table = el("table", { className: "md-table resume-table" });
+      const thead = el("thead", {},
+        el("tr", {},
+          el("th", {}, "Generated"),
+          el("th", {}, "Cover Letter"),
+          el("th", {}, "")
+        )
+      );
+      const tbody = el("tbody", {});
+
+      for (const cl of data.coverLetters as { filename: string; version: number; timestamp: string }[]) {
+        const viewBtn = el("a", { href: "#", className: "past-resume-link" }, "View");
+        viewBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const resp2 = await fetch(`/api/cover-letters/${editId}/${cl.filename}`);
+          if (resp2.ok) {
+            const d = await resp2.json();
+            showResumeViewer(cl.filename, d.content);
+          }
+        });
+        const localTime = cl.timestamp ? new Date(cl.timestamp).toLocaleString() : "—";
+        tbody.appendChild(
+          el("tr", {},
+            el("td", {}, localTime),
+            el("td", {}, cl.filename),
+            el("td", {}, viewBtn)
+          )
+        );
+      }
+
+      table.append(thead, tbody);
+      pastCoverLetters.appendChild(table);
+    } catch { /* ignore */ }
+  };
+
+  coverLetterBody.append(coverLetterNotesInput, coverLetterContent, pastCoverLetters);
+
+  const coverLetterSpinner = el("span", { className: "section-spinner" });
+  const generateCoverLetterBtn = el("button", { className: "btn btn-primary btn-sm" }, "Generate") as HTMLButtonElement;
+
+  if (isEdit && editId) {
+    generateCoverLetterBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      generateCoverLetterBtn.textContent = "Generating...";
+      generateCoverLetterBtn.setAttribute("disabled", "true");
+      coverLetterSpinner.classList.add("active");
+      try {
+        const resp = await fetch("/api/generate-cover-letter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jobId: editId, notes: coverLetterNotesInput.value.trim() }),
+        });
+        if (!resp.ok) {
+          const err = await resp.json();
+          coverLetterContent.textContent = err.error || "Generation failed.";
+          return;
+        }
+        const data = await resp.json();
+        showResumeViewer(data.filename, data.content);
+        await loadPastCoverLetters();
+      } catch {
+        coverLetterContent.textContent = "Failed to connect to server.";
+      } finally {
+        generateCoverLetterBtn.textContent = "Generate";
+        generateCoverLetterBtn.removeAttribute("disabled");
+        coverLetterSpinner.classList.remove("active");
+      }
+    });
+
+    loadPastCoverLetters();
+  } else {
+    generateCoverLetterBtn.setAttribute("disabled", "true");
+    generateCoverLetterBtn.title = "Save the application first to generate a cover letter";
+  }
+
+  const coverLetterSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Cover Letter", coverLetterSpinner),
+    generateCoverLetterBtn,
+  );
+  coverLetterSection.appendChild(coverLetterSummary);
+  coverLetterSection.appendChild(coverLetterBody);
+  container.appendChild(coverLetterSection);
+
+  // --- Custom Questions section ---
+  const questionsSection = el("details", { className: "collapsible-section glass-card" });
+  const questionsBody = el("div", { className: "collapsible-body" });
+  const questionsList = el("div", { className: "questions-list" });
+
+  const questionInput = el("input", {
+    type: "text",
+    placeholder: "Type a question...",
+    className: "input",
+  }) as HTMLInputElement;
+  const addQuestionBtn = el("button", { className: "btn btn-primary btn-sm" }, "Add") as HTMLButtonElement;
+
+  const renderQuestionCard = (q: { id: string; question: string; answer: string; generatedAt: string }) => {
+    const card = el("div", { className: "question-card glass-card" });
+
+    const questionText = el("div", { className: "question-text" }, q.question);
+
+    const answerInput = el("textarea", {
+      className: "input input-textarea",
+      rows: "4",
+      placeholder: "Answer will appear here...",
+    }) as HTMLTextAreaElement;
+    if (q.answer) answerInput.value = q.answer;
+
+    const spinner = el("span", { className: "section-spinner" });
+    const generateBtn = el("button", { className: "btn btn-primary btn-sm" }, "Generate") as HTMLButtonElement;
+    const saveBtn = el("button", { className: "btn btn-secondary btn-sm" }, "Save") as HTMLButtonElement;
+    const deleteBtn = el("button", { className: "btn btn-danger-glass btn-sm" }, "Delete") as HTMLButtonElement;
+
+    generateBtn.addEventListener("click", async () => {
+      generateBtn.textContent = "Generating...";
+      generateBtn.setAttribute("disabled", "true");
+      spinner.classList.add("active");
+      try {
+        const resp = await fetch(`/api/custom-questions/${editId}/${q.id}/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          answerInput.value = data.answer;
+        } else {
+          const err = await resp.json();
+          answerInput.value = err.error || "Generation failed.";
+        }
+      } catch {
+        answerInput.value = "Failed to connect to server.";
+      } finally {
+        generateBtn.textContent = "Generate";
+        generateBtn.removeAttribute("disabled");
+        spinner.classList.remove("active");
+      }
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      saveBtn.textContent = "Saving...";
+      saveBtn.setAttribute("disabled", "true");
+      try {
+        await fetch(`/api/custom-questions/${editId}/${q.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answer: answerInput.value }),
+        });
+        saveBtn.textContent = "Saved!";
+        setTimeout(() => { saveBtn.textContent = "Save"; }, 1500);
+      } catch {
+        saveBtn.textContent = "Error";
+        setTimeout(() => { saveBtn.textContent = "Save"; }, 1500);
+      } finally {
+        saveBtn.removeAttribute("disabled");
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!confirm("Delete this question?")) return;
+      await fetch(`/api/custom-questions/${editId}/${q.id}`, { method: "DELETE" });
+      card.remove();
+    });
+
+    const actions = el("div", { className: "question-actions" }, spinner, generateBtn, saveBtn, deleteBtn);
+    card.append(questionText, answerInput, actions);
+    questionsList.appendChild(card);
+  };
+
+  const loadQuestions = async () => {
+    questionsList.innerHTML = "";
+    if (!isEdit || !editId) return;
+    try {
+      const resp = await fetch(`/api/custom-questions/${editId}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      for (const q of data.questions) renderQuestionCard(q);
+    } catch { /* ignore */ }
+  };
+
+  addQuestionBtn.addEventListener("click", async () => {
+    const text = questionInput.value.trim();
+    if (!text || !editId) return;
+    addQuestionBtn.setAttribute("disabled", "true");
+    try {
+      const resp = await fetch(`/api/custom-questions/${editId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: text }),
+      });
+      if (resp.ok) {
+        const q = await resp.json();
+        renderQuestionCard(q);
+        questionInput.value = "";
+      }
+    } finally {
+      addQuestionBtn.removeAttribute("disabled");
+    }
+  });
+
+  questionInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); addQuestionBtn.click(); }
+  });
+
+  const addRow = el("div", { className: "question-add-row" }, questionInput, addQuestionBtn);
+  questionsBody.append(addRow, questionsList);
+
+  const questionsSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Custom Questions"),
+  );
+  questionsSection.appendChild(questionsSummary);
+  questionsSection.appendChild(questionsBody);
+
+  if (isEdit && editId) {
+    loadQuestions();
+  } else {
+    addQuestionBtn.setAttribute("disabled", "true");
+    questionInput.setAttribute("disabled", "true");
+    questionInput.placeholder = "Save the application first to add questions";
+  }
+
+  container.appendChild(questionsSection);
 
   if (bottomActions) {
     container.appendChild(bottomActions);

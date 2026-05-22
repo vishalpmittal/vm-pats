@@ -8,4 +8,9 @@ export interface JobApplication {
   applicationDate: string;
   notes: string;
   hasAiReview?: boolean;
+  referralName?: string;
+  referralLinkedIn?: string;
+  referralRelation?: string;
+  referralContext?: string;
+  addedDate?: string;
 }

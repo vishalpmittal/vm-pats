@@ -4,6 +4,7 @@ import { renderGuidelines } from "./pages/guidelines";
 import { renderGuidelineEditor } from "./pages/guideline-editor";
 import { renderGuidelinesList } from "./pages/guidelines-list";
 import { renderGaps } from "./pages/gaps";
+import { renderCompanies } from "./pages/companies";
 import { renderMasterResume } from "./pages/master-resume";
 import { renderNav } from "./components/nav";
 
@@ -21,6 +22,8 @@ async function route(): Promise<void> {
     await renderMasterResume(app);
   } else if (hash === "#/gaps") {
     await renderGaps(app);
+  } else if (hash === "#/companies") {
+    await renderCompanies(app);
   } else if (hash === "#/guidelines") {
     await renderGuidelinesList(app);
   } else if (hash === "#/guidelines/new") {

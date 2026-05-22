@@ -7,6 +7,8 @@ import { scrapeJobDescription } from "./scraper.js";
 import { analyzeResume } from "./job-analyzer.js";
 import { generateResumeContent, generateResumeFilename, findResumesForJob } from "./resume-generator.js";
 import { runClaude } from "./claude.js";
+import { generateReferralBlurb, generateBlurbFilename, findBlurbsForJob } from "./referral-blurb.js";
+import { generateCoverLetter, generateCoverLetterFilename, findCoverLettersForJob } from "./cover-letter.js";
 
 interface JobApplication {
   id: string;
@@ -18,11 +20,18 @@ interface JobApplication {
   applicationDate: string;
   notes: string;
   hasAiReview: boolean;
+  referralName: string;
+  referralLinkedIn: string;
+  referralRelation: string;
+  referralContext: string;
+  addedDate: string;
 }
 
 const JOB_FIELDS: ReadonlyArray<keyof Omit<JobApplication, "id">> = [
   "company", "title", "jobLink", "location",
   "postingDate", "applicationDate", "notes", "hasAiReview",
+  "referralName", "referralLinkedIn", "referralRelation", "referralContext",
+  "addedDate",
 ];
 
 function pickJobFields(body: Record<string, unknown>): Partial<Omit<JobApplication, "id">> {
@@ -47,13 +56,19 @@ const resumeFile = path.join(dataDir, "resumes", "master-resume.md");
 const gapFile = path.join(dataDir, "resumes", "resume-gap.md");
 const resumesDir = path.join(dataDir, "resumes");
 const guidelinesDir = path.join(dataDir, "guidelines");
+const blurbsDir = path.join(dataDir, "referral-blurbs");
+const coverLettersDir = path.join(dataDir, "cover-letters");
+const customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
 
 function initDataDir(): void {
   fs.mkdirSync(path.join(dataDir, "jobs"), { recursive: true });
   fs.mkdirSync(path.join(dataDir, "resumes"), { recursive: true });
   fs.mkdirSync(guidelinesDir, { recursive: true });
+  fs.mkdirSync(blurbsDir, { recursive: true });
+  fs.mkdirSync(coverLettersDir, { recursive: true });
   if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]\n");
   if (!fs.existsSync(reviewsFile)) fs.writeFileSync(reviewsFile, "{}\n");
+  if (!fs.existsSync(customQuestionsFile)) fs.writeFileSync(customQuestionsFile, "{}\n");
 
   const repoGuidelinesDir = path.join(__dirname, "..", "data", "guidelines");
   if (fs.existsSync(repoGuidelinesDir) && repoGuidelinesDir !== guidelinesDir) {
@@ -100,6 +115,17 @@ function writeReview(jobId: string, review: string): void {
   const reviews = readReviews();
   reviews[jobId] = { text: review, reviewedAt: new Date().toISOString() };
   fs.writeFileSync(reviewsFile, JSON.stringify(reviews, null, 2) + "\n");
+}
+
+interface CustomQuestion { id: string; question: string; answer: string; generatedAt: string; }
+
+function readCustomQuestions(): Record<string, CustomQuestion[]> {
+  if (!fs.existsSync(customQuestionsFile)) return {};
+  return JSON.parse(fs.readFileSync(customQuestionsFile, "utf-8")) as Record<string, CustomQuestion[]>;
+}
+
+function writeCustomQuestions(data: Record<string, CustomQuestion[]>): void {
+  fs.writeFileSync(customQuestionsFile, JSON.stringify(data, null, 2) + "\n");
 }
 
 const GAP_REGEX = /##\s*\d+\.\s*Key Gaps\s*\n([\s\S]*?)(?=\n##\s*\d+\.|$)/i;
@@ -172,6 +198,11 @@ app.post("/api/jobs", (req, res) => {
     applicationDate: fields.applicationDate ?? "",
     notes: fields.notes ?? "",
     hasAiReview: false,
+    referralName: fields.referralName ?? "",
+    referralLinkedIn: fields.referralLinkedIn ?? "",
+    referralRelation: fields.referralRelation ?? "",
+    referralContext: fields.referralContext ?? "",
+    addedDate: new Date().toISOString().slice(0, 10),
     id: crypto.randomUUID(),
   };
   jobs.push(entry);
@@ -410,6 +441,90 @@ app.get("/api/gaps", (_req, res) => {
   res.json({ content });
 });
 
+const companiesFile = path.join(dataDir, "companies", "all-companies.json");
+
+function readCompanies(): { rank: number; company: string; sector: string; type: string; careersUrl: string }[] {
+  if (!fs.existsSync(companiesFile)) return [];
+  return JSON.parse(fs.readFileSync(companiesFile, "utf-8"));
+}
+
+function writeCompanies(data: { rank: number; company: string; sector: string; type: string; careersUrl: string }[]): void {
+  fs.mkdirSync(path.dirname(companiesFile), { recursive: true });
+  fs.writeFileSync(companiesFile, JSON.stringify(data, null, 2) + "\n");
+}
+
+app.get("/api/companies", (_req, res) => {
+  res.json(readCompanies());
+});
+
+app.post("/api/companies", (req, res) => {
+  const { company, sector, type, careersUrl } = req.body;
+  if (!company) { res.status(400).json({ error: "company name is required" }); return; }
+  const companies = readCompanies();
+  const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
+  const entry = { rank: maxRank + 1, company, sector: sector || "", type: type || "", careersUrl: careersUrl || "" };
+  companies.push(entry);
+  writeCompanies(companies);
+  res.status(201).json(entry);
+});
+
+app.put("/api/companies/:rank", (req, res) => {
+  const rank = parseInt(req.params.rank, 10);
+  const companies = readCompanies();
+  const idx = companies.findIndex((c) => c.rank === rank);
+  if (idx === -1) { res.status(404).json({ error: "company not found" }); return; }
+  const { company, sector, type, careersUrl } = req.body;
+  if (company !== undefined) companies[idx].company = company;
+  if (sector !== undefined) companies[idx].sector = sector;
+  if (type !== undefined) companies[idx].type = type;
+  if (careersUrl !== undefined) companies[idx].careersUrl = careersUrl;
+  writeCompanies(companies);
+  res.json(companies[idx]);
+});
+
+app.post("/api/companies/lookup", async (req, res) => {
+  const { company } = req.body;
+  if (!company) { res.status(400).json({ error: "company name is required" }); return; }
+
+  const companies = readCompanies();
+  const existing = companies.find((c) => c.company.toLowerCase() === company.toLowerCase());
+  if (existing) { res.json(existing); return; }
+
+  console.log(`AI lookup for company: ${company}`);
+  try {
+    const prompt = `Look up the company "${company}" and return ONLY a JSON object with these fields:
+- "sector": the company's primary industry/sector (e.g., "Enterprise SaaS", "AI / Foundation Models", "Finance / Tech", "Healthcare / MedTech")
+- "type": ownership type — one of "Public", "Private", or "Subsidiary"
+- "careersUrl": the company's careers/jobs page URL (must be a real, working URL)
+
+Return ONLY the JSON object, no markdown, no explanation. Example:
+{"sector": "Cloud / SaaS", "type": "Public", "careersUrl": "https://example.com/careers"}`;
+
+    const raw = await runClaude(prompt);
+    const match = raw.match(/\{[\s\S]*\}/);
+    const parsed = match ? JSON.parse(match[0]) : {};
+
+    const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
+    const entry = {
+      rank: maxRank + 1,
+      company,
+      sector: parsed.sector || "",
+      type: parsed.type || "",
+      careersUrl: parsed.careersUrl || "",
+    };
+    companies.push(entry);
+    writeCompanies(companies);
+    res.status(201).json(entry);
+  } catch (err) {
+    console.error("Company lookup error:", err);
+    const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
+    const entry = { rank: maxRank + 1, company, sector: "", type: "", careersUrl: "" };
+    companies.push(entry);
+    writeCompanies(companies);
+    res.status(201).json(entry);
+  }
+});
+
 // --- Resume Generation ---
 
 function readEnabledGuidelines(): string {
@@ -463,6 +578,229 @@ app.post("/api/generate-resume", async (req, res) => {
   } catch (err) {
     console.error("Resume generation error:", err);
     res.status(500).json({ error: "Failed to generate resume" });
+  }
+});
+
+app.post("/api/generate-referral-blurb", async (req, res) => {
+  const { jobId } = req.body;
+  if (!jobId) { res.status(400).json({ error: "jobId is required" }); return; }
+
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+
+  const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
+  const reviews = readReviews();
+  const aiReview = reviews[jobId]?.text ?? "";
+
+  let description = "";
+  if (job.jobLink) {
+    try {
+      description = await scrapeJobDescription(job.jobLink);
+    } catch {
+      description = "(Could not fetch job description)";
+    }
+  }
+
+  console.log(`Generating referral blurb for: ${job.company} - ${job.title}`);
+  try {
+    const content = await generateReferralBlurb({
+      company: job.company,
+      title: job.title,
+      description,
+      masterResume,
+      aiReview,
+      referrerName: job.referralName,
+      referralRelation: job.referralRelation,
+      referralContext: job.referralContext,
+    });
+    const referrerFooter = [
+      "",
+      "---",
+      "",
+      `**Referrer:** ${job.referralName}`,
+      job.referralLinkedIn ? `**LinkedIn:** ${job.referralLinkedIn}` : "",
+      job.referralRelation ? `**Relationship:** ${job.referralRelation}` : "",
+    ].filter(Boolean).join("\n");
+
+    const fullContent = content + "\n" + referrerFooter;
+    const filename = generateBlurbFilename(job.company, job.title, blurbsDir, job.referralName);
+    fs.mkdirSync(blurbsDir, { recursive: true });
+    fs.writeFileSync(path.join(blurbsDir, filename), fullContent + "\n");
+    res.json({ filename, content: fullContent });
+  } catch (err) {
+    console.error("Referral blurb generation error:", err);
+    res.status(500).json({ error: "Failed to generate referral blurb" });
+  }
+});
+
+app.get("/api/referral-blurbs/:jobId", (req, res) => {
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === req.params.jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+  res.json({ blurbs: findBlurbsForJob(job.company, job.title, blurbsDir, job.referralName) });
+});
+
+app.get("/api/referral-blurbs/:jobId/:filename", (req, res) => {
+  const filePath = path.join(blurbsDir, req.params.filename);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "file not found" }); return; }
+  const content = fs.readFileSync(filePath, "utf-8");
+  res.json({ content });
+});
+
+app.post("/api/generate-cover-letter", async (req, res) => {
+  const { jobId, notes } = req.body;
+  if (!jobId) { res.status(400).json({ error: "jobId is required" }); return; }
+
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+
+  const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
+  const reviews = readReviews();
+  const aiReview = reviews[jobId]?.text ?? "";
+
+  let description = "";
+  if (job.jobLink) {
+    try {
+      description = await scrapeJobDescription(job.jobLink);
+    } catch {
+      description = "(Could not fetch job description)";
+    }
+  }
+
+  console.log(`Generating cover letter for: ${job.company} - ${job.title}`);
+  try {
+    const content = await generateCoverLetter({
+      company: job.company,
+      title: job.title,
+      location: job.location,
+      description,
+      masterResume,
+      aiReview,
+      referrerName: job.referralName,
+      referralRelation: job.referralRelation,
+      additionalNotes: notes ?? "",
+    });
+    const filename = generateCoverLetterFilename(job.company, job.title, coverLettersDir);
+    fs.mkdirSync(coverLettersDir, { recursive: true });
+    fs.writeFileSync(path.join(coverLettersDir, filename), content + "\n");
+    res.json({ filename, content });
+  } catch (err) {
+    console.error("Cover letter generation error:", err);
+    res.status(500).json({ error: "Failed to generate cover letter" });
+  }
+});
+
+app.get("/api/cover-letters/:jobId", (req, res) => {
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === req.params.jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+  res.json({ coverLetters: findCoverLettersForJob(job.company, job.title, coverLettersDir) });
+});
+
+app.get("/api/cover-letters/:jobId/:filename", (req, res) => {
+  const filePath = path.join(coverLettersDir, req.params.filename);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "file not found" }); return; }
+  const content = fs.readFileSync(filePath, "utf-8");
+  res.json({ content });
+});
+
+app.get("/api/custom-questions/:jobId", (req, res) => {
+  const questions = readCustomQuestions()[req.params.jobId] ?? [];
+  res.json({ questions });
+});
+
+app.post("/api/custom-questions/:jobId", (req, res) => {
+  const { question } = req.body;
+  if (!question) { res.status(400).json({ error: "question is required" }); return; }
+  const all = readCustomQuestions();
+  const entry: CustomQuestion = { id: crypto.randomUUID(), question, answer: "", generatedAt: "" };
+  if (!all[req.params.jobId]) all[req.params.jobId] = [];
+  all[req.params.jobId].push(entry);
+  writeCustomQuestions(all);
+  res.status(201).json(entry);
+});
+
+app.put("/api/custom-questions/:jobId/:questionId", (req, res) => {
+  const { answer } = req.body;
+  const all = readCustomQuestions();
+  const questions = all[req.params.jobId] ?? [];
+  const q = questions.find((q) => q.id === req.params.questionId);
+  if (!q) { res.status(404).json({ error: "question not found" }); return; }
+  q.answer = answer ?? "";
+  writeCustomQuestions(all);
+  res.json(q);
+});
+
+app.delete("/api/custom-questions/:jobId/:questionId", (req, res) => {
+  const all = readCustomQuestions();
+  const questions = all[req.params.jobId] ?? [];
+  const idx = questions.findIndex((q) => q.id === req.params.questionId);
+  if (idx === -1) { res.status(404).json({ error: "question not found" }); return; }
+  questions.splice(idx, 1);
+  writeCustomQuestions(all);
+  res.json({ ok: true });
+});
+
+app.post("/api/custom-questions/:jobId/:questionId/generate", async (req, res) => {
+  const all = readCustomQuestions();
+  const questions = all[req.params.jobId] ?? [];
+  const q = questions.find((q) => q.id === req.params.questionId);
+  if (!q) { res.status(404).json({ error: "question not found" }); return; }
+
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === req.params.jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+
+  const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
+  const reviews = readReviews();
+  const aiReview = reviews[req.params.jobId]?.text ?? "";
+
+  let description = "";
+  if (job.jobLink) {
+    try {
+      description = await scrapeJobDescription(job.jobLink);
+    } catch {
+      description = "(Could not fetch job description)";
+    }
+  }
+
+  const prompt = `Answer the following question for a job application. The answer should be written in first person as the candidate.
+
+## Question
+${q.question}
+
+## Target Role
+- **Company:** ${job.company}
+- **Title:** ${job.title}
+- **Location:** ${job.location}
+
+## Job Description
+${description || "(No job description available)"}
+
+## Candidate's Resume (source of truth for all facts)
+${masterResume}
+
+## AI Resume Review
+${aiReview || "(No review available)"}
+
+## Instructions
+- Answer the question directly and concisely.
+- Only reference facts from the resume — do not fabricate.
+- Tailor the answer to the specific role and company.
+- Write in a professional but personable tone.
+- Output ONLY the answer — no preamble, no commentary.`;
+
+  try {
+    const answer = await runClaude(prompt);
+    q.answer = answer;
+    q.generatedAt = new Date().toISOString();
+    writeCustomQuestions(all);
+    res.json(q);
+  } catch (err) {
+    console.error("Custom question generation error:", err);
+    res.status(500).json({ error: "Failed to generate answer" });
   }
 });
 

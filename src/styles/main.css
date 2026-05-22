@@ -327,6 +327,130 @@ h3 {
   color: var(--text);
 }
 
+.referral-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.referral-fields > .guidelines-content,
+.referral-fields > .past-resumes {
+  grid-column: 1 / -1;
+}
+
+.companies-table-wrap {
+  margin-top: 12px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.companies-table {
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.companies-table th {
+  position: sticky;
+  top: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  z-index: 1;
+}
+
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sortable-th:hover {
+  color: var(--accent);
+}
+
+.companies-table td a.job-link {
+  color: #1b2a4a;
+}
+
+.company-name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.company-edit-btn {
+  opacity: 0;
+  transition: opacity 0.15s;
+  font-size: 0.75rem;
+}
+
+.companies-table tr:hover .company-edit-btn {
+  opacity: 1;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(220, 230, 245, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.autocomplete-item {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #1b2a4a;
+  font-weight: 500;
+}
+
+.autocomplete-item:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.question-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.question-add-row .input {
+  flex: 1;
+}
+
+.question-card {
+  margin-bottom: 12px;
+  padding: 14px 16px;
+}
+
+.question-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.question-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .collapsible-body .input-textarea {
   width: 100%;
   margin-bottom: 12px;
@@ -449,7 +573,7 @@ h3 {
 /* ── Job List ── */
 .job-row {
   display: grid;
-  grid-template-columns: 100px 140px 1fr 120px 60px 100px 1fr;
+  grid-template-columns: 90px 140px 2fr 120px 100px 100px;
   gap: 12px;
   align-items: center;
   margin-bottom: 8px;
@@ -478,6 +602,12 @@ h3 {
   white-space: nowrap;
 }
 
+.cell-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
 .cell-notes {
   white-space: normal;
   display: -webkit-box;
@@ -499,7 +629,7 @@ h3 {
 }
 
 .job-link {
-  color: var(--accent);
+  color: #1b2a4a;
   text-decoration: none;
   font-weight: 500;
 }
