@@ -68,6 +68,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   const headerButtons = el("div", { className: "header-actions" }, backBtn);
 
+  let extractedJobDescription = existing?.jobDescription ?? "";
   let bottomActions: HTMLElement | undefined;
   let runAnalysis: (() => Promise<void>) | undefined;
   const reviewSpinner = el("span", { className: "section-spinner" });
@@ -259,6 +260,9 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
         if (data.postingDate) {
           postingDateInput.value = data.postingDate;
         }
+        if (data.jobDescription) {
+          extractedJobDescription = data.jobDescription;
+        }
         extractStatus.textContent = "Details extracted";
         setTimeout(() => { extractStatus.className = "extract-status hidden"; }, 2000);
       } catch {
@@ -389,6 +393,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
       referralLinkedIn: referralLinkedInInput.value.trim(),
       referralRelation: referralRelationSelect.value,
       referralContext: referralContextInput.value.trim(),
+      jobDescription: extractedJobDescription,
     };
     if (isEdit) {
       await update(editId!, fields);
@@ -401,104 +406,129 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   container.appendChild(form);
   container.appendChild(pastAppsSection);
 
-  if (isEdit && existing) {
-    const reviewSection = el("details", { className: "collapsible-section glass-card" });
+  // --- Job Description section ---
+  const jobDescSection = el("details", { className: "collapsible-section glass-card" });
+  const jobDescSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Job Description")
+  );
+  const jobDescBody = el("div", { className: "collapsible-body" });
+  if (existing?.jobDescription) {
+    jobDescBody.innerHTML = renderMarkdown(existing.jobDescription);
+    jobDescBody.classList.add("guidelines-content");
+  } else {
+    jobDescBody.textContent = "No job description available.";
+  }
+  jobDescSection.appendChild(jobDescSummary);
+  jobDescSection.appendChild(jobDescBody);
+  container.appendChild(jobDescSection);
 
-    const reviewBtn = el("button", { className: "btn btn-primary btn-sm" }, "Review") as HTMLButtonElement;
-    reviewBtnRef = reviewBtn;
+  // --- AI Resume Review section ---
+  const reviewSection = el("details", { className: "collapsible-section glass-card" });
+
+  const reviewBtn = el("button", { className: "btn btn-primary btn-sm" }, "Review") as HTMLButtonElement;
+  reviewBtnRef = reviewBtn;
+
+  if (isEdit && editId) {
     reviewBtn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       runAnalysis!();
     });
+  } else {
+    reviewBtn.setAttribute("disabled", "true");
+    reviewBtn.title = "Save the application first to review";
+  }
 
-    const summary = el("summary", { className: "collapsible-header" },
-      el("span", {}, "AI Resume Review", reviewSpinner, reviewTimestamp),
-      reviewBtn
-    );
-    const reviewBody = el("div", { className: "collapsible-body" });
-    reviewBodyRef = reviewBody;
-    reviewSectionRef = reviewSection;
+  const reviewSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "AI Resume Review", reviewSpinner, reviewTimestamp),
+    reviewBtn
+  );
+  const reviewBody = el("div", { className: "collapsible-body" });
+  reviewBodyRef = reviewBody;
+  reviewSectionRef = reviewSection;
 
-    reviewSection.appendChild(summary);
-    reviewSection.appendChild(reviewBody);
-    container.appendChild(reviewSection);
+  reviewSection.appendChild(reviewSummary);
+  reviewSection.appendChild(reviewBody);
+  container.appendChild(reviewSection);
 
-    if (existing.hasAiReview) {
-      fetch(`/api/reviews/${editId}`).then(async (resp) => {
-        if (resp.ok) {
-          const data = await resp.json();
-          reviewBody.innerHTML = renderMarkdown(data.review);
-          reviewBody.classList.add("guidelines-content");
-          if (data.reviewedAt) reviewTimestamp.textContent = new Date(data.reviewedAt).toLocaleString();
-        } else {
-          reviewBody.textContent = "Could not load review.";
-        }
-      }).catch(() => {
-        reviewBody.textContent = "Failed to connect to server.";
-      });
-    } else {
-      reviewBody.textContent = "No AI review yet. Click \"Review\" to generate one.";
-    }
-
-    // --- Resume for Role section ---
-    const resumeSection = el("details", { className: "collapsible-section glass-card" });
-    const resumeBody = el("div", { className: "collapsible-body" });
-
-    const feedbackInput = el("textarea", {
-      placeholder: "Resume generation context / feedback (optional)",
-      className: "input input-textarea",
-      rows: "3",
-    }) as HTMLTextAreaElement;
-
-    const resumeContent = el("div", { className: "guidelines-content" });
-    const pastResumes = el("div", { className: "past-resumes" });
-
-    const loadPastResumes = async () => {
-      pastResumes.innerHTML = "";
-      try {
-        const resp = await fetch(`/api/generated-resumes/${editId}`);
-        if (!resp.ok) return;
+  if (isEdit && existing?.hasAiReview) {
+    fetch(`/api/reviews/${editId}`).then(async (resp) => {
+      if (resp.ok) {
         const data = await resp.json();
-        if (data.resumes.length === 0) return;
+        reviewBody.innerHTML = renderMarkdown(data.review);
+        reviewBody.classList.add("guidelines-content");
+        if (data.reviewedAt) reviewTimestamp.textContent = new Date(data.reviewedAt).toLocaleString();
+      } else {
+        reviewBody.textContent = "Could not load review.";
+      }
+    }).catch(() => {
+      reviewBody.textContent = "Failed to connect to server.";
+    });
+  } else {
+    reviewBody.textContent = "No AI review yet. Click \"Review\" to generate one.";
+  }
 
-        const table = el("table", { className: "md-table resume-table" });
-        const thead = el("thead", {},
+  // --- Resume for Role section ---
+  const resumeSection = el("details", { className: "collapsible-section glass-card" });
+  const resumeBody = el("div", { className: "collapsible-body" });
+
+  const feedbackInput = el("textarea", {
+    placeholder: "Resume generation context / feedback (optional)",
+    className: "input input-textarea",
+    rows: "3",
+  }) as HTMLTextAreaElement;
+
+  const resumeContent = el("div", { className: "guidelines-content" });
+  const pastResumes = el("div", { className: "past-resumes" });
+
+  const loadPastResumes = async () => {
+    pastResumes.innerHTML = "";
+    if (!isEdit || !editId) return;
+    try {
+      const resp = await fetch(`/api/generated-resumes/${editId}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data.resumes.length === 0) return;
+
+      const table = el("table", { className: "md-table resume-table" });
+      const thead = el("thead", {},
+        el("tr", {},
+          el("th", {}, "Generated"),
+          el("th", {}, "Resume"),
+          el("th", {}, "")
+        )
+      );
+      const tbody = el("tbody", {});
+
+      for (const r of data.resumes as { filename: string; version: number; timestamp: string }[]) {
+        const viewBtn = el("a", { href: "#", className: "past-resume-link" }, "View");
+        viewBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const resp2 = await fetch(`/api/generated-resumes/${editId}/${r.filename}`);
+          if (resp2.ok) {
+            const d = await resp2.json();
+            showResumeViewer(r.filename, d.content);
+          }
+        });
+        const localTime = r.timestamp ? new Date(r.timestamp).toLocaleString() : "—";
+        tbody.appendChild(
           el("tr", {},
-            el("th", {}, "Generated"),
-            el("th", {}, "Resume"),
-            el("th", {}, "")
+            el("td", {}, localTime),
+            el("td", {}, r.filename),
+            el("td", {}, viewBtn)
           )
         );
-        const tbody = el("tbody", {});
+      }
 
-        for (const r of data.resumes as { filename: string; version: number; timestamp: string }[]) {
-          const viewBtn = el("a", { href: "#", className: "past-resume-link" }, "View");
-          viewBtn.addEventListener("click", async (e) => {
-            e.preventDefault();
-            const resp2 = await fetch(`/api/generated-resumes/${editId}/${r.filename}`);
-            if (resp2.ok) {
-              const d = await resp2.json();
-              showResumeViewer(r.filename, d.content);
-            }
-          });
-          const localTime = r.timestamp ? new Date(r.timestamp).toLocaleString() : "—";
-          tbody.appendChild(
-            el("tr", {},
-              el("td", {}, localTime),
-              el("td", {}, r.filename),
-              el("td", {}, viewBtn)
-            )
-          );
-        }
+      table.append(thead, tbody);
+      pastResumes.appendChild(table);
+    } catch { /* ignore */ }
+  };
 
-        table.append(thead, tbody);
-        pastResumes.appendChild(table);
-      } catch { /* ignore */ }
-    };
+  const resumeSpinner = el("span", { className: "section-spinner" });
+  const generateBtn = el("button", { className: "btn btn-primary btn-sm" }, "Generate") as HTMLButtonElement;
 
-    const resumeSpinner = el("span", { className: "section-spinner" });
-    const generateBtn = el("button", { className: "btn btn-primary btn-sm" }, "Generate");
+  if (isEdit && editId) {
     generateBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -528,18 +558,21 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
       }
     });
 
-    const resumeSummary = el("summary", { className: "collapsible-header" },
-      el("span", {}, "Resume for Role", resumeSpinner),
-      generateBtn
-    );
-
-    resumeBody.append(feedbackInput, resumeContent, pastResumes);
-    resumeSection.appendChild(resumeSummary);
-    resumeSection.appendChild(resumeBody);
-    container.appendChild(resumeSection);
-
     loadPastResumes();
+  } else {
+    generateBtn.setAttribute("disabled", "true");
+    generateBtn.title = "Save the application first to generate a resume";
   }
+
+  const resumeSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Resume for Role", resumeSpinner),
+    generateBtn
+  );
+
+  resumeBody.append(feedbackInput, resumeContent, pastResumes);
+  resumeSection.appendChild(resumeSummary);
+  resumeSection.appendChild(resumeBody);
+  container.appendChild(resumeSection);
 
   // --- Referral section ---
   const referralSection = el("details", { className: "collapsible-section glass-card" });

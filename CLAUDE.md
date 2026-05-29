@@ -46,7 +46,7 @@ All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cov
 - `main.ts` — Entry point, hash-based routing (`#/` → home, `#/add` → add role, `#/edit/:id` → role details, `#/master-resume` → master resume, `#/gaps` → resume gaps, `#/companies` → companies list, `#/guidelines` → guidelines list, `#/guidelines/new` → create guideline, `#/guidelines/:slug` → view guideline). Renders the nav bar on every route change.
 - `types.ts` — Canonical `JobApplication` interface (duplicated in `server/index.ts` — keep both in sync when changing fields).
 - `store.ts` — Async CRUD via `fetch` to `/api/jobs` endpoints. All functions return Promises.
-- `pages/add-role.ts` — Add/edit form ("Role Details" in edit mode). URL paste → client-side parse → debounced server extraction. Company field has autocomplete dropdown from the companies list (`/api/companies`) — if a typed company isn't in the list, it's auto-added via AI lookup on form submit. Contains five collapsible sections in edit mode (see Role Details sections below).
+- `pages/add-role.ts` — Add/edit form ("Role Details" in edit mode). URL paste → client-side parse → debounced server extraction. Company field has autocomplete dropdown from the companies list (`/api/companies`) — if a typed company isn't in the list, it's auto-added via AI lookup on form submit. Contains six collapsible sections in edit mode (see Role Details sections below).
 - `pages/master-resume.ts` — View master resume (rendered markdown) or upload a new one (file upload → AI conversion to markdown if not `.md`).
 - `pages/guideline-editor.ts` — Form to create new guidelines (auto-slugifies title). Includes AI prompt field to auto-generate guideline content.
 - `pages/guidelines-list.ts` — Guidelines index page with enable/disable checkboxes (enabled guidelines are injected into resume generation prompts).
@@ -64,13 +64,14 @@ All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cov
 
 ### Role Details page sections (`pages/add-role.ts`)
 
-The edit-mode page has five collapsible `<details>` sections below the main form, all following the same pattern (spinner + action button in header, content in body):
+The edit-mode page has six collapsible `<details>` sections below the main form, all following the same pattern (spinner + action button in header, content in body):
 
-1. **AI Resume Review** — Analyze resume against job posting. Saves to `reviews.json`.
-2. **Resume for Role** — Generate tailored resume with feedback textarea. Versioned files in `data/resumes/`, past versions in table, side-pane viewer.
-3. **Referral** — Referrer name/LinkedIn/relation/context fields (two-per-row grid). "Generate Blurb" saves referral fields first, then generates a 3-paragraph referral blurb with referrer details appended at the bottom. Filename includes referrer name. Versioned files in `data/referral-blurbs/`, past versions in table, side-pane viewer.
-4. **Cover Letter** — Notes textarea for additional context. "Generate" button creates a 3-paragraph cover letter. Versioned files in `data/cover-letters/`, past versions in table, side-pane viewer.
-5. **Custom Questions** — Add questions via text input, each renders as a card with editable answer textarea, per-question "Generate" (AI), "Save", and "Delete" buttons. Persisted to `data/jobs/custom-questions.json`.
+1. **Job Description** — Displays the full job description (scraped at extraction time and stored as markdown on the job). Read-only, no action button.
+2. **AI Resume Review** — Analyze resume against job posting. Saves to `reviews.json`.
+3. **Resume for Role** — Generate tailored resume with feedback textarea. Versioned files in `data/resumes/`, past versions in table, side-pane viewer.
+4. **Referral** — Referrer name/LinkedIn/relation/context fields (two-per-row grid). "Generate Blurb" saves referral fields first, then generates a 3-paragraph referral blurb with referrer details appended at the bottom. Filename includes referrer name. Versioned files in `data/referral-blurbs/`, past versions in table, side-pane viewer.
+5. **Cover Letter** — Notes textarea for additional context. "Generate" button creates a 3-paragraph cover letter. Versioned files in `data/cover-letters/`, past versions in table, side-pane viewer.
+6. **Custom Questions** — Add questions via text input, each renders as a card with editable answer textarea, per-question "Generate" (AI), "Save", and "Delete" buttons. Persisted to `data/jobs/custom-questions.json`.
 
 ### Backend (`server/`)
 
@@ -95,7 +96,7 @@ The edit-mode page has five collapsible `<details>` sections below the main form
   - `GET /api/gaps` — Serve consolidated resume gaps.
 - `claude.ts` — Shared `runClaude()` with CLI/SDK auto-detection (see AI backend section above).
 - `extractor.ts` — Renders pages with Puppeteer, extracts job details via Cheerio. Priority: JSON-LD → DOM selectors → OG/meta tags → h1 fallback → URL pattern fallback.
-- `scraper.ts` — Puppeteer-based job description scraper (returns plain text, capped at 5000 chars). Reuses a shared browser instance.
+- `scraper.ts` — Puppeteer-based job description scraper (returns markdown via turndown HTML conversion, capped at 5000 chars). Reuses a shared browser instance.
 - `job-analyzer.ts` — Builds the resume analysis prompt and calls `runClaude()`.
 - `resume-generator.ts` — Builds generation prompt (master resume + enabled guidelines + AI review + job description + user feedback) and handles versioned filename generation (`{yyyymmdd}-{company}-{abbrev}-VishalM-resume-v{N}.md`).
 - `referral-blurb.ts` — Builds referral blurb prompt (referrer info + job context + resume) and handles versioned filename/find functions.
@@ -103,7 +104,7 @@ The edit-mode page has five collapsible `<details>` sections below the main form
 
 ### Data flow
 
-1. User pastes URL → client-side `parseJobUrl()` fills form instantly → server `/api/extract` overwrites with richer data from rendered HTML
+1. User pastes URL → client-side `parseJobUrl()` fills form instantly → server `/api/extract` overwrites with richer data from rendered HTML and scrapes the full job description as markdown
 2. Form submit → `POST /api/jobs` → written to `data/jobs/jobs.json`
 3. AI analyze → server reads `data/resumes/master-resume.md` + scrapes job page → `runClaude()` → review saved to `data/jobs/reviews.json` (with timestamp) → `consolidateGaps()` reads ALL reviews, extracts gaps, uses AI to deduplicate and categorize them, overwrites `data/resumes/resume-gap.md`
 4. Resume generation → server reads master resume + all enabled guidelines + AI review + job description + user feedback → `runClaude()` → saved as versioned `.md` in `data/resumes/`, displayed in slide-in viewer

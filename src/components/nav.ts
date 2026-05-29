@@ -6,7 +6,7 @@ interface NavItem {
 }
 
 const STATIC_ITEMS: NavItem[] = [
-  { label: "Job Applications", hash: "#/" },
+  { label: "My Applications", hash: "#/" },
   { label: "Master Resume", hash: "#/master-resume" },
   { label: "Resume Gaps", hash: "#/gaps" },
   { label: "Companies", hash: "#/companies" },

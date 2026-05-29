@@ -13,4 +13,5 @@ export interface JobApplication {
   referralRelation?: string;
   referralContext?: string;
   addedDate?: string;
+  jobDescription?: string;
 }

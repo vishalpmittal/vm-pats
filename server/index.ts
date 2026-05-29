@@ -25,13 +25,14 @@ interface JobApplication {
   referralRelation: string;
   referralContext: string;
   addedDate: string;
+  jobDescription: string;
 }
 
 const JOB_FIELDS: ReadonlyArray<keyof Omit<JobApplication, "id">> = [
   "company", "title", "jobLink", "location",
   "postingDate", "applicationDate", "notes", "hasAiReview",
   "referralName", "referralLinkedIn", "referralRelation", "referralContext",
-  "addedDate",
+  "addedDate", "jobDescription",
 ];
 
 function pickJobFields(body: Record<string, unknown>): Partial<Omit<JobApplication, "id">> {
@@ -202,6 +203,7 @@ app.post("/api/jobs", (req, res) => {
     referralLinkedIn: fields.referralLinkedIn ?? "",
     referralRelation: fields.referralRelation ?? "",
     referralContext: fields.referralContext ?? "",
+    jobDescription: fields.jobDescription ?? "",
     addedDate: new Date().toISOString().slice(0, 10),
     id: crypto.randomUUID(),
   };
@@ -237,9 +239,12 @@ app.get("/api/extract", async (req, res) => {
 
   console.log(`Extracting: ${url}`);
   try {
-    const result = await extractJobDetails(url);
+    const [result, jobDescription] = await Promise.all([
+      extractJobDetails(url),
+      scrapeJobDescription(url).catch(() => ""),
+    ]);
     console.log(`Result:`, JSON.stringify(result));
-    res.json(result);
+    res.json({ ...result, jobDescription });
   } catch (err) {
     console.error("Extraction error:", err);
     res.status(500).json({ error: "Failed to extract job details" });
@@ -262,8 +267,8 @@ app.post("/api/analyze", async (req, res) => {
   }
 
   const resume = fs.readFileSync(resumeFile, "utf-8");
-  let description = "";
-  if (job.jobLink) {
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
     try {
       description = await scrapeJobDescription(job.jobLink);
     } catch {
@@ -550,8 +555,8 @@ app.post("/api/generate-resume", async (req, res) => {
   const reviews = readReviews();
   const aiReview = reviews[jobId]?.text ?? "";
 
-  let description = "";
-  if (job.jobLink) {
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
     try {
       description = await scrapeJobDescription(job.jobLink);
     } catch {
@@ -593,8 +598,8 @@ app.post("/api/generate-referral-blurb", async (req, res) => {
   const reviews = readReviews();
   const aiReview = reviews[jobId]?.text ?? "";
 
-  let description = "";
-  if (job.jobLink) {
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
     try {
       description = await scrapeJobDescription(job.jobLink);
     } catch {
@@ -660,8 +665,8 @@ app.post("/api/generate-cover-letter", async (req, res) => {
   const reviews = readReviews();
   const aiReview = reviews[jobId]?.text ?? "";
 
-  let description = "";
-  if (job.jobLink) {
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
     try {
       description = await scrapeJobDescription(job.jobLink);
     } catch {
@@ -757,8 +762,8 @@ app.post("/api/custom-questions/:jobId/:questionId/generate", async (req, res) =
   const reviews = readReviews();
   const aiReview = reviews[req.params.jobId]?.text ?? "";
 
-  let description = "";
-  if (job.jobLink) {
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
     try {
       description = await scrapeJobDescription(job.jobLink);
     } catch {

@@ -38,8 +38,8 @@ export function parseJobUrl(url: string): ParsedJob {
   const pathParts = parsed.pathname.split("/").filter(Boolean);
   const empty: ParsedJob = { company: null, title: null };
 
-  // Greenhouse: boards.greenhouse.io/{company}/jobs/{slug-or-id}
-  if (host === "boards.greenhouse.io" && pathParts.length > 0) {
+  // Greenhouse: boards.greenhouse.io/{company}/jobs/{slug-or-id} or job-boards.greenhouse.io/{company}/jobs/{id}
+  if ((host === "boards.greenhouse.io" || host === "job-boards.greenhouse.io") && pathParts.length > 0) {
     const company = cleanSlug(pathParts[0]);
     const jobSlug = pathParts.length >= 3 ? pathParts[2] : null;
     return { company, title: jobSlug ? titleFromSlug(jobSlug) : null };

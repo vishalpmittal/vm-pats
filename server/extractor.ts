@@ -252,6 +252,7 @@ function companyFromUrl(url: string): string | null {
 
   const platformHosts: Record<string, boolean> = {
     "boards.greenhouse.io": true,
+    "job-boards.greenhouse.io": true,
     "jobs.lever.co": true,
     "jobs.ashbyhq.com": true,
     "jobs.smartrecruiters.com": true,
