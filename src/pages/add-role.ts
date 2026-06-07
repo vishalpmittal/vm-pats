@@ -408,16 +408,64 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   // --- Job Description section ---
   const jobDescSection = el("details", { className: "collapsible-section glass-card" });
-  const jobDescSummary = el("summary", { className: "collapsible-header" },
-    el("span", {}, "Job Description")
-  );
   const jobDescBody = el("div", { className: "collapsible-body" });
-  if (existing?.jobDescription) {
-    jobDescBody.innerHTML = renderMarkdown(existing.jobDescription);
+  const jobDescSpinner = el("span", { className: "section-spinner" });
+  const fetchDescBtn = el("button", { className: "btn btn-primary btn-sm" }, existing?.jobDescription ? "Refetch" : "Fetch") as HTMLButtonElement;
+
+  const renderJobDesc = (md: string) => {
+    jobDescBody.innerHTML = renderMarkdown(md);
     jobDescBody.classList.add("guidelines-content");
+    extractedJobDescription = md;
+    fetchDescBtn.textContent = "Refetch";
+  };
+
+  const fetchJobDesc = async () => {
+    if (isEdit && editId) {
+      fetchDescBtn.textContent = "Fetching...";
+      fetchDescBtn.setAttribute("disabled", "true");
+      jobDescSpinner.classList.add("active");
+      try {
+        const resp = await fetch(`/api/fetch-job-description/${editId}`, { method: "POST" });
+        if (resp.ok) {
+          const data = await resp.json();
+          renderJobDesc(data.jobDescription);
+        } else {
+          jobDescBody.textContent = "Failed to fetch job description.";
+        }
+      } catch {
+        jobDescBody.textContent = "Failed to connect to server.";
+      } finally {
+        fetchDescBtn.removeAttribute("disabled");
+        jobDescSpinner.classList.remove("active");
+      }
+    }
+  };
+
+  if (isEdit && editId && linkInput.value) {
+    fetchDescBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      fetchJobDesc();
+    });
+  } else {
+    fetchDescBtn.setAttribute("disabled", "true");
+    fetchDescBtn.title = "Save the application with a job link first";
+  }
+
+  const jobDescSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Job Description", jobDescSpinner),
+    fetchDescBtn
+  );
+
+  if (existing?.jobDescription) {
+    renderJobDesc(existing.jobDescription);
+  } else if (isEdit && editId && linkInput.value) {
+    jobDescBody.textContent = "Fetching job description...";
+    fetchJobDesc();
   } else {
     jobDescBody.textContent = "No job description available.";
   }
+
   jobDescSection.appendChild(jobDescSummary);
   jobDescSection.appendChild(jobDescBody);
   container.appendChild(jobDescSection);

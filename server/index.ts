@@ -251,6 +251,25 @@ app.get("/api/extract", async (req, res) => {
   }
 });
 
+// --- Job description fetch ---
+
+app.post("/api/fetch-job-description/:id", async (req, res) => {
+  const jobs = readJobs();
+  const idx = jobs.findIndex((j) => j.id === req.params.id);
+  if (idx === -1) { res.status(404).json({ error: "not found" }); return; }
+  const job = jobs[idx];
+  if (!job.jobLink) { res.status(400).json({ error: "no job link" }); return; }
+
+  try {
+    const description = await scrapeJobDescription(job.jobLink);
+    jobs[idx] = { ...jobs[idx], jobDescription: description };
+    writeJobs(jobs);
+    res.json({ jobDescription: description });
+  } catch {
+    res.status(500).json({ error: "Failed to fetch job description" });
+  }
+});
+
 // --- Resume analysis ---
 
 app.post("/api/analyze", async (req, res) => {

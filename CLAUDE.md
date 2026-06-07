@@ -52,7 +52,7 @@ All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cov
 - `pages/guidelines-list.ts` — Guidelines index page with enable/disable checkboxes (enabled guidelines are injected into resume generation prompts).
 - `pages/guidelines.ts` — Single guideline viewer with delete option.
 - `pages/companies.ts` — Companies directory table with sortable columns (rank, company, sector, type, roles). Add/edit company modals. Shows job count per company. Company names link to careers URLs.
-- `components/nav.ts` — Left sidebar nav. Static items (Job Applications, Master Resume, Resume Gaps, Companies) + dynamic Guidelines section fetched from API.
+- `components/nav.ts` — Left sidebar nav. Static items (My Applications, Master Resume, Resume Gaps, Companies) + dynamic Guidelines section fetched from API.
 - `components/resume-viewer.ts` — Slide-in overlay pane for viewing generated resumes/blurbs/cover letters, with Export PDF (triggers `window.print()` with print-optimized CSS).
 - `pages/analysis-modal.ts` — Modal overlay for displaying AI resume review results, with optional re-analyze callback.
 - `pages/home.ts` — Home timeline listing all jobs with sortable columns (Added, Company, Title, Location, Posted, Applied). Default sort: Added date descending. Title column links to job posting. Applied column has checkbox to mark as applied today.
