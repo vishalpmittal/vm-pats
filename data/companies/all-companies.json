@@ -4,2407 +4,3413 @@
     "company": "AT&T",
     "sector": "Telecom / Tech",
     "type": "Public",
-    "careersUrl": "https://www.att.jobs"
+    "careersUrl": "https://www.att.jobs",
+    "about": "Telecom and wireless carrier",
+    "trending": false
   },
   {
     "rank": 2,
     "company": "Bank of America",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.bankofamerica.com"
+    "careersUrl": "https://careers.bankofamerica.com",
+    "about": "Consumer and investment banking",
+    "trending": false
   },
   {
     "rank": 3,
     "company": "Centene (Digital Solutions)",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.centene.com/"
+    "careersUrl": "https://jobs.centene.com/",
+    "about": "Government-sponsored healthcare insurer",
+    "trending": false
   },
   {
     "rank": 4,
     "company": "Chevron",
     "sector": "Energy / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.chevron.com"
+    "careersUrl": "https://careers.chevron.com",
+    "about": "Integrated oil and gas",
+    "trending": false
   },
   {
     "rank": 5,
     "company": "Citigroup",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://jobs.citi.com"
+    "careersUrl": "https://jobs.citi.com",
+    "about": "Global banking and financial services",
+    "isFavorite": false,
+    "trending": false
   },
   {
     "rank": 6,
     "company": "Comcast (Xfinity)",
     "sector": "Telecom / Streaming",
     "type": "Public",
-    "careersUrl": "https://jobs.comcast.com"
+    "careersUrl": "https://jobs.comcast.com",
+    "about": "Cable internet and media",
+    "trending": false
   },
   {
     "rank": 7,
     "company": "CVS Health (Digital & Tech)",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.cvshealth.com/"
+    "careersUrl": "https://jobs.cvshealth.com/",
+    "about": "Pharmacy and health services",
+    "trending": false
   },
   {
     "rank": 8,
     "company": "Dell Technologies",
     "sector": "Hardware / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.dell.com"
+    "careersUrl": "https://jobs.dell.com",
+    "about": "Enterprise hardware and PCs",
+    "trending": false
   },
   {
     "rank": 9,
     "company": "Elevance Health (Carelon Tech)",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.elevancehealth.com/"
+    "careersUrl": "https://careers.elevancehealth.com/",
+    "about": "Health insurance and services",
+    "trending": false
   },
   {
     "rank": 10,
     "company": "ExxonMobil",
     "sector": "Energy / Tech",
     "type": "Public",
-    "careersUrl": "https://corporate.exxonmobil.com/careers"
+    "careersUrl": "https://corporate.exxonmobil.com/careers",
+    "about": "Integrated oil and gas",
+    "isFavorite": false,
+    "trending": false
   },
   {
     "rank": 11,
     "company": "FedEx",
     "sector": "Logistics / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.fedex.com"
+    "careersUrl": "https://careers.fedex.com",
+    "about": "Global shipping and logistics",
+    "trending": false
   },
   {
     "rank": 12,
     "company": "Ford Motor Company (Model e Tech)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://corporate.ford.com/careers.html"
+    "careersUrl": "https://corporate.ford.com/careers.html",
+    "about": "Electric vehicle software division",
+    "trending": false
   },
   {
     "rank": 13,
     "company": "General Motors (Software & Services)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://search-careers.gm.com/"
+    "careersUrl": "https://search-careers.gm.com/",
+    "about": "Connected vehicle software platform",
+    "trending": false
   },
   {
     "rank": 14,
     "company": "UPS",
     "sector": "Logistics / Tech",
     "type": "Public",
-    "careersUrl": "https://www.jobs-ups.com"
+    "careersUrl": "https://www.jobs-ups.com",
+    "about": "Package delivery and logistics",
+    "trending": false
   },
   {
     "rank": 15,
     "company": "Verizon",
     "sector": "Telecom / Tech",
     "type": "Public",
-    "careersUrl": "https://www.verizon.com/about/careers"
+    "careersUrl": "https://www.verizon.com/about/careers",
+    "about": "Wireless telecom carrier",
+    "trending": false
   },
   {
     "rank": 16,
     "company": "Goldman Sachs",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.goldmansachs.com/careers"
+    "careersUrl": "https://www.goldmansachs.com/careers",
+    "about": "Investment banking and finance",
+    "trending": false
   },
   {
     "rank": 17,
     "company": "IBM",
     "sector": "Enterprise Software / AI",
     "type": "Public",
-    "careersUrl": "https://careers.ibm.com"
+    "careersUrl": "https://careers.ibm.com",
+    "about": "Enterprise tech and consulting",
+    "trending": false
   },
   {
     "rank": 18,
     "company": "Intel",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": "https://jobs.intel.com"
+    "careersUrl": "https://jobs.intel.com",
+    "about": "Semiconductor chip manufacturer",
+    "trending": false
   },
   {
     "rank": 19,
     "company": "Lockheed Martin",
     "sector": "Defense / Software",
     "type": "Public",
-    "careersUrl": "https://www.lockheedmartinjobs.com"
+    "careersUrl": "https://www.lockheedmartinjobs.com",
+    "about": "Aerospace and defense contractor",
+    "trending": false
   },
   {
     "rank": 20,
     "company": "Microsoft",
     "sector": "Pure Software / Cloud / Productivity",
     "type": "Public",
-    "careersUrl": "https://careers.microsoft.com/"
+    "careersUrl": "https://careers.microsoft.com/",
+    "about": "Software, cloud, and devices",
+    "trending": false,
+    "isFavorite": false
   },
   {
     "rank": 21,
     "company": "Raytheon (RTX)",
     "sector": "Defense / Software",
     "type": "Public",
-    "careersUrl": "https://careers.rtx.com"
+    "careersUrl": "https://careers.rtx.com",
+    "about": "Aerospace and defense systems",
+    "trending": false
   },
   {
     "rank": 22,
     "company": "T-Mobile",
     "sector": "Telecom / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.t-mobile.com"
+    "careersUrl": "https://careers.t-mobile.com",
+    "about": "Wireless telecommunications carrier",
+    "trending": false
   },
   {
     "rank": 23,
     "company": "The Walt Disney Company (Streaming)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://jobs.disneycareers.com/"
+    "careersUrl": "https://jobs.disneycareers.com/",
+    "about": "Entertainment streaming services",
+    "trending": false
   },
   {
     "rank": 24,
     "company": "Boeing",
     "sector": "Aerospace / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.boeing.com"
+    "careersUrl": "https://jobs.boeing.com",
+    "about": "Aerospace and aircraft manufacturer",
+    "trending": false
   },
   {
     "rank": 25,
     "company": "Caterpillar",
     "sector": "Industrial / Software",
     "type": "Public",
-    "careersUrl": "https://www.caterpillar.com/en/careers.html"
+    "careersUrl": "https://www.caterpillar.com/en/careers.html",
+    "about": "Heavy construction machinery manufacturer",
+    "trending": false
   },
   {
     "rank": 26,
     "company": "Charter Communications",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.spectrum.com/"
+    "careersUrl": "https://jobs.spectrum.com/",
+    "about": "Cable and broadband provider",
+    "trending": false
   },
   {
     "rank": 27,
     "company": "Morgan Stanley",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.morganstanley.com/careers"
+    "careersUrl": "https://www.morganstanley.com/careers",
+    "about": "Investment banking and wealth management",
+    "trending": false
   },
   {
     "rank": 28,
     "company": "Tesla",
     "sector": "Automotive / Software",
     "type": "Public",
-    "careersUrl": "https://www.tesla.com/careers"
+    "careersUrl": "https://www.tesla.com/careers",
+    "about": "Electric vehicles and energy",
+    "trending": false
   },
   {
     "rank": 29,
     "company": "Alphabet (Google)",
     "sector": "Search / AdTech / Enterprise Cloud",
     "type": "Public",
-    "careersUrl": "https://www.google.com/about/careers/"
+    "careersUrl": "https://www.google.com/about/careers/",
+    "about": "Search, ads, and cloud",
+    "trending": false
   },
   {
     "rank": 30,
     "company": "American Express",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.americanexpress.com/en-us/careers"
+    "careersUrl": "https://www.americanexpress.com/en-us/careers",
+    "about": "Credit cards and financial services",
+    "trending": false
   },
   {
     "rank": 31,
     "company": "General Dynamics (Information Tech)",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://www.gdit.com/careers/"
+    "careersUrl": "https://www.gdit.com/careers/",
+    "about": "Defense IT services contractor",
+    "trending": false
   },
   {
     "rank": 32,
     "company": "John Deere",
     "sector": "Agriculture / Tech",
     "type": "Public",
-    "careersUrl": "https://www.deere.com/en/our-company/careers"
+    "careersUrl": "https://about.deere.com/en-us/careers",
+    "about": "Agricultural and construction machinery",
+    "trending": false,
+    "isFavorite": false
   },
   {
     "rank": 33,
     "company": "Abbott Laboratories (Digital)",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://www.jobs.abbott/"
+    "careersUrl": "https://www.jobs.abbott/",
+    "about": "Medical devices and diagnostics",
+    "trending": false
   },
   {
     "rank": 34,
     "company": "Capital One",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.capitalonecareers.com"
+    "careersUrl": "https://www.capitalonecareers.com",
+    "about": "Consumer banking and credit cards",
+    "trending": false
   },
   {
     "rank": 35,
     "company": "Hewlett Packard Enterprise (HPE)",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.hpe.com/"
+    "careersUrl": "https://careers.hpe.com/",
+    "about": "Enterprise servers and cloud infrastructure",
+    "trending": false
   },
   {
     "rank": 36,
     "company": "Honeywell",
     "sector": "Industrial / Software",
     "type": "Public",
-    "careersUrl": "https://careers.honeywell.com"
+    "careersUrl": "https://careers.honeywell.com",
+    "about": "Industrial automation and aerospace",
+    "trending": false
   },
   {
     "rank": 37,
     "company": "Northrop Grumman",
     "sector": "Defense / Software",
     "type": "Public",
-    "careersUrl": "https://www.northropgrumman.com/careers"
+    "careersUrl": "https://www.northropgrumman.com/careers",
+    "about": "Defense and aerospace systems",
+    "trending": false
   },
   {
     "rank": 38,
     "company": "Nvidia",
     "sector": "Chips / AI Hardware & Software Platforms",
     "type": "Public",
-    "careersUrl": "https://www.nvidia.com/en-us/about-nvidia/careers/"
+    "careersUrl": "https://www.nvidia.com/en-us/about-nvidia/careers/",
+    "about": "AI chips and GPUs",
+    "trending": true
   },
   {
     "rank": 39,
     "company": "Paramount Global (Streaming Systems)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://careers.paramount.com/"
+    "careersUrl": "https://careers.paramount.com/",
+    "about": "Media streaming and entertainment",
+    "trending": false
   },
   {
     "rank": 40,
     "company": "Qualcomm",
     "sector": "Semiconductors / 5G",
     "type": "Public",
-    "careersUrl": "https://careers.qualcomm.com"
+    "careersUrl": "https://careers.qualcomm.com",
+    "about": "Mobile chipsets and wireless tech",
+    "trending": false
   },
   {
     "rank": 41,
     "company": "Uber Technologies",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://www.uber.com/us/en/careers/"
+    "careersUrl": "https://www.uber.com/us/en/careers/",
+    "about": "Ride-hailing and delivery platform",
+    "trending": false
   },
   {
     "rank": 42,
     "company": "Warner Bros Discovery",
     "sector": "Media / Streaming",
     "type": "Public",
-    "careersUrl": "https://careers.wbd.com"
+    "careersUrl": "https://careers.wbd.com",
+    "about": "Media and entertainment conglomerate",
+    "trending": false
   },
   {
     "rank": 43,
     "company": "Apple",
     "sector": "Consumer Tech / iOS Operating Systems",
     "type": "Public",
-    "careersUrl": "https://www.apple.com/careers/"
+    "careersUrl": "https://www.apple.com/careers/",
+    "about": "Consumer electronics and software",
+    "trending": false
   },
   {
     "rank": 44,
     "company": "Duke Energy (Grid Tech)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://www.duke-energy.com/our-company/careers"
+    "careersUrl": "https://www.duke-energy.com/our-company/careers",
+    "about": "Electric utility grid technology",
+    "trending": false
   },
   {
     "rank": 45,
     "company": "Live Nation Entertainment",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://www.livenationentertainment.com/careers/"
+    "careersUrl": "https://www.livenationentertainment.com/careers/",
+    "about": "Live events and ticketing",
+    "trending": false
   },
   {
     "rank": 46,
     "company": "Medtronic",
     "sector": "MedTech / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.medtronic.com"
+    "careersUrl": "https://jobs.medtronic.com",
+    "about": "Medical devices and technology",
+    "trending": false
   },
   {
     "rank": 47,
     "company": "Micron Technology",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.micron.com/"
+    "careersUrl": "https://careers.micron.com/",
+    "about": "Memory and storage semiconductors",
+    "trending": false
   },
   {
     "rank": 48,
     "company": "Netflix",
     "sector": "Streaming / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.netflix.com"
+    "careersUrl": "https://jobs.netflix.com",
+    "about": "Streaming video entertainment service",
+    "trending": false
   },
   {
     "rank": 49,
     "company": "NextEra Energy (Digital Products)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://jobs.nexteraenergy.com/"
+    "careersUrl": "https://jobs.nexteraenergy.com/",
+    "about": "Renewable energy digital products",
+    "trending": false
   },
   {
     "rank": 50,
     "company": "OpenAI",
     "sector": "AI",
     "type": "Private",
-    "careersUrl": "https://openai.com/careers"
+    "careersUrl": "https://openai.com/careers",
+    "about": "AI research and products",
+    "trending": true
   },
   {
     "rank": 51,
     "company": "PayPal",
     "sector": "Fintech",
     "type": "Public",
-    "careersUrl": "https://careers.pypl.com"
+    "careersUrl": "https://careers.pypl.com",
+    "about": "Digital payments platform",
+    "trending": false
   },
   {
     "rank": 52,
     "company": "Visa",
     "sector": "Payments / Tech",
     "type": "Public",
-    "careersUrl": "https://usa.visa.com/careers.html"
+    "careersUrl": "https://usa.visa.com/careers.html",
+    "about": "Global payments network",
+    "trending": false
   },
   {
     "rank": 53,
     "company": "Anthropic",
     "sector": "AI",
     "type": "Private",
-    "careersUrl": "https://www.anthropic.com/careers"
+    "careersUrl": "https://www.anthropic.com/careers",
+    "about": "AI safety research lab",
+    "trending": true
   },
   {
     "rank": 54,
     "company": "Applied Materials",
     "sector": "Semiconductor Equipment",
     "type": "Public",
-    "careersUrl": "https://careers.appliedmaterials.com"
+    "careersUrl": "https://careers.appliedmaterials.com",
+    "about": "Semiconductor manufacturing equipment",
+    "trending": false
   },
   {
     "rank": 55,
     "company": "Baker Hughes (Digital Solutions)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://careers.bakerhughes.com/"
+    "careersUrl": "https://careers.bakerhughes.com/",
+    "about": "Energy technology software",
+    "trending": false
   },
   {
     "rank": 56,
     "company": "C.H. Robinson (Navisphere Platforms)",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.chrobinson.com/"
+    "careersUrl": "https://jobs.chrobinson.com/",
+    "about": "Logistics and freight platform",
+    "trending": false
   },
   {
     "rank": 57,
     "company": "Salesforce",
     "sector": "Enterprise SaaS / CRM",
     "type": "Public",
-    "careersUrl": "https://careers.salesforce.com/"
+    "careersUrl": "https://careers.salesforce.com/",
+    "about": "Enterprise CRM software",
+    "trending": false
   },
   {
     "rank": 58,
     "company": "Southern Company (Tech Solutions)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://www.southerncompany.com/about/careers.html"
+    "careersUrl": "https://southerncompany.jobs/",
+    "about": "Utility technology services",
+    "trending": false
   },
   {
     "rank": 59,
     "company": "Block (Square)",
     "sector": "Fintech",
     "type": "Public",
-    "careersUrl": "https://block.xyz/careers"
+    "careersUrl": "https://block.xyz/careers",
+    "about": "Merchant payments and fintech",
+    "trending": false
   },
   {
     "rank": 60,
     "company": "Mastercard",
     "sector": "Payments / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.mastercard.com"
+    "careersUrl": "https://careers.mastercard.com",
+    "about": "Global payments network",
+    "trending": false
   },
   {
     "rank": 61,
     "company": "Schlumberger (SLB Digital)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://careers.slb.com/"
+    "careersUrl": "https://careers.slb.com/",
+    "about": "Oilfield services digital platform",
+    "trending": false
   },
   {
     "rank": 62,
     "company": "Amazon",
     "sector": "Cloud Infrastructure / Dev Platforms",
     "type": "Public",
-    "careersUrl": "https://www.amazon.jobs/"
+    "careersUrl": "https://www.amazon.jobs/",
+    "about": "E-commerce and cloud computing",
+    "trending": false
   },
   {
     "rank": 63,
     "company": "Charles Schwab",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.aboutschwab.com/careers"
+    "careersUrl": "https://www.aboutschwab.com/careers",
+    "about": "Brokerage and wealth management",
+    "trending": false
   },
   {
     "rank": 64,
     "company": "GE HealthCare",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.gehealthcare.com/"
+    "careersUrl": "https://careers.gehealthcare.com/",
+    "about": "Medical imaging and diagnostics",
+    "trending": false
   },
   {
     "rank": 65,
     "company": "L3Harris Technologies",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.l3harris.com/"
+    "careersUrl": "https://careers.l3harris.com/",
+    "about": "Defense and aerospace technology",
+    "trending": false
   },
   {
     "rank": 66,
     "company": "Stryker (Digital & Software)",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.stryker.com/"
+    "careersUrl": "https://careers.stryker.com/",
+    "about": "Medical devices and software",
+    "trending": false
   },
   {
     "rank": 67,
     "company": "Texas Instruments",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": "https://careers.ti.com"
+    "careersUrl": "https://careers.ti.com",
+    "about": "Analog semiconductor manufacturer",
+    "trending": false
   },
   {
     "rank": 68,
     "company": "AMD",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": "https://careers.amd.com"
+    "careersUrl": "https://careers.amd.com",
+    "about": "Semiconductor chips and processors",
+    "trending": false
   },
   {
     "rank": 69,
     "company": "Fiserv",
     "sector": "Finance / FinTech Systems",
     "type": "Public",
-    "careersUrl": "https://www.careers.fiserv.com/"
+    "careersUrl": "https://www.careers.fiserv.com/",
+    "about": "Financial services technology",
+    "trending": false
   },
   {
     "rank": 70,
     "company": "Lam Research",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.lamresearch.com/"
+    "careersUrl": "https://careers.lamresearch.com/",
+    "about": "Semiconductor wafer fabrication equipment",
+    "trending": false
   },
   {
     "rank": 71,
     "company": "Meta Platforms",
     "sector": "Social Media / AI / AdTech",
     "type": "Public",
-    "careersUrl": "https://www.metacareers.com/"
+    "careersUrl": "https://www.metacareers.com/",
+    "about": "Social media and VR",
+    "trending": false
   },
   {
     "rank": 72,
     "company": "Adobe",
     "sector": "Creativity Software / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.adobe.com/careers.html"
+    "careersUrl": "https://www.adobe.com/careers.html",
+    "about": "Creative and document software",
+    "trending": false
   },
   {
     "rank": 73,
     "company": "Booking Holdings",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://careers.bookingholdings.com/"
+    "careersUrl": "https://careers.bookingholdings.com/",
+    "about": "Online travel booking",
+    "trending": false
   },
   {
     "rank": 74,
     "company": "Emerson Electric",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://www.emerson.com/en-us/careers"
+    "careersUrl": "https://www.emerson.com/en-us/careers",
+    "about": "Industrial automation solutions",
+    "trending": false
   },
   {
     "rank": 75,
     "company": "Sling TV / Dish Wireless",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://careers.dish.com/"
+    "careersUrl": "https://careers.dish.com/",
+    "about": "Streaming TV and wireless",
+    "trending": false
   },
   {
     "rank": 76,
     "company": "Baxter International",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.baxter.com/"
+    "careersUrl": "https://jobs.baxter.com/",
+    "about": "Medical devices and therapies",
+    "trending": false
   },
   {
     "rank": 77,
     "company": "FIS (Fidelity National Info)",
     "sector": "Finance / FinTech Systems",
     "type": "Public",
-    "careersUrl": "https://careers.fisglobal.com/"
+    "careersUrl": "https://careers.fisglobal.com/",
+    "about": "Financial services technology",
+    "trending": false
   },
   {
     "rank": 78,
     "company": "Leidos",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.leidos.com/"
+    "careersUrl": "https://careers.leidos.com/",
+    "about": "Defense and government IT",
+    "trending": false
   },
   {
     "rank": 79,
     "company": "Boston Scientific",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://www.bostonscientific.com/en-US/careers.html"
+    "careersUrl": "https://www.bostonscientific.com/en-US/careers.html",
+    "about": "Medical device manufacturer",
+    "trending": false
   },
   {
     "rank": 80,
     "company": "Expeditors International",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://www.expeditors.com/careers"
+    "careersUrl": "https://www.expeditors.com/careers",
+    "about": "Global logistics and freight",
+    "trending": false
   },
   {
     "rank": 81,
     "company": "Oracle",
     "sector": "Enterprise Database / ERP / Cloud",
     "type": "Public",
-    "careersUrl": "https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1"
+    "careersUrl": "https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1",
+    "about": "Enterprise database and cloud software",
+    "trending": false
   },
   {
     "rank": 82,
     "company": "Analog Devices",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.analog.com/"
+    "careersUrl": "https://careers.analog.com/",
+    "about": "Analog and mixed-signal semiconductors",
+    "trending": false
   },
   {
     "rank": 83,
     "company": "eBay",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://careers.ebayinc.com/"
+    "careersUrl": "https://careers.ebayinc.com/",
+    "about": "Online marketplace and auctions",
+    "trending": false
   },
   {
     "rank": 84,
     "company": "ServiceNow",
     "sector": "IT Service Management / SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.servicenow.com/"
+    "careersUrl": "https://careers.servicenow.com/",
+    "about": "Enterprise workflow automation platform",
+    "trending": false
   },
   {
     "rank": 85,
     "company": "Wayfair",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://www.aboutwayfair.com/careers"
+    "careersUrl": "https://www.aboutwayfair.com/careers",
+    "about": "Online home goods retailer",
+    "trending": false
   },
   {
     "rank": 86,
     "company": "Chewy",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://careers.chewy.com/"
+    "careersUrl": "https://careers.chewy.com/",
+    "about": "Online pet supplies retailer",
+    "trending": false
   },
   {
     "rank": 87,
     "company": "Rivian",
     "sector": "EV / Software",
     "type": "Public",
-    "careersUrl": "https://rivian.com/careers"
+    "careersUrl": "https://rivian.com/careers",
+    "about": "Electric trucks and SUVs",
+    "trending": false
   },
   {
     "rank": 88,
     "company": "UnitedHealth Group",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.unitedhealthgroup.com/"
+    "careersUrl": "https://careers.unitedhealthgroup.com/",
+    "about": "Health insurance and services",
+    "trending": false
   },
   {
     "rank": 89,
     "company": "Cisco Systems",
     "sector": "Telecom / Networking Software & Cyber",
     "type": "Public",
-    "careersUrl": "https://jobs.cisco.com/"
+    "careersUrl": "https://jobs.cisco.com/",
+    "about": "Networking hardware and software",
+    "trending": false
   },
   {
     "rank": 90,
     "company": "JPMorgan Chase",
     "sector": "Finance / FinTech Systems",
     "type": "Public",
-    "careersUrl": "https://careers.jpmorgan.com/US/en/home"
+    "careersUrl": "https://careers.jpmorgan.com/US/en/home",
+    "about": "Global banking and financial services",
+    "trending": false
   },
   {
     "rank": 91,
     "company": "KLA Corporation",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://www.kla.com/careers"
+    "careersUrl": "https://www.kla.com/careers",
+    "about": "Semiconductor process control equipment",
+    "trending": false
   },
   {
     "rank": 92,
     "company": "Broadcom",
     "sector": "Chips / Infrastructure Software (VMware)",
     "type": "Public",
-    "careersUrl": "https://careers.broadcom.com/"
+    "careersUrl": "https://careers.broadcom.com/",
+    "about": "Semiconductor and infrastructure software",
+    "trending": false
   },
   {
     "rank": 93,
     "company": "Expedia Group",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://www.expediagroup.com/careers/"
+    "careersUrl": "https://www.expediagroup.com/careers/",
+    "about": "Online travel booking platform",
+    "trending": false
   },
   {
     "rank": 94,
     "company": "Booz Allen Hamilton",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.boozallen.com/"
+    "careersUrl": "https://careers.boozallen.com/",
+    "about": "Government consulting and technology",
+    "trending": false
   },
   {
     "rank": 95,
     "company": "Global Payments",
     "sector": "Finance / FinTech Systems",
     "type": "Public",
-    "careersUrl": "https://careers.globalpayments.com/"
+    "careersUrl": "https://careers.globalpayments.com/",
+    "about": "Payment processing technology",
+    "trending": false
   },
   {
     "rank": 96,
     "company": "Intuit",
     "sector": "Finance / Consumer FinTech Software",
     "type": "Public",
-    "careersUrl": "https://www.intuit.com/careers/"
+    "careersUrl": "https://www.intuit.com/careers/",
+    "about": "Financial and tax software",
+    "trending": false
   },
   {
     "rank": 97,
     "company": "Workday",
     "sector": "HR Tech / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.workday.com/en-us/company/careers.html"
+    "careersUrl": "https://www.workday.com/en-us/company/careers.html",
+    "about": "Enterprise HR and finance software",
+    "trending": false
   },
   {
     "rank": 98,
     "company": "Activision Blizzard (Microsoft)",
     "sector": "Gaming",
     "type": "Subsidiary",
-    "careersUrl": "https://careers.activisionblizzard.com"
+    "careersUrl": "https://careers.activisionblizzard.com",
+    "about": "Video game publisher",
+    "trending": false
   },
   {
     "rank": 99,
     "company": "Airtable",
     "sector": "Low-Code / SaaS",
     "type": "Private",
-    "careersUrl": "https://airtable.com/careers"
+    "careersUrl": "https://airtable.com/careers",
+    "about": "No-code database and collaboration",
+    "trending": false
   },
   {
     "rank": 100,
     "company": "Alteryx",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://www.alteryx.com/careers"
+    "careersUrl": "https://www.alteryx.com/careers",
+    "about": "Data analytics and automation platform",
+    "trending": false
   },
   {
     "rank": 101,
     "company": "Ampere Computing",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Private",
-    "careersUrl": "https://amperecomputing.com/careers"
+    "careersUrl": "https://amperecomputing.com/careers",
+    "about": "Cloud-native Arm server chips",
+    "trending": false
   },
   {
     "rank": 102,
     "company": "Anduril",
     "sector": "Defense Tech",
     "type": "Private",
-    "careersUrl": "https://www.anduril.com/careers"
+    "careersUrl": "https://www.anduril.com/careers",
+    "about": "Defense technology and autonomous systems",
+    "trending": true
   },
   {
     "rank": 103,
     "company": "Canva",
     "sector": "Design Software",
     "type": "Private",
-    "careersUrl": "https://www.canva.com/careers"
+    "careersUrl": "https://www.canva.com/careers",
+    "about": "Online graphic design platform",
+    "trending": false
   },
   {
     "rank": 104,
     "company": "Cerebras Systems",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Private",
-    "careersUrl": "https://www.cerebras.net/careers"
+    "careersUrl": "https://www.cerebras.net/careers",
+    "about": "Wafer-scale AI chips",
+    "trending": true
   },
   {
     "rank": 105,
     "company": "Cerner (Oracle Health)",
     "sector": "Healthcare Software",
     "type": "Subsidiary",
-    "careersUrl": "https://careers.oracle.com"
+    "careersUrl": "https://careers.oracle.com",
+    "about": "Electronic health records software",
+    "trending": false
   },
   {
     "rank": 106,
     "company": "Chime",
     "sector": "Finance / FinTech Systems",
     "type": "Private",
-    "careersUrl": "https://chime.com/careers/"
+    "careersUrl": "https://chime.com/careers/",
+    "about": "Mobile-first consumer banking",
+    "trending": false
   },
   {
     "rank": 107,
     "company": "ClickUp",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://clickup.com/careers"
+    "careersUrl": "https://clickup.com/careers",
+    "about": "All-in-one productivity platform",
+    "trending": false
   },
   {
     "rank": 108,
     "company": "Cloudera",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Private",
-    "careersUrl": "https://www.cloudera.com/about/careers.html"
+    "careersUrl": "https://www.cloudera.com/careers.html",
+    "about": "Enterprise data and analytics platform",
+    "trending": false
   },
   {
     "rank": 109,
     "company": "Cockroach Labs",
     "sector": "Distributed Database",
     "type": "Private",
-    "careersUrl": "https://www.cockroachlabs.com/careers"
+    "careersUrl": "https://www.cockroachlabs.com/careers",
+    "about": "Distributed SQL database",
+    "trending": false
   },
   {
     "rank": 110,
     "company": "Cohere",
     "sector": "AI / LLM",
     "type": "Private",
-    "careersUrl": "https://cohere.com/careers"
+    "careersUrl": "https://cohere.com/careers",
+    "about": "Enterprise large language models",
+    "trending": true
   },
   {
     "rank": 111,
     "company": "Dataiku",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://www.dataiku.com/company/careers/"
+    "careersUrl": "https://www.dataiku.com/company/careers/",
+    "about": "Enterprise AI and data platform",
+    "trending": false
   },
   {
     "rank": 112,
     "company": "DataRobot",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://www.datarobot.com/careers/"
+    "careersUrl": "https://www.datarobot.com/careers/",
+    "about": "Enterprise AI automation platform",
+    "trending": false
   },
   {
     "rank": 113,
     "company": "Epic Games",
     "sector": "Gaming / Engine",
     "type": "Private",
-    "careersUrl": "https://www.epicgames.com/site/en-US/careers"
+    "careersUrl": "https://www.epicgames.com/site/en-US/careers",
+    "about": "Game studio behind Fortnite",
+    "trending": false
   },
   {
     "rank": 114,
     "company": "Epic Systems",
     "sector": "Healthcare Software",
     "type": "Private",
-    "careersUrl": "https://www.epic.com/careers"
+    "careersUrl": "https://www.epic.com/careers",
+    "about": "Healthcare electronic medical records",
+    "trending": false
   },
   {
     "rank": 115,
     "company": "Fidelity Investments",
     "sector": "Finance / Tech",
     "type": "Private",
-    "careersUrl": "https://jobs.fidelity.com"
+    "careersUrl": "https://jobs.fidelity.com",
+    "about": "Financial services and brokerage",
+    "trending": false
   },
   {
     "rank": 116,
     "company": "Figma",
     "sector": "Design Software",
     "type": "Private (Adobe acq.)",
-    "careersUrl": "https://www.figma.com/careers"
+    "careersUrl": "https://www.figma.com/careers",
+    "about": "Collaborative design tool",
+    "trending": false
   },
   {
     "rank": 117,
     "company": "Flatiron Health",
     "sector": "Medical / HealthTech Platforms",
     "type": "Private",
-    "careersUrl": "https://flatiron.com/careers/"
+    "careersUrl": "https://flatiron.com/careers/",
+    "about": "Oncology data and software",
+    "trending": false
   },
   {
     "rank": 118,
     "company": "Flexport",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Private",
-    "careersUrl": "https://www.flexport.com/careers/"
+    "careersUrl": "https://www.flexport.com/careers/jobs/",
+    "about": "Digital freight forwarding platform",
+    "trending": false
   },
   {
     "rank": 119,
     "company": "GitHub (Microsoft)",
     "sector": "Dev Tools",
     "type": "Subsidiary",
-    "careersUrl": "https://github.com/about/careers"
+    "careersUrl": "https://github.com/about/careers",
+    "about": "Developer code hosting platform",
+    "trending": false
   },
   {
     "rank": 120,
     "company": "Groq",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Private",
-    "careersUrl": "https://groq.com/careers/"
+    "careersUrl": "https://groq.com/careers/",
+    "about": "Fast AI inference hardware",
+    "trending": true
   },
   {
     "rank": 121,
     "company": "H2O.ai",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://h2o.ai/company/careers/"
+    "careersUrl": "https://h2o.ai/company/careers/",
+    "about": "Open-source AI platform",
+    "trending": false
   },
   {
     "rank": 122,
     "company": "Hugging Face",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Private",
-    "careersUrl": "https://huggingface.co/join"
+    "careersUrl": "https://huggingface.co/join",
+    "about": "AI model hub",
+    "trending": true
   },
   {
     "rank": 123,
     "company": "Juniper Networks",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public (HPE)",
-    "careersUrl": "https://careers.juniper.net/"
-  },
-  {
-    "rank": 124,
-    "company": "Micro Focus",
-    "sector": "Pure Software / Cloud / Enterprise SaaS",
-    "type": "Private",
-    "careersUrl": "https://www.microfocus.com/en-us/careers"
+    "careersUrl": "https://careers.juniper.net/",
+    "about": "Enterprise networking hardware",
+    "trending": false
   },
   {
     "rank": 125,
     "company": "Miro",
     "sector": "Collaboration / Whiteboard",
     "type": "Private",
-    "careersUrl": "https://miro.com/careers"
+    "careersUrl": "https://miro.com/careers",
+    "about": "Online collaborative whiteboard",
+    "trending": false
   },
   {
     "rank": 126,
     "company": "Neo4j",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Private",
-    "careersUrl": "https://neo4j.com/careers/"
+    "careersUrl": "https://neo4j.com/careers/",
+    "about": "Graph database platform",
+    "trending": false
   },
   {
     "rank": 127,
     "company": "Notion",
     "sector": "Productivity Software",
     "type": "Private",
-    "careersUrl": "https://www.notion.so/careers"
+    "careersUrl": "https://www.notion.so/careers",
+    "about": "All-in-one workspace app",
+    "trending": false
   },
   {
     "rank": 128,
     "company": "Palo Alto Networks",
     "sector": "Cybersecurity Software",
     "type": "Public",
-    "careersUrl": "https://jobs.paloaltonetworks.com/"
+    "careersUrl": "https://jobs.paloaltonetworks.com/",
+    "about": "Enterprise cybersecurity platform",
+    "trending": false
   },
   {
     "rank": 129,
     "company": "Plaid",
     "sector": "Fintech",
     "type": "Private",
-    "careersUrl": "https://plaid.com/careers"
+    "careersUrl": "https://plaid.com/careers",
+    "about": "Financial data API",
+    "trending": false
   },
   {
     "rank": 130,
     "company": "Riot Games",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Private",
-    "careersUrl": "https://www.riotgames.com/en/work-with-us"
+    "careersUrl": "https://www.riotgames.com/en/work-with-us",
+    "about": "Competitive video game developer",
+    "trending": false
   },
   {
     "rank": 131,
     "company": "SambaNova Systems",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Private",
-    "careersUrl": "https://sambanova.ai/careers"
+    "careersUrl": "https://sambanova.ai/careers",
+    "about": "AI chips and platform",
+    "trending": false
   },
   {
     "rank": 132,
     "company": "Scale AI",
     "sector": "AI / Data",
     "type": "Private",
-    "careersUrl": "https://scale.com/careers"
+    "careersUrl": "https://scale.com/careers",
+    "about": "AI training data platform",
+    "trending": true
   },
   {
     "rank": 133,
     "company": "ScyllaDB",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Private",
-    "careersUrl": "https://www.scylladb.com/company/careers/"
+    "careersUrl": "https://www.scylladb.com/company/careers/",
+    "about": "High-performance NoSQL database",
+    "trending": false
   },
   {
     "rank": 134,
     "company": "SiriusXM (Pandora Tech)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://careers.siriusxm.com/"
+    "careersUrl": "https://careers.siriusxm.com/",
+    "about": "Audio streaming and radio",
+    "trending": false
   },
   {
     "rank": 135,
     "company": "SpaceX",
     "sector": "Aerospace / Software",
     "type": "Private",
-    "careersUrl": "https://www.spacex.com/careers"
+    "careersUrl": "https://www.spacex.com/careers",
+    "about": "Rockets and satellite internet",
+    "trending": true
   },
   {
     "rank": 136,
     "company": "Splunk (Cisco)",
     "sector": "Observability / SIEM",
     "type": "Subsidiary",
-    "careersUrl": "https://www.splunk.com/en_us/careers.html"
+    "careersUrl": "https://www.splunk.com/en_us/careers.html",
+    "about": "Observability and security analytics",
+    "trending": false
   },
   {
     "rank": 137,
     "company": "Twitch (Amazon)",
     "sector": "Streaming / Social",
     "type": "Subsidiary",
-    "careersUrl": "https://www.twitch.tv/jobs"
+    "careersUrl": "https://www.twitch.tv/jobs",
+    "about": "Live streaming platform",
+    "trending": false
   },
   {
     "rank": 138,
     "company": "Zendesk",
     "sector": "Customer Support SaaS",
     "type": "Private",
-    "careersUrl": "https://jobs.zendesk.com"
+    "careersUrl": "https://jobs.zendesk.com",
+    "about": "Customer support software",
+    "trending": false
   },
   {
     "rank": 139,
     "company": "Stripe",
     "sector": "Finance / FinTech APIs / Startup-Scale",
     "type": "Private",
-    "careersUrl": "https://stripe.com/jobs"
+    "careersUrl": "https://stripe.com/jobs",
+    "about": "Online payments infrastructure",
+    "trending": false
   },
   {
     "rank": 140,
     "company": "Databricks",
     "sector": "Data Infrastructure / AI Platforms / Startup-Scale",
     "type": "Private",
-    "careersUrl": "https://www.databricks.com/company/careers"
+    "careersUrl": "https://www.databricks.com/company/careers",
+    "about": "Data and AI platform",
+    "trending": true
   },
   {
     "rank": 141,
     "company": "Lyft",
     "sector": "Mobility / Software",
     "type": "Public",
-    "careersUrl": "https://www.lyft.com/careers"
+    "careersUrl": "https://www.lyft.com/careers",
+    "about": "Ridesharing and mobility platform",
+    "trending": false
   },
   {
     "rank": 142,
     "company": "Rockwell Automation",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://www.rockwellautomation.com/en-us/company/careers.html"
+    "careersUrl": "https://www.rockwellautomation.com/en-us/company/careers.html",
+    "about": "Industrial automation solutions",
+    "trending": false
   },
   {
     "rank": 143,
     "company": "SAIC",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://jobs.saic.com/"
+    "careersUrl": "https://jobs.saic.com/",
+    "about": "Government IT services contractor",
+    "trending": false
   },
   {
     "rank": 144,
     "company": "CACI International",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.caci.com/"
+    "careersUrl": "https://careers.caci.com/",
+    "about": "Defense and intelligence services",
+    "trending": false
   },
   {
     "rank": 145,
     "company": "Electronic Arts",
     "sector": "Gaming",
     "type": "Public",
-    "careersUrl": "https://www.ea.com/careers"
+    "careersUrl": "https://www.ea.com/careers",
+    "about": "Video game publisher",
+    "trending": false
   },
   {
     "rank": 146,
     "company": "General Electric (GE Vernova)",
     "sector": "Energy / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://www.gevernova.com/careers"
+    "careersUrl": "https://www.gevernova.com/careers",
+    "about": "Energy and power equipment",
+    "trending": false
   },
   {
     "rank": 147,
     "company": "Airbnb",
     "sector": "Travel / Marketplace",
     "type": "Public",
-    "careersUrl": "https://careers.airbnb.com"
+    "careersUrl": "https://careers.airbnb.com",
+    "about": "Short-term rental marketplace",
+    "trending": false
   },
   {
     "rank": 148,
     "company": "Akamai Technologies",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.akamai.com/careers"
+    "careersUrl": "https://www.akamai.com/careers",
+    "about": "Content delivery and security",
+    "trending": false
   },
   {
     "rank": 149,
     "company": "Ansys",
     "sector": "Simulation Software",
     "type": "Public",
-    "careersUrl": "https://www.ansys.com/about-ansys/careers"
+    "careersUrl": "https://www.ansys.com/about-ansys/careers",
+    "about": "Engineering simulation software",
+    "trending": false
   },
   {
     "rank": 150,
     "company": "Arista Networks",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.arista.com/en/careers"
+    "careersUrl": "https://www.arista.com/en/careers",
+    "about": "Cloud networking equipment",
+    "trending": false
   },
   {
     "rank": 151,
     "company": "Asana",
     "sector": "Project Management SaaS",
     "type": "Public",
-    "careersUrl": "https://asana.com/jobs"
+    "careersUrl": "https://asana.com/jobs",
+    "about": "Work management platform",
+    "trending": false
   },
   {
     "rank": 152,
     "company": "Atlassian",
     "sector": "Dev Tools / SaaS",
     "type": "Public",
-    "careersUrl": "https://www.atlassian.com/company/careers"
+    "careersUrl": "https://www.atlassian.com/company/careers",
+    "about": "Team collaboration software",
+    "trending": false
   },
   {
     "rank": 153,
     "company": "Autodesk",
     "sector": "Design / Engineering Software",
     "type": "Public",
-    "careersUrl": "https://www.autodesk.com/careers"
+    "careersUrl": "https://www.autodesk.com/careers",
+    "about": "Design and engineering software",
+    "trending": false
   },
   {
     "rank": 154,
     "company": "Box",
     "sector": "Cloud Content Mgmt",
     "type": "Public",
-    "careersUrl": "https://careers.box.com"
+    "careersUrl": "https://careers.box.com",
+    "about": "Cloud content management",
+    "trending": false
   },
   {
     "rank": 155,
     "company": "BuzzFeed (Tech Product)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://www.buzzfeed.com/about/jobs"
+    "careersUrl": "https://www.buzzfeed.com/about/jobs",
+    "about": "Digital media and entertainment",
+    "trending": false
   },
   {
     "rank": 156,
     "company": "C3.ai",
     "sector": "Data Infrastructure / AI Platforms / Modern Scaleups",
     "type": "Public",
-    "careersUrl": "https://c3.ai/company/careers/"
+    "careersUrl": "https://c3.ai/company/careers/",
+    "about": "Enterprise AI applications",
+    "trending": false
   },
   {
     "rank": 157,
     "company": "Cadence Design Systems",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.cadence.com/en_US/home/company/careers.html"
+    "careersUrl": "https://www.cadence.com/en_US/home/company/careers.html",
+    "about": "Electronic design automation",
+    "trending": false
   },
   {
     "rank": 158,
     "company": "Check Point Software",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.checkpoint.com/careers/"
+    "careersUrl": "https://www.checkpoint.com/careers/",
+    "about": "Cybersecurity solutions provider",
+    "trending": false
   },
   {
     "rank": 159,
     "company": "Ciena",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.ciena.com/about/careers"
+    "careersUrl": "https://www.ciena.com/about/careers",
+    "about": "Networking systems and software",
+    "trending": false
   },
   {
     "rank": 160,
     "company": "Cloudflare",
     "sector": "Cloud / Security",
     "type": "Public",
-    "careersUrl": "https://www.cloudflare.com/careers"
+    "careersUrl": "https://www.cloudflare.com/careers",
+    "about": "Internet infrastructure and security",
+    "trending": false
   },
   {
     "rank": 161,
     "company": "Coinbase",
     "sector": "Crypto / Fintech",
     "type": "Public",
-    "careersUrl": "https://www.coinbase.com/careers"
+    "careersUrl": "https://www.coinbase.com/careers",
+    "about": "Cryptocurrency exchange platform",
+    "trending": false
   },
   {
     "rank": 162,
     "company": "Confluent",
     "sector": "Data Streaming",
     "type": "Public",
-    "careersUrl": "https://careers.confluent.io"
+    "careersUrl": "https://careers.confluent.io",
+    "about": "Streaming data platform",
+    "trending": false
   },
   {
     "rank": 163,
     "company": "Couchbase",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.couchbase.com/careers/"
+    "careersUrl": "https://www.couchbase.com/careers/",
+    "about": "NoSQL database platform",
+    "trending": false
   },
   {
     "rank": 164,
     "company": "CrowdStrike",
     "sector": "Cybersecurity",
     "type": "Public",
-    "careersUrl": "https://www.crowdstrike.com/careers"
+    "careersUrl": "https://www.crowdstrike.com/careers",
+    "about": "Cloud endpoint security",
+    "trending": false
   },
   {
     "rank": 165,
     "company": "Datadog",
     "sector": "Observability / SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.datadoghq.com"
+    "careersUrl": "https://careers.datadoghq.com",
+    "about": "Cloud monitoring and observability",
+    "trending": false
   },
   {
     "rank": 166,
     "company": "DocuSign",
     "sector": "Document SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.docusign.com"
+    "careersUrl": "https://careers.docusign.com",
+    "about": "Electronic signature platform",
+    "trending": false
   },
   {
     "rank": 167,
     "company": "DoorDash",
     "sector": "Delivery / Software",
     "type": "Public",
-    "careersUrl": "https://careers.doordash.com"
+    "careersUrl": "https://careers.doordash.com",
+    "about": "Food delivery marketplace",
+    "trending": false
   },
   {
     "rank": 168,
     "company": "Doximity",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://www.doximity.com/careers"
+    "careersUrl": "https://www.doximity.com/careers",
+    "about": "Medical professional network",
+    "trending": false
   },
   {
     "rank": 169,
     "company": "Dropbox",
     "sector": "Cloud Storage",
     "type": "Public",
-    "careersUrl": "https://jobs.dropbox.com"
+    "careersUrl": "https://jobs.dropbox.com",
+    "about": "Cloud file storage",
+    "trending": false
   },
   {
     "rank": 170,
     "company": "Dynatrace",
     "sector": "Observability",
     "type": "Public",
-    "careersUrl": "https://careers.dynatrace.com"
+    "careersUrl": "https://careers.dynatrace.com",
+    "about": "Application performance monitoring",
+    "trending": false
   },
   {
     "rank": 171,
     "company": "Elastic",
     "sector": "Search / Observability",
     "type": "Public",
-    "careersUrl": "https://www.elastic.co/careers"
+    "careersUrl": "https://www.elastic.co/careers",
+    "about": "Search and observability platform",
+    "trending": false
   },
   {
     "rank": 172,
     "company": "Ericsson (Cloud Software)",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.ericsson.com/en/careers"
+    "careersUrl": "https://www.ericsson.com/en/careers",
+    "about": "Telecom cloud network software",
+    "trending": false
   },
   {
     "rank": 173,
     "company": "F5 Networks",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.f5.com/company/careers"
+    "careersUrl": "https://www.f5.com/company/careers",
+    "about": "Application delivery and security",
+    "trending": false
   },
   {
     "rank": 174,
     "company": "Fastly",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.fastly.com/about/careers/"
+    "careersUrl": "https://www.fastly.com/about/careers/",
+    "about": "Edge cloud CDN platform",
+    "trending": false
   },
   {
     "rank": 175,
     "company": "Fortinet",
     "sector": "Cybersecurity",
     "type": "Public",
-    "careersUrl": "https://www.fortinet.com/corporate/careers"
+    "careersUrl": "https://www.fortinet.com/corporate/careers",
+    "about": "Enterprise cybersecurity solutions",
+    "trending": false
   },
   {
     "rank": 176,
     "company": "Garmin (Consumer & Aviation Software)",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://careers.garmin.com/"
+    "careersUrl": "https://careers.garmin.com/",
+    "about": "GPS wearables and avionics",
+    "trending": false
   },
   {
     "rank": 177,
     "company": "GitLab",
     "sector": "Dev Tools",
     "type": "Public",
-    "careersUrl": "https://about.gitlab.com/jobs"
+    "careersUrl": "https://about.gitlab.com/jobs",
+    "about": "DevOps and source control platform",
+    "trending": false
   },
   {
     "rank": 178,
     "company": "GoodRx",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://www.goodrx.com/careers"
+    "careersUrl": "https://www.goodrx.com/careers",
+    "about": "Prescription drug price comparison",
+    "trending": false
   },
   {
     "rank": 179,
     "company": "HashiCorp (IBM)",
     "sector": "Infrastructure Software",
     "type": "Public",
-    "careersUrl": "https://www.hashicorp.com/careers"
+    "careersUrl": "https://www.hashicorp.com/careers",
+    "about": "Infrastructure automation software",
+    "trending": false
   },
   {
     "rank": 180,
     "company": "HubSpot",
     "sector": "Marketing SaaS",
     "type": "Public",
-    "careersUrl": "https://www.hubspot.com/careers"
+    "careersUrl": "https://www.hubspot.com/careers",
+    "about": "CRM and marketing software",
+    "trending": false
   },
   {
     "rank": 181,
     "company": "Informatica",
     "sector": "Data Integration",
     "type": "Public",
-    "careersUrl": "https://www.informatica.com/about-us/careers.html"
+    "careersUrl": "https://www.informatica.com/about-us/careers.html",
+    "about": "Enterprise data integration platform",
+    "trending": false
   },
   {
     "rank": 182,
     "company": "Instacart",
     "sector": "Delivery / Marketplace",
     "type": "Public",
-    "careersUrl": "https://instacart.careers"
+    "careersUrl": "https://instacart.careers",
+    "about": "Grocery delivery marketplace",
+    "trending": false
   },
   {
     "rank": 183,
     "company": "Lucid Motors (Connected Car)",
     "sector": "Energy / Automotive / Industrial IoT Software",
     "type": "Public",
-    "careersUrl": "https://lucidmotors.com/careers"
+    "careersUrl": "https://lucidmotors.com/careers",
+    "about": "Luxury electric vehicle maker",
+    "trending": false
   },
   {
     "rank": 184,
     "company": "Marvell Technology",
     "sector": "Chips / Hardware / Infrastructure Software Platforms",
     "type": "Public",
-    "careersUrl": "https://www.marvell.com/company/careers.html"
+    "careersUrl": "https://www.marvell.com/company/careers.html",
+    "about": "Semiconductor infrastructure chips",
+    "trending": false
   },
   {
     "rank": 185,
     "company": "Match Group",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://mtch.com/careers"
+    "careersUrl": "https://mtch.com/careers",
+    "about": "Online dating app portfolio",
+    "trending": false
   },
   {
     "rank": 186,
     "company": "Monday.com",
     "sector": "Project Management SaaS",
     "type": "Public",
-    "careersUrl": "https://monday.com/careers"
+    "careersUrl": "https://monday.com/careers",
+    "about": "Work management software platform",
+    "trending": false
   },
   {
     "rank": 187,
     "company": "MongoDB",
     "sector": "Database Software",
     "type": "Public",
-    "careersUrl": "https://www.mongodb.com/careers"
+    "careersUrl": "https://www.mongodb.com/careers",
+    "about": "NoSQL document database",
+    "trending": false
   },
   {
     "rank": 188,
     "company": "NetApp",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.netapp.com/company/careers/"
+    "careersUrl": "https://www.netapp.com/company/careers/",
+    "about": "Enterprise data storage solutions",
+    "trending": false
   },
   {
     "rank": 189,
     "company": "New York Times (Digital Tech)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://www.nytco.com/careers/"
+    "careersUrl": "https://www.nytco.com/careers/",
+    "about": "Digital news media publisher",
+    "trending": false
   },
   {
     "rank": 190,
     "company": "Nokia (Software Division)",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.nokia.com/about-us/careers/"
+    "careersUrl": "https://www.nokia.com/about-us/careers/",
+    "about": "Telecom network software provider",
+    "trending": false
   },
   {
     "rank": 191,
     "company": "Okta",
     "sector": "Identity / Security",
     "type": "Public",
-    "careersUrl": "https://www.okta.com/company/careers"
+    "careersUrl": "https://www.okta.com/company/careers",
+    "about": "Enterprise identity and access management",
+    "trending": false
   },
   {
     "rank": 192,
     "company": "PagerDuty",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.pagerduty.com/careers/"
+    "careersUrl": "https://www.pagerduty.com/careers/",
+    "about": "Incident response and alerting platform",
+    "trending": false
   },
   {
     "rank": 193,
     "company": "Palantir",
     "sector": "Gov / Enterprise Data",
     "type": "Public",
-    "careersUrl": "https://www.palantir.com/careers"
+    "careersUrl": "https://www.palantir.com/careers",
+    "about": "Data analytics for enterprises",
+    "trending": false
   },
   {
     "rank": 194,
     "company": "Philips",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://www.careers.philips.com"
+    "careersUrl": "https://www.careers.philips.com",
+    "about": "Health technology and medical devices",
+    "trending": false
   },
   {
     "rank": 195,
     "company": "Pinterest",
     "sector": "Social / Discovery",
     "type": "Public",
-    "careersUrl": "https://www.pinterestcareers.com"
+    "careersUrl": "https://www.pinterestcareers.com",
+    "about": "Visual discovery and bookmarking platform",
+    "trending": false
   },
   {
     "rank": 196,
     "company": "PTC",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.ptc.com/en/careers"
+    "careersUrl": "https://www.ptc.com/en/careers",
+    "about": "Industrial software and IoT",
+    "trending": false
   },
   {
     "rank": 197,
     "company": "Pure Storage",
     "sector": "Storage / Cloud",
     "type": "Public",
-    "careersUrl": "https://careers.purestorage.com"
+    "careersUrl": "https://careers.purestorage.com",
+    "about": "Enterprise flash storage solutions",
+    "trending": false
   },
   {
     "rank": 198,
     "company": "Rapid7",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.rapid7.com/about/careers/"
+    "careersUrl": "https://careers.rapid7.com/",
+    "about": "Cybersecurity and vulnerability management",
+    "trending": false
   },
   {
     "rank": 199,
     "company": "Reddit",
     "sector": "Social / Community",
     "type": "Public",
-    "careersUrl": "https://www.redditinc.com/careers"
+    "careersUrl": "https://www.redditinc.com/careers",
+    "about": "Social news and discussion platform",
+    "trending": false
   },
   {
     "rank": 200,
     "company": "Robinhood",
     "sector": "Fintech",
     "type": "Public",
-    "careersUrl": "https://careers.robinhood.com"
+    "careersUrl": "https://careers.robinhood.com",
+    "about": "Commission-free stock trading app",
+    "trending": false
   },
   {
     "rank": 201,
     "company": "Roku",
     "sector": "Streaming / Platform",
     "type": "Public",
-    "careersUrl": "https://www.roku.com/en-us/jobs"
+    "careersUrl": "https://www.roku.com/en-us/jobs",
+    "about": "Streaming TV platform",
+    "trending": false
   },
   {
     "rank": 202,
     "company": "Samsara",
     "sector": "Aerospace / Defense & Logistics Platforms",
     "type": "Public",
-    "careersUrl": "https://www.samsara.com/company/careers"
+    "careersUrl": "https://www.samsara.com/company/careers",
+    "about": "IoT fleet operations platform",
+    "trending": false
   },
   {
     "rank": 203,
     "company": "Schneider Electric",
     "sector": "Energy / Industrial Tech",
     "type": "Public",
-    "careersUrl": "https://www.se.com/us/en/about-us/careers"
+    "careersUrl": "https://www.se.com/us/en/about-us/careers",
+    "about": "Energy management and automation",
+    "trending": false
   },
   {
     "rank": 204,
     "company": "SentinelOne",
     "sector": "Cybersecurity / AI",
     "type": "Public",
-    "careersUrl": "https://www.sentinelone.com/careers"
+    "careersUrl": "https://www.sentinelone.com/careers",
+    "about": "AI endpoint security platform",
+    "trending": false
   },
   {
     "rank": 205,
     "company": "Siemens",
     "sector": "Industrial / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.siemens.com"
+    "careersUrl": "https://jobs.siemens.com",
+    "about": "Industrial automation and engineering",
+    "trending": false
   },
   {
     "rank": 206,
     "company": "Smartsheet",
     "sector": "Pure Software / Cloud / Enterprise SaaS",
     "type": "Public",
-    "careersUrl": "https://www.smartsheet.com/careers"
+    "careersUrl": "https://www.smartsheet.com/careers",
+    "about": "Collaborative work management platform",
+    "trending": false
   },
   {
     "rank": 207,
     "company": "Snowflake",
     "sector": "Data / Cloud",
     "type": "Public",
-    "careersUrl": "https://careers.snowflake.com"
+    "careersUrl": "https://careers.snowflake.com",
+    "about": "Cloud data warehouse",
+    "trending": false
   },
   {
     "rank": 208,
     "company": "Sony Electronics (PlayStation Software)",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://www.sony.com/en_us/SCA/careers/overview.html"
+    "careersUrl": "https://www.sony.com/en_us/SCA/careers/overview.html",
+    "about": "Gaming console software platform",
+    "trending": false
   },
   {
     "rank": 209,
     "company": "Spotify",
     "sector": "Streaming / Software",
     "type": "Public",
-    "careersUrl": "https://www.lifeatspotify.com"
+    "careersUrl": "https://www.lifeatspotify.com",
+    "about": "Music streaming service",
+    "trending": false
   },
   {
     "rank": 210,
     "company": "Synopsys",
     "sector": "EDA / Chip Design",
     "type": "Public",
-    "careersUrl": "https://careers.synopsys.com"
+    "careersUrl": "https://careers.synopsys.com",
+    "about": "Chip design software tools",
+    "trending": false
   },
   {
     "rank": 211,
     "company": "Take-Two Interactive",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://www.take2games.com/careers"
+    "careersUrl": "https://www.take2games.com/careers",
+    "about": "Video game publisher",
+    "trending": false
   },
   {
     "rank": 212,
     "company": "Teladoc Health",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://teladochealth.com/careers/"
+    "careersUrl": "https://teladochealth.com/careers/",
+    "about": "Virtual healthcare and telemedicine",
+    "trending": false
   },
   {
     "rank": 213,
     "company": "Tempus",
     "sector": "Medical / HealthTech Platforms",
     "type": "Public",
-    "careersUrl": "https://www.tempus.com/careers/"
+    "careersUrl": "https://www.tempus.com/careers/",
+    "about": "AI-driven precision medicine",
+    "trending": false
   },
   {
     "rank": 214,
     "company": "Tenable",
     "sector": "Telecom / Networking & Cyber Platforms",
     "type": "Public",
-    "careersUrl": "https://www.tenable.com/careers"
+    "careersUrl": "https://www.tenable.com/careers",
+    "about": "Cybersecurity vulnerability management",
+    "trending": false
   },
   {
     "rank": 215,
     "company": "Teradata",
     "sector": "Data Analytics",
     "type": "Public",
-    "careersUrl": "https://careers.teradata.com"
+    "careersUrl": "https://careers.teradata.com",
+    "about": "Enterprise data analytics platform",
+    "trending": false
   },
   {
     "rank": 216,
     "company": "Trimble",
     "sector": "Geospatial / Construction Tech",
     "type": "Public",
-    "careersUrl": "https://careers.trimble.com"
+    "careersUrl": "https://careers.trimble.com",
+    "about": "Positioning and geospatial technology",
+    "trending": false
   },
   {
     "rank": 217,
     "company": "Twilio",
     "sector": "Communications SaaS",
     "type": "Public",
-    "careersUrl": "https://www.twilio.com/en-us/company/jobs"
+    "careersUrl": "https://www.twilio.com/en-us/company/jobs",
+    "about": "Cloud communications APIs",
+    "trending": false
   },
   {
     "rank": 218,
     "company": "UiPath",
     "sector": "RPA / Automation",
     "type": "Public",
-    "careersUrl": "https://www.uipath.com/company/careers"
+    "careersUrl": "https://www.uipath.com/company/careers",
+    "about": "Robotic process automation",
+    "trending": false
   },
   {
     "rank": 219,
     "company": "Unity Technologies",
     "sector": "Entertainment / Media / Gaming Tech",
     "type": "Public",
-    "careersUrl": "https://careers.unity.com/"
+    "careersUrl": "https://careers.unity.com/",
+    "about": "Real-time 3D game engine",
+    "trending": false
   },
   {
     "rank": 220,
     "company": "Veeva Systems",
     "sector": "Life Sciences SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.veeva.com"
+    "careersUrl": "https://careers.veeva.com",
+    "about": "Life sciences cloud software",
+    "trending": false
   },
   {
     "rank": 221,
     "company": "Zillow Group",
     "sector": "Cloud Infrastructure & Internet Services",
     "type": "Public",
-    "careersUrl": "https://careers.zillowgroup.com/"
+    "careersUrl": "https://careers.zillowgroup.com/",
+    "about": "Online real estate marketplace",
+    "trending": false
   },
   {
     "rank": 222,
     "company": "Zoom",
     "sector": "Communications / SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.zoom.us"
+    "careersUrl": "https://careers.zoom.us",
+    "about": "Video conferencing platform",
+    "trending": false
   },
   {
     "rank": 223,
     "company": "Zscaler",
     "sector": "Cloud Security",
     "type": "Public",
-    "careersUrl": "https://www.zscaler.com/careers"
+    "careersUrl": "https://www.zscaler.com/careers",
+    "about": "Cloud security platform",
+    "trending": false
   },
   {
     "rank": 224,
     "company": "3M",
     "sector": "Industrial / Tech",
     "type": "Public",
-    "careersUrl": "https://www.3m.com/3M/en_US/careers-us"
+    "careersUrl": "https://www.3m.com/3M/en_US/careers-us",
+    "about": "Industrial and consumer manufacturing",
+    "trending": false
   },
   {
     "rank": 225,
     "company": "Abbott",
     "sector": "MedTech / Software",
     "type": "Public",
-    "careersUrl": "https://www.jobs.abbott"
+    "careersUrl": "https://www.jobs.abbott",
+    "about": "Medical devices and diagnostics",
+    "trending": false
   },
   {
     "rank": 226,
     "company": "AbbVie",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://careers.abbvie.com"
+    "careersUrl": "https://careers.abbvie.com",
+    "about": "Biopharmaceutical drug maker",
+    "trending": false
   },
   {
     "rank": 227,
     "company": "Accenture",
     "sector": "Consulting / Tech",
     "type": "Public",
-    "careersUrl": "https://www.accenture.com/us-en/careers"
+    "careersUrl": "https://www.accenture.com/us-en/careers",
+    "about": "IT consulting and services",
+    "trending": false
   },
   {
     "rank": 228,
     "company": "Advanced Micro Devices",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": ""
+    "careersUrl": "",
+    "about": "Semiconductor chip designer",
+    "trending": false
   },
   {
     "rank": 229,
     "company": "Amgen",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://careers.amgen.com"
+    "careersUrl": "https://careers.amgen.com",
+    "about": "Biotechnology drug developer",
+    "trending": false
   },
   {
     "rank": 230,
     "company": "Amplitude",
     "sector": "Product Analytics",
     "type": "Public",
-    "careersUrl": "https://amplitude.com/careers"
+    "careersUrl": "https://amplitude.com/careers",
+    "about": "Product analytics platform",
+    "trending": false
   },
   {
     "rank": 231,
     "company": "Anysphere (Cursor)",
     "sector": "AI / Code Tools",
     "type": "Private",
-    "careersUrl": "https://anysphere.inc/careers"
+    "careersUrl": "https://cursor.com/careers",
+    "about": "AI coding editor",
+    "trending": true
   },
   {
     "rank": 232,
     "company": "Astera Labs",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": "https://www.asteralabs.com/careers"
+    "careersUrl": "https://www.asteralabs.com/careers",
+    "about": "Cloud connectivity semiconductors",
+    "trending": false
   },
   {
     "rank": 233,
     "company": "Bentley Systems",
     "sector": "Infrastructure Software",
     "type": "Public",
-    "careersUrl": "https://www.bentley.com/careers"
+    "careersUrl": "https://www.bentley.com/careers",
+    "about": "Infrastructure engineering software",
+    "trending": false
   },
   {
     "rank": 234,
     "company": "BigBear.ai Holdings",
     "sector": "AI / Software",
     "type": "Public",
-    "careersUrl": "https://bigbear.ai/careers"
+    "careersUrl": "https://bigbear.ai/careers",
+    "about": "AI-powered decision intelligence",
+    "trending": false
   },
   {
     "rank": 235,
     "company": "Bill.com",
     "sector": "Financial SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.bill.com"
+    "careersUrl": "https://careers.bill.com",
+    "about": "SMB financial operations platform",
+    "trending": false
   },
   {
     "rank": 236,
     "company": "BlackRock",
     "sector": "Finance / Tech (Aladdin)",
     "type": "Public",
-    "careersUrl": "https://careers.blackrock.com"
+    "careersUrl": "https://careers.blackrock.com",
+    "about": "Global investment management firm",
+    "trending": false
   },
   {
     "rank": 237,
     "company": "Bloomberg",
     "sector": "Finance / Data / Software",
     "type": "Private",
-    "careersUrl": "https://www.bloomberg.com/careers"
+    "careersUrl": "https://www.bloomberg.com/careers",
+    "about": "Financial data and media",
+    "trending": false
   },
   {
     "rank": 238,
     "company": "Boston Consulting Group",
     "sector": "Consulting / Tech",
     "type": "Private",
-    "careersUrl": "https://careers.bcg.com"
+    "careersUrl": "https://careers.bcg.com",
+    "about": "Management consulting firm",
+    "trending": false
   },
   {
     "rank": 239,
     "company": "Brex",
     "sector": "Fintech / Corporate",
     "type": "Private",
-    "careersUrl": "https://www.brex.com/careers"
+    "careersUrl": "https://www.brex.com/careers",
+    "about": "Corporate cards and spend",
+    "trending": false
   },
   {
     "rank": 240,
     "company": "Carta",
     "sector": "Equity Management / Fintech",
     "type": "Private",
-    "careersUrl": "https://carta.com/careers"
+    "careersUrl": "https://carta.com/careers",
+    "about": "Equity and cap table management",
+    "trending": false
   },
   {
     "rank": 241,
     "company": "Cisco",
     "sector": "Networking / Software",
     "type": "Public",
-    "careersUrl": "https://jobs.cisco.com"
+    "careersUrl": "https://jobs.cisco.com",
+    "about": "Enterprise networking and security",
+    "trending": false
   },
   {
     "rank": 242,
     "company": "Citadel / Citadel Securities",
     "sector": "Finance / Tech",
     "type": "Private",
-    "careersUrl": "https://www.citadel.com/careers"
+    "careersUrl": "https://www.citadel.com/careers",
+    "about": "Hedge fund and market maker",
+    "trending": false
   },
   {
     "rank": 243,
     "company": "Clear Secure, Inc. (Clear)",
     "sector": "Cybersecurity",
     "type": "Public",
-    "careersUrl": "https://www.clearme.com/careers"
+    "careersUrl": "https://www.clearme.com/careers",
+    "about": "Biometric identity verification",
+    "trending": false
   },
   {
     "rank": 244,
     "company": "Cognition AI (Devin)",
     "sector": "AI / Code Tools",
     "type": "Private",
-    "careersUrl": "https://www.cognition.ai/careers"
+    "careersUrl": "https://www.cognition.ai/careers",
+    "about": "Autonomous AI software engineer",
+    "trending": true
   },
   {
     "rank": 245,
     "company": "Coreweave (Private/Expected IPO/Proxy)",
     "sector": "Cloud / Data Center",
     "type": "Public",
-    "careersUrl": "https://www.coreweave.com/careers"
+    "careersUrl": "https://www.coreweave.com/careers",
+    "about": "GPU cloud for AI",
+    "trending": true
   },
   {
     "rank": 246,
     "company": "Cruise (GM)",
     "sector": "Autonomous / AI",
     "type": "Subsidiary",
-    "careersUrl": "https://www.getcruise.com/careers"
+    "careersUrl": "https://www.getcruise.com/careers",
+    "about": "Autonomous vehicle technology",
+    "trending": false
   },
   {
     "rank": 247,
     "company": "Crusoe Energy Systems",
     "sector": "AI / Infrastructure",
     "type": "Private",
-    "careersUrl": "https://www.crusoeenergy.com/careers"
+    "careersUrl": "https://www.crusoeenergy.com/careers",
+    "about": "Energy-powered AI cloud infrastructure",
+    "trending": true,
+    "isFavorite": false
   },
   {
     "rank": 248,
     "company": "D-Wave Quantum",
     "sector": "Quantum Computing",
     "type": "Public",
-    "careersUrl": "https://www.dwavesys.com/careers"
+    "careersUrl": "https://www.dwavesys.com/careers",
+    "about": "Quantum computing systems",
+    "trending": false
   },
   {
     "rank": 249,
     "company": "Danaher Corporation",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://careers.danaher.com"
+    "careersUrl": "https://careers.danaher.com",
+    "about": "Diversified life sciences conglomerate",
+    "trending": false
   },
   {
     "rank": 250,
     "company": "Decagon",
     "sector": "AI / Search & Agents",
     "type": "Private",
-    "careersUrl": "https://decagon.ai/careers"
+    "careersUrl": "https://decagon.ai/careers",
+    "about": "Enterprise AI customer support agents",
+    "trending": true
   },
   {
     "rank": 251,
     "company": "Deloitte",
     "sector": "Consulting / Tech",
     "type": "Private",
-    "careersUrl": "https://apply.deloitte.com"
+    "careersUrl": "https://apply.deloitte.com",
+    "about": "Global consulting and audit firm",
+    "trending": false
   },
   {
     "rank": 252,
     "company": "Disney (Streaming/Tech)",
     "sector": "Media / Tech",
     "type": "Public",
-    "careersUrl": "https://jobs.disneycareers.com"
+    "careersUrl": "https://jobs.disneycareers.com",
+    "about": "Streaming media and entertainment",
+    "trending": false
   },
   {
     "rank": 253,
     "company": "Eli Lilly and Company",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://careers.lilly.com"
+    "careersUrl": "https://careers.lilly.com",
+    "about": "Pharmaceutical drug manufacturer",
+    "trending": false
   },
   {
     "rank": 254,
     "company": "Emerald AI",
     "sector": "AI / Infrastructure",
     "type": "Private",
-    "careersUrl": "https://emeraldai.com/careers"
+    "careersUrl": "https://emeraldai.com/careers",
+    "about": "AI data center energy optimization",
+    "trending": false
   },
   {
     "rank": 255,
     "company": "Factory",
     "sector": "AI / Code Tools",
     "type": "Private",
-    "careersUrl": "https://www.factory.ai/careers"
+    "careersUrl": "https://www.factory.ai/careers",
+    "about": "AI software development platform",
+    "trending": false
   },
   {
     "rank": 256,
     "company": "Fal",
     "sector": "AI / Infrastructure",
     "type": "Private",
-    "careersUrl": "https://fal.ai/careers"
+    "careersUrl": "https://fal.ai/careers",
+    "about": "Generative AI inference platform",
+    "trending": true
   },
   {
     "rank": 257,
     "company": "Freshworks",
     "sector": "Customer SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.freshworks.com"
+    "careersUrl": "https://careers.freshworks.com",
+    "about": "Customer engagement SaaS suite",
+    "trending": false
   },
   {
     "rank": 258,
     "company": "Gamma",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://gamma.app/careers"
+    "careersUrl": "https://gammagroup.co/company/careers/",
+    "about": "AI presentation and document creator",
+    "trending": false
   },
   {
     "rank": 259,
     "company": "GE (GE Vernova)",
     "sector": "Industrial / Energy Tech",
     "type": "Public",
-    "careersUrl": "https://careers.gevernova.com"
+    "careersUrl": "https://careers.gevernova.com",
+    "about": "Energy and power equipment",
+    "trending": false
   },
   {
     "rank": 260,
     "company": "Glean",
     "sector": "AI / Search & Agents",
     "type": "Private",
-    "careersUrl": "https://www.glean.com/careers"
+    "careersUrl": "https://www.glean.com/careers",
+    "about": "Enterprise AI search assistant",
+    "trending": true
   },
   {
     "rank": 261,
     "company": "Google (Alphabet)",
     "sector": "Software / AI",
     "type": "Public",
-    "careersUrl": "https://careers.google.com"
+    "careersUrl": "https://careers.google.com",
+    "about": "Search and digital advertising giant",
+    "trending": false
   },
   {
     "rank": 262,
     "company": "Grafana Labs",
     "sector": "Observability / OSS",
     "type": "Private",
-    "careersUrl": "https://grafana.com/about/careers"
+    "careersUrl": "https://grafana.com/about/careers",
+    "about": "Open-source observability platform",
+    "trending": false
   },
   {
     "rank": 263,
     "company": "Gusto",
     "sector": "HR / Payroll SaaS",
     "type": "Private",
-    "careersUrl": "https://gusto.com/about/careers"
+    "careersUrl": "https://gusto.com/about/careers",
+    "about": "Small business payroll software",
+    "trending": false
   },
   {
     "rank": 264,
     "company": "Harvey",
     "sector": "AI / Legal Tech",
     "type": "Private",
-    "careersUrl": "https://www.harvey.ai/careers"
+    "careersUrl": "https://www.harvey.ai/careers",
+    "about": "AI for legal professionals",
+    "trending": true
   },
   {
     "rank": 265,
     "company": "Hulu (Disney)",
     "sector": "Streaming",
     "type": "Subsidiary",
-    "careersUrl": "https://jobs.disneycareers.com"
+    "careersUrl": "https://jobs.disneycareers.com",
+    "about": "Streaming video service",
+    "trending": false
   },
   {
     "rank": 266,
     "company": "International Business Machines Corporation",
     "sector": "Cloud / Data Center",
     "type": "Public",
-    "careersUrl": ""
+    "careersUrl": "",
+    "about": "Enterprise IT and consulting",
+    "trending": false
   },
   {
     "rank": 267,
     "company": "IonQ",
     "sector": "Quantum Computing",
     "type": "Public",
-    "careersUrl": "https://ionq.com/careers"
+    "careersUrl": "https://ionq.com/careers",
+    "about": "Trapped-ion quantum computing hardware",
+    "trending": false
   },
   {
     "rank": 268,
     "company": "Jane Street",
     "sector": "Finance / Tech",
     "type": "Private",
-    "careersUrl": "https://www.janestreet.com/join-jane-street"
+    "careersUrl": "https://www.janestreet.com/join-jane-street",
+    "about": "Quantitative proprietary trading firm",
+    "trending": false
   },
   {
     "rank": 269,
     "company": "Johnson & Johnson",
     "sector": "Pharma / MedTech",
     "type": "Public",
-    "careersUrl": "https://jobs.jnj.com"
+    "careersUrl": "https://jobs.jnj.com",
+    "about": "Pharmaceuticals and medical devices",
+    "trending": false
   },
   {
     "rank": 270,
     "company": "Kraken",
     "sector": "Crypto / Fintech",
     "type": "Private",
-    "careersUrl": "https://www.kraken.com/careers"
+    "careersUrl": "https://www.kraken.com/careers",
+    "about": "Cryptocurrency exchange platform",
+    "trending": false
   },
   {
     "rank": 271,
     "company": "Krea",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://www.krea.ai/careers"
+    "careersUrl": "https://www.krea.ai/careers",
+    "about": "AI image generation tools",
+    "trending": false
   },
   {
     "rank": 272,
     "company": "LaunchDarkly",
     "sector": "Feature Management",
     "type": "Private",
-    "careersUrl": "https://launchdarkly.com/careers"
+    "careersUrl": "https://launchdarkly.com/careers",
+    "about": "Feature flag management platform",
+    "trending": false
   },
   {
     "rank": 273,
     "company": "Legora",
     "sector": "AI / Legal Tech",
     "type": "Private",
-    "careersUrl": "https://www.legora.ai/careers"
+    "careersUrl": "https://legora.com/careers",
+    "about": "AI legal workflow platform",
+    "trending": true
   },
   {
     "rank": 274,
     "company": "Linear",
     "sector": "Dev Tools / PM",
     "type": "Private",
-    "careersUrl": "https://linear.app/careers"
+    "careersUrl": "https://linear.app/careers",
+    "about": "Issue tracking for teams",
+    "trending": false
   },
   {
     "rank": 275,
     "company": "LinkedIn (Microsoft)",
     "sector": "Professional Network",
     "type": "Subsidiary",
-    "careersUrl": "https://careers.linkedin.com"
+    "careersUrl": "https://careers.linkedin.com",
+    "about": "Professional networking platform",
+    "trending": false
   },
   {
     "rank": 276,
     "company": "Lovable",
     "sector": "AI / Code Tools",
     "type": "Private",
-    "careersUrl": "https://lovable.dev/careers"
+    "careersUrl": "https://lovable.dev/careers",
+    "about": "AI app builder",
+    "trending": true
   },
   {
     "rank": 277,
     "company": "McKinsey",
     "sector": "Consulting / Tech",
     "type": "Private",
-    "careersUrl": "https://www.mckinsey.com/careers"
+    "careersUrl": "https://www.mckinsey.com/careers",
+    "about": "Management consulting firm",
+    "trending": false
   },
   {
     "rank": 278,
     "company": "Merck & Co.",
     "sector": "Healthcare / MedTech",
     "type": "Public",
-    "careersUrl": "https://jobs.merck.com"
+    "careersUrl": "https://jobs.merck.com",
+    "about": "Global pharmaceutical company",
+    "trending": false
   },
   {
     "rank": 279,
     "company": "Meta",
     "sector": "Software / Social",
     "type": "Public",
-    "careersUrl": "https://www.metacareers.com"
+    "careersUrl": "https://www.metacareers.com",
+    "about": "Social media and VR",
+    "trending": false
   },
   {
     "rank": 280,
     "company": "Micron",
     "sector": "Memory / Semiconductors",
     "type": "Public",
-    "careersUrl": "https://careers.micron.com"
+    "careersUrl": "https://careers.micron.com",
+    "about": "Memory and storage semiconductors",
+    "trending": false
   },
   {
     "rank": 281,
     "company": "Midjourney",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://www.midjourney.com/careers"
+    "careersUrl": "https://www.midjourney.com/careers",
+    "about": "AI image generation",
+    "trending": false
   },
   {
     "rank": 282,
     "company": "Mistral AI",
     "sector": "AI / Foundation Models",
     "type": "Private",
-    "careersUrl": "https://mistral.ai/careers"
+    "careersUrl": "https://mistral.ai/careers",
+    "about": "Open-source AI models",
+    "trending": true
   },
   {
     "rank": 283,
     "company": "Navan",
     "sector": "Travel / Expense SaaS",
     "type": "Private",
-    "careersUrl": "https://navan.com/careers"
+    "careersUrl": "https://navan.com/careers",
+    "about": "Corporate travel and expense",
+    "trending": false
   },
   {
     "rank": 284,
     "company": "Nike",
     "sector": "Retail / Tech",
     "type": "Public",
-    "careersUrl": "https://jobs.nike.com"
+    "careersUrl": "https://jobs.nike.com",
+    "about": "Athletic footwear and apparel",
+    "trending": false
   },
   {
     "rank": 285,
     "company": "Nutanix",
     "sector": "Cloud / HCI",
     "type": "Public",
-    "careersUrl": "https://www.nutanix.com/company/careers"
-  },
-  {
-    "rank": 286,
-    "company": "OpenEvidence",
-    "sector": "AI / Medical Tech",
-    "type": "Private",
-    "careersUrl": "https://www.openevidence.com/careers"
+    "careersUrl": "https://www.nutanix.com/company/careers",
+    "about": "Hybrid cloud infrastructure software",
+    "trending": false
   },
   {
     "rank": 287,
     "company": "Optum (UHG)",
     "sector": "Healthcare Tech",
     "type": "Subsidiary",
-    "careersUrl": "https://www.optum.com/en/about-us/careers.html"
+    "careersUrl": "https://www.optum.com/en/careers.html",
+    "about": "Healthcare services and technology",
+    "trending": false
   },
   {
     "rank": 288,
     "company": "Pegasystems",
     "sector": "BPM / CRM Software",
     "type": "Public",
-    "careersUrl": "https://www.pega.com/about/careers"
+    "careersUrl": "https://www.pega.com/about/careers",
+    "about": "Enterprise workflow automation software",
+    "trending": false
   },
   {
     "rank": 289,
     "company": "Perplexity AI",
     "sector": "AI / Search & Agents",
     "type": "Private",
-    "careersUrl": "https://www.perplexity.ai/hub/careers"
+    "careersUrl": "https://www.perplexity.ai/hub/careers",
+    "about": "AI-powered answer engine",
+    "trending": true
   },
   {
     "rank": 290,
     "company": "Pfizer",
     "sector": "Pharma / Tech",
     "type": "Public",
-    "careersUrl": "https://www.pfizer.com/about/careers"
+    "careersUrl": "https://www.pfizer.com/about/careers",
+    "about": "Pharmaceutical research and manufacturing",
+    "trending": false
   },
   {
     "rank": 291,
     "company": "Postman",
     "sector": "API Dev Tools",
     "type": "Private",
-    "careersUrl": "https://www.postman.com/company/careers"
+    "careersUrl": "https://www.postman.com/company/careers",
+    "about": "API development platform",
+    "trending": false
   },
   {
     "rank": 292,
     "company": "Procter & Gamble",
     "sector": "Consumer / Tech",
     "type": "Public",
-    "careersUrl": "https://www.pgcareers.com"
+    "careersUrl": "https://www.pgcareers.com",
+    "about": "Consumer goods manufacturer",
+    "trending": false
   },
   {
     "rank": 293,
     "company": "QuantumScape Corporation",
     "sector": "Quantum Computing",
     "type": "Public",
-    "careersUrl": "https://www.quantumscape.com/careers"
+    "careersUrl": "https://www.quantumscape.com/careers",
+    "about": "Solid-state EV batteries",
+    "trending": false
   },
   {
     "rank": 294,
     "company": "Redfin",
     "sector": "Real Estate / Tech",
     "type": "Public",
-    "careersUrl": "https://www.redfin.com/about/careers"
+    "careersUrl": "https://rocket.com/careers/teams-at-rocket",
+    "about": "Online real estate brokerage",
+    "trending": false
   },
   {
     "rank": 295,
     "company": "Relativity",
     "sector": "Legal Tech / SaaS",
     "type": "Private",
-    "careersUrl": "https://www.relativity.com/company/careers"
+    "careersUrl": "https://www.relativity.com/company/careers",
+    "about": "Legal e-discovery software",
+    "trending": false
   },
   {
     "rank": 296,
     "company": "Replit",
     "sector": "AI / Code Tools",
     "type": "Private",
-    "careersUrl": "https://replit.com/site/careers"
+    "careersUrl": "https://replit.com/site/careers",
+    "about": "Browser-based coding platform",
+    "trending": false
   },
   {
     "rank": 297,
     "company": "Retool",
     "sector": "Internal Tools",
     "type": "Private",
-    "careersUrl": "https://retool.com/careers"
+    "careersUrl": "https://retool.com/careers",
+    "about": "Internal tools builder",
+    "trending": false
   },
   {
     "rank": 298,
     "company": "Rippling",
     "sector": "HR / Software",
     "type": "Private",
-    "careersUrl": "https://www.rippling.com/careers"
+    "careersUrl": "https://www.rippling.com/careers",
+    "about": "HR and IT platform",
+    "trending": false
   },
   {
     "rank": 299,
     "company": "Roblox",
     "sector": "Gaming / Platform",
     "type": "Public",
-    "careersUrl": "https://careers.roblox.com"
+    "careersUrl": "https://careers.roblox.com",
+    "about": "Online gaming platform",
+    "trending": false
   },
   {
     "rank": 300,
     "company": "Rubrik",
     "sector": "Data Security",
     "type": "Private",
-    "careersUrl": "https://www.rubrik.com/company/careers"
+    "careersUrl": "https://www.rubrik.com/company/careers",
+    "about": "Cloud data security",
+    "trending": false
   },
   {
     "rank": 301,
     "company": "Runway",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://runwayml.com/careers"
+    "careersUrl": "https://runwayml.com/careers",
+    "about": "Generative AI video tools",
+    "trending": false
   },
   {
     "rank": 302,
     "company": "Samsung (Semiconductor)",
     "sector": "Electronics / Chips",
     "type": "Public",
-    "careersUrl": "https://www.samsung.com/semiconductor/careers"
+    "careersUrl": "https://www.samsung.com/semiconductor/careers",
+    "about": "Memory and chip manufacturing",
+    "trending": false
   },
   {
     "rank": 303,
     "company": "SAP",
     "sector": "Enterprise Software",
     "type": "Public",
-    "careersUrl": "https://jobs.sap.com"
+    "careersUrl": "https://jobs.sap.com",
+    "about": "Enterprise business software",
+    "trending": false
   },
   {
     "rank": 304,
     "company": "Shell",
     "sector": "Energy / Tech",
     "type": "Public",
-    "careersUrl": "https://www.shell.com/careers"
+    "careersUrl": "https://www.shell.com/careers",
+    "about": "Global oil and gas",
+    "trending": false
   },
   {
     "rank": 305,
     "company": "Shield AI",
     "sector": "Defense / AI",
     "type": "Private",
-    "careersUrl": "https://shield.ai/careers"
+    "careersUrl": "https://shield.ai/careers",
+    "about": "Autonomous defense aircraft systems",
+    "trending": false
   },
   {
     "rank": 306,
     "company": "Shopify",
     "sector": "E-commerce SaaS",
     "type": "Public",
-    "careersUrl": "https://www.shopify.com/careers"
+    "careersUrl": "https://www.shopify.com/careers",
+    "about": "Ecommerce platform for merchants",
+    "trending": false
   },
   {
     "rank": 307,
     "company": "Sierra",
     "sector": "AI / Search & Agents",
     "type": "Private",
-    "careersUrl": "https://sierra.ai/careers"
+    "careersUrl": "https://sierra.ai/careers",
+    "about": "Conversational AI agents platform",
+    "trending": true
   },
   {
     "rank": 308,
     "company": "Skild AI",
     "sector": "AI / Robotics",
     "type": "Private",
-    "careersUrl": "https://www.skild.ai/careers"
+    "careersUrl": "https://www.skild.ai/career",
+    "about": "General-purpose robotics intelligence",
+    "trending": true
   },
   {
     "rank": 309,
     "company": "Slack (Salesforce)",
     "sector": "Collaboration SaaS",
     "type": "Subsidiary",
-    "careersUrl": "https://slack.com/careers"
+    "careersUrl": "https://slack.com/careers",
+    "about": "Workplace messaging and collaboration",
+    "trending": false
   },
   {
     "rank": 310,
     "company": "Snap",
     "sector": "Social / AR",
     "type": "Public",
-    "careersUrl": "https://careers.snap.com"
+    "careersUrl": "https://careers.snap.com",
+    "about": "Social media and AR",
+    "trending": false
   },
   {
     "rank": 311,
     "company": "Sony (PlayStation)",
     "sector": "Gaming / Entertainment",
     "type": "Public",
-    "careersUrl": "https://www.sonyjobs.com"
+    "careersUrl": "https://www.sonyjobs.com",
+    "about": "Gaming consoles and entertainment",
+    "trending": false
   },
   {
     "rank": 312,
     "company": "SoundHound AI",
     "sector": "AI / Software",
     "type": "Public",
-    "careersUrl": "https://www.soundhound.com/careers"
+    "careersUrl": "https://www.soundhound.com/careers",
+    "about": "Voice AI platform",
+    "trending": false
   },
   {
     "rank": 313,
     "company": "Sprinklr",
     "sector": "CX / SaaS",
     "type": "Public",
-    "careersUrl": "https://www.sprinklr.com/careers"
+    "careersUrl": "https://www.sprinklr.com/careers",
+    "about": "Customer experience management software",
+    "trending": false
   },
   {
     "rank": 314,
     "company": "Squarespace",
     "sector": "Website Builder",
     "type": "Public",
-    "careersUrl": "https://www.squarespace.com/careers"
+    "careersUrl": "https://www.squarespace.com/careers",
+    "about": "Website building platform",
+    "trending": false
   },
   {
     "rank": 315,
     "company": "Starbucks",
     "sector": "Retail / Tech",
     "type": "Public",
-    "careersUrl": "https://www.starbucks.com/careers"
+    "careersUrl": "https://www.starbucks.com/careers",
+    "about": "Global coffeehouse chain",
+    "trending": false
   },
   {
     "rank": 316,
     "company": "Supabase",
     "sector": "Dev Tools / BaaS",
     "type": "Private",
-    "careersUrl": "https://supabase.com/careers"
+    "careersUrl": "https://supabase.com/careers",
+    "about": "Open source Firebase alternative",
+    "trending": false
   },
   {
     "rank": 317,
     "company": "Synthesia",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://www.synthesia.io/careers"
+    "careersUrl": "https://www.synthesia.io/careers",
+    "about": "AI video generation platform",
+    "trending": false
   },
   {
     "rank": 318,
     "company": "Taiwan Semiconductor Manufacturing Company Limited",
     "sector": "Semiconductors",
     "type": "Public",
-    "careersUrl": ""
+    "careersUrl": "",
+    "about": "Semiconductor chip foundry",
+    "trending": false
   },
   {
     "rank": 319,
     "company": "Target",
     "sector": "Retail / Tech",
     "type": "Public",
-    "careersUrl": "https://corporate.target.com/careers"
+    "careersUrl": "https://corporate.target.com/careers",
+    "about": "Big-box retail chain",
+    "trending": false
   },
   {
     "rank": 320,
     "company": "Temporal",
     "sector": "Workflow Orchestration",
     "type": "Private",
-    "careersUrl": "https://temporal.io/careers"
+    "careersUrl": "https://temporal.io/careers",
+    "about": "Durable workflow orchestration platform",
+    "trending": false
   },
   {
     "rank": 321,
     "company": "Thermo Fisher",
     "sector": "Life Sciences / Tech",
     "type": "Public",
-    "careersUrl": "https://jobs.thermofisher.com"
+    "careersUrl": "https://jobs.thermofisher.com",
+    "about": "Scientific instruments and lab equipment",
+    "trending": false
   },
   {
     "rank": 322,
     "company": "Thomson Reuters",
     "sector": "Legal / News Tech",
     "type": "Public",
-    "careersUrl": "https://careers.thomsonreuters.com"
+    "careersUrl": "https://careers.thomsonreuters.com",
+    "about": "Legal and financial information services",
+    "trending": false
   },
   {
     "rank": 323,
     "company": "Toast",
     "sector": "Restaurant SaaS",
     "type": "Public",
-    "careersUrl": "https://careers.toasttab.com"
+    "careersUrl": "https://careers.toasttab.com",
+    "about": "Restaurant point-of-sale platform",
+    "trending": false
   },
   {
     "rank": 324,
     "company": "TSMC",
     "sector": "Semiconductor Foundry",
     "type": "Public",
-    "careersUrl": "https://careers.tsmc.com"
+    "careersUrl": "https://careers.tsmc.com",
+    "about": "Semiconductor chip manufacturing foundry",
+    "trending": false
   },
   {
     "rank": 325,
     "company": "Twitter / X",
     "sector": "Social / Media",
     "type": "Private",
-    "careersUrl": "https://x.com/careers"
+    "careersUrl": "https://x.com/careers",
+    "about": "Social media platform",
+    "trending": false
   },
   {
     "rank": 326,
     "company": "Two Sigma",
     "sector": "Finance / Tech",
     "type": "Private",
-    "careersUrl": "https://www.twosigma.com/careers"
+    "careersUrl": "https://www.twosigma.com/careers",
+    "about": "Quantitative hedge fund",
+    "trending": false
   },
   {
     "rank": 327,
     "company": "Uber",
     "sector": "Mobility / Software",
     "type": "Public",
-    "careersUrl": "https://www.uber.com/us/en/careers"
+    "careersUrl": "https://www.uber.com/us/en/careers",
+    "about": "Ride-hailing and delivery platform",
+    "trending": false
   },
   {
     "rank": 328,
     "company": "Unity",
     "sector": "Gaming / 3D Engine",
     "type": "Public",
-    "careersUrl": "https://careers.unity.com"
+    "careersUrl": "https://careers.unity.com",
+    "about": "Game development engine",
+    "trending": false
   },
   {
     "rank": 329,
     "company": "Vercel",
     "sector": "Dev Tools / Cloud",
     "type": "Private",
-    "careersUrl": "https://vercel.com/careers"
+    "careersUrl": "https://vercel.com/careers",
+    "about": "Frontend deployment and hosting platform",
+    "trending": false
   },
   {
     "rank": 330,
     "company": "VMware (Broadcom)",
     "sector": "Virtualization / Cloud",
     "type": "Public",
-    "careersUrl": "https://www.vmware.com/careers.html"
+    "careersUrl": "https://www.broadcom.com/company/careers",
+    "about": "Enterprise virtualization and cloud software",
+    "trending": false
   },
   {
     "rank": 331,
     "company": "Walmart (Walmart Global Tech)",
     "sector": "Retail / Tech",
     "type": "Public",
-    "careersUrl": "https://careers.walmart.com"
+    "careersUrl": "https://careers.walmart.com",
+    "about": "Retail giant's technology arm",
+    "trending": false
   },
   {
     "rank": 332,
     "company": "Waymo (Alphabet)",
     "sector": "Autonomous / AI",
     "type": "Subsidiary",
-    "careersUrl": "https://waymo.com/careers"
+    "careersUrl": "https://waymo.com/careers",
+    "about": "Autonomous vehicle technology",
+    "trending": false
   },
   {
     "rank": 333,
     "company": "Weights & Biases",
     "sector": "MLOps / AI",
     "type": "Private",
-    "careersUrl": "https://wandb.ai/careers"
+    "careersUrl": "https://wandb.ai/careers",
+    "about": "ML experiment tracking platform",
+    "trending": false
   },
   {
     "rank": 334,
     "company": "Wells Fargo",
     "sector": "Finance / Tech",
     "type": "Public",
-    "careersUrl": "https://www.wellsfargojobs.com"
+    "careersUrl": "https://www.wellsfargojobs.com",
+    "about": "Banking and financial services",
+    "trending": false
   },
   {
     "rank": 335,
     "company": "World Labs",
     "sector": "AI / Infrastructure",
     "type": "Private",
-    "careersUrl": "https://www.worldlabs.ai/careers"
+    "careersUrl": "https://job-boards.greenhouse.io/worldlabs",
+    "about": "Spatial AI 3D models",
+    "trending": false
   },
   {
     "rank": 336,
     "company": "xAI",
     "sector": "AI / Foundation Models",
     "type": "Private",
-    "careersUrl": "https://x.ai/careers"
+    "careersUrl": "https://x.ai/careers",
+    "about": "Frontier AI research lab",
+    "trending": true
   },
   {
     "rank": 337,
     "company": "Zillow",
     "sector": "Real Estate / Tech",
     "type": "Public",
-    "careersUrl": "https://www.zillow.com/careers"
+    "careersUrl": "https://www.zillow.com/careers",
+    "about": "Online real estate marketplace",
+    "trending": false
   },
   {
     "rank": 338,
     "company": "ZoomInfo",
     "sector": "Data / Sales SaaS",
     "type": "Public",
-    "careersUrl": "https://www.zoominfo.com/about/careers"
+    "careersUrl": "https://www.zoominfo.com/about/careers",
+    "about": "B2B sales intelligence platform",
+    "trending": false
   },
   {
     "rank": 339,
     "company": "Abridge",
     "sector": "AI / Medical Tech",
     "type": "Private",
-    "careersUrl": "https://www.abridge.com/careers"
+    "careersUrl": "https://www.abridge.com/careers",
+    "about": "AI medical conversation documentation",
+    "trending": false
   },
   {
     "rank": 340,
     "company": "HeyGen",
     "sector": "AI / Content Generation",
     "type": "Private",
-    "careersUrl": "https://www.heygen.com/careers"
+    "careersUrl": "https://www.heygen.com/careers",
+    "about": "AI video avatar generation",
+    "trending": false
   },
   {
     "rank": 341,
     "company": "Physical Intelligence",
     "sector": "AI / Robotics",
     "type": "Private",
-    "careersUrl": "https://www.physicalintelligence.company/careers"
+    "careersUrl": "https://www.pi.website/join-us",
+    "about": "Robotics foundation models",
+    "trending": true
   },
   {
     "rank": 342,
     "company": "Palo Alto Networks, Inc.",
     "sector": "Cybersecurity",
     "type": "Public",
-    "careersUrl": "https://jobs.paloaltonetworks.com/en"
+    "careersUrl": "https://jobs.paloaltonetworks.com/en",
+    "about": "Enterprise cybersecurity platform",
+    "trending": false
   },
   {
     "rank": 343,
     "company": "Lambda",
     "sector": "AI Infrastructure / GPU Cloud",
     "type": "Private",
-    "careersUrl": "https://lambdalabs.com/careers"
+    "careersUrl": "https://lambdalabs.com/careers",
+    "about": "GPU cloud for AI",
+    "trending": true
   },
   {
     "rank": 344,
-    "company": "Job Boards",
-    "sector": "HR Tech / Recruiting",
+    "company": "Fleet AI, Inc.",
+    "sector": "",
     "type": "Private",
-    "careersUrl": "https://www.jobboards.com/careers"
+    "careersUrl": "",
+    "about": "simulation environments for training AI agents",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 345,
+    "company": "Inertia",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "laser-driven fusion energy",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 346,
+    "company": "Harper",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "insurance brokerage for SMBs",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 347,
+    "company": "Aria Networks, Inc.",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI-optimized networking switches",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 348,
+    "company": "Lio (formerly askLio)",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI procurement automation",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 349,
+    "company": "Conveo",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI qualitative research platform",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 350,
+    "company": "Fundamental",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "predictive analytics",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 351,
+    "company": "spektr",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "compliance automation",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 352,
+    "company": "Monaco",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI revenue platform",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 353,
+    "company": "Allen Control Systems",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "autonomous weapon systems",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 354,
+    "company": "Jazz",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI-driven data loss prevention",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 355,
+    "company": "Nscale",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "GPU cloud platform for AI",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 356,
+    "company": "Corgi",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "insurance platform for tech startups",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 357,
+    "company": "Outset",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI-moderated research",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 358,
+    "company": "NODA AI",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "orchestration platform for defense",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 359,
+    "company": "Blitzy",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "autonomous software development",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 360,
+    "company": "Tenzai",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI cybersecurity",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 361,
+    "company": "Mecka AI",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "movement data for robotics",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 362,
+    "company": "Reflection",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "API to automate engineering tasks",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 363,
+    "company": "Peec AI",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "brand visibility analytics for AI search",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 364,
+    "company": "XBOW",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "autonomous offensive security platform",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 365,
+    "company": "Beacon Software",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "vertical software acquisition",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 366,
+    "company": "Sunday",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "autonomous home robot",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 367,
+    "company": "Quartermaster",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "maritime monitoring system",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 368,
+    "company": "Straiker",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "security for AI apps",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 369,
+    "company": "Polymarket",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "decentralized prediction market",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 370,
+    "company": "Console",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI automation for IT requests",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 371,
+    "company": "OpenFX",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "cross-border payment infrastructure",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 372,
+    "company": "Gray Swan",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "security for AI deployments",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 373,
+    "company": "Yuzu",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "platform for customized health plans",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 374,
+    "company": "Lexroom",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI platform for legal professionals",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 375,
+    "company": "Brain Co.",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI predictive analytics",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 376,
+    "company": "GC AI",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI platform for in-house legal teams",
+    "isFavorite": false,
+    "trending": true
+  },
+  {
+    "rank": 377,
+    "company": "Serval",
+    "sector": "",
+    "type": "Private",
+    "careersUrl": "",
+    "about": "AI automation for IT help desk",
+    "isFavorite": false,
+    "trending": true
   }
 ]

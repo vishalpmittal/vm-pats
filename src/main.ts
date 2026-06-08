@@ -1,4 +1,4 @@
-import { renderHome } from "./pages/home";
+import { renderHome, renderApplied } from "./pages/home";
 import { renderAddRole } from "./pages/add-role";
 import { renderGuidelines } from "./pages/guidelines";
 import { renderGuidelineEditor } from "./pages/guideline-editor";
@@ -18,6 +18,8 @@ async function route(): Promise<void> {
     await renderAddRole(app);
   } else if (hash.startsWith("#/edit/")) {
     await renderAddRole(app, hash.slice("#/edit/".length));
+  } else if (hash === "#/applied") {
+    await renderApplied(app);
   } else if (hash === "#/master-resume") {
     await renderMasterResume(app);
   } else if (hash === "#/gaps") {
@@ -28,6 +30,8 @@ async function route(): Promise<void> {
     await renderGuidelinesList(app);
   } else if (hash === "#/guidelines/new") {
     await renderGuidelineEditor(app);
+  } else if (hash.startsWith("#/guidelines/edit/")) {
+    await renderGuidelineEditor(app, hash.slice("#/guidelines/edit/".length));
   } else if (hash.startsWith("#/guidelines/")) {
     await renderGuidelines(app, hash.slice("#/guidelines/".length));
   } else {

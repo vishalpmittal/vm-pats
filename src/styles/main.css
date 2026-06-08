@@ -9,8 +9,8 @@
 
 /* ── Base ── */
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.18);
-  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-bg: #eaf2fc;
+  --glass-border: rgba(135, 175, 215, 0.28);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   --blur: 20px;
   --radius: 16px;
@@ -20,6 +20,8 @@
   --accent: #e8a838;
   --accent-hover: #d4952e;
   --danger: #e05555;
+  --btn-gradient: linear-gradient(135deg, rgba(53, 120, 196, 0.75), rgba(126, 180, 232, 0.75));
+  --btn-gradient-hover: linear-gradient(135deg, rgba(45, 105, 180, 0.9), rgba(110, 168, 224, 0.9));
   --font: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
@@ -27,7 +29,7 @@ body {
   font-family: var(--font);
   color: var(--text);
   min-height: 100vh;
-  background: linear-gradient(135deg, #d0d0d0 0%, #8db8e0 100%);
+  background: #ffffff;
   background-attachment: fixed;
 }
 
@@ -119,7 +121,7 @@ body {
 }
 
 .nav-item.active .nav-link {
-  background: linear-gradient(135deg, rgba(232, 168, 56, 0.7), rgba(80, 140, 220, 0.7));
+  background: var(--btn-gradient);
   color: #fff;
   font-weight: 600;
 }
@@ -228,7 +230,7 @@ h3 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, rgba(232, 168, 56, 0.7), rgba(80, 140, 220, 0.7));
+  background: var(--btn-gradient);
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -236,7 +238,7 @@ h3 {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, rgba(232, 168, 56, 0.85), rgba(80, 140, 220, 0.85));
+  background: var(--btn-gradient-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(80, 140, 220, 0.3);
 }
@@ -340,8 +342,188 @@ h3 {
 
 .companies-table-wrap {
   margin-top: 12px;
-  max-height: calc(100vh - 140px);
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.filter-search {
+  flex: 1 1 50%;
+  max-width: 50%;
+}
+
+.filter-toggles {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.filter-toggle:hover {
+  color: var(--text);
+  border-color: rgba(135, 175, 215, 0.5);
+}
+
+.filter-toggle.active {
+  background: var(--btn-gradient);
+  color: #fff;
+  border-color: transparent;
+}
+
+.filter-toggle svg {
+  display: block;
+}
+
+.filter-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.filter-calendar-wrap {
+  position: relative;
+}
+
+.filter-calendar-btn {
+  padding: 7px 10px;
+}
+
+.date-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  min-width: 240px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-popover.hidden {
+  display: none;
+}
+
+.date-popover-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.date-popover-fields {
+  display: flex;
+  gap: 6px;
+}
+
+.date-pill {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.date-pill:hover {
+  color: var(--text);
+  border-color: rgba(135, 175, 215, 0.5);
+}
+
+.date-pill.active {
+  background: var(--btn-gradient);
+  color: #fff;
+  border-color: transparent;
+}
+
+.date-popover-input {
+  width: 100%;
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  padding: 10px 8px 10px 22px;
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 90vw;
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.toast-close {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.toast-close:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .companies-table {
@@ -385,6 +567,39 @@ h3 {
 
 .companies-table tr:hover .company-edit-btn {
   opacity: 1;
+}
+
+.company-star-btn {
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.company-star-btn.is-favorite {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.companies-table tr:hover .company-star-btn {
+  opacity: 1;
+}
+
+.company-star-btn:hover {
+  color: var(--accent);
+}
+
+.company-trending-icon {
+  display: inline-flex;
+  align-items: center;
+  color: #1f9d55;
+  line-height: 1;
+  cursor: default;
+}
+
+.company-trending-icon svg {
+  display: block;
 }
 
 .autocomplete-dropdown {

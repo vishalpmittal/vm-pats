@@ -346,15 +346,27 @@ function readGuidelinesConfig(): { enabled: string[] } | null {
   try { return JSON.parse(fs.readFileSync(guidelinesConfigFile, "utf-8")); } catch { return null; }
 }
 
+function guidelineCreatedDate(filePath: string): string {
+  const stat = fs.statSync(filePath);
+  const t = stat.birthtime.getTime() > 0 ? stat.birthtime : stat.mtime;
+  return t.toISOString().slice(0, 10);
+}
+
 app.get("/api/guidelines", (_req, res) => {
   if (!fs.existsSync(guidelinesDir)) { res.json([]); return; }
   const files = fs.readdirSync(guidelinesDir).filter(f => f.endsWith(".md")).sort();
   const config = readGuidelinesConfig();
   const guidelines = files.map(f => {
-    const content = fs.readFileSync(path.join(guidelinesDir, f), "utf-8");
+    const filePath = path.join(guidelinesDir, f);
+    const content = fs.readFileSync(filePath, "utf-8");
     const slug = guidelineSlugFromFilename(f);
     const enabled = config ? config.enabled.includes(slug) : true;
-    return { slug, title: guidelineTitleFromContent(content, f), enabled };
+    return {
+      slug,
+      title: guidelineTitleFromContent(content, f),
+      enabled,
+      createdDate: guidelineCreatedDate(filePath),
+    };
   });
   res.json(guidelines);
 });
@@ -372,7 +384,8 @@ app.get("/api/guidelines/:slug", (req, res) => {
   if (!fs.existsSync(filePath)) { res.status(404).json({ error: "guidelines not found" }); return; }
   const content = fs.readFileSync(filePath, "utf-8");
   const title = guidelineTitleFromContent(content, `${req.params.slug}.md`);
-  res.json({ title, content });
+  const body = content.replace(/^#\s+.+\n+/, "");
+  res.json({ title, content, body, createdDate: guidelineCreatedDate(filePath) });
 });
 
 app.post("/api/guidelines", (req, res) => {
@@ -386,6 +399,19 @@ app.post("/api/guidelines", (req, res) => {
   const md = `# ${title}\n\n${content ?? ""}`;
   fs.writeFileSync(filePath, md + "\n");
   res.status(201).json({ slug });
+});
+
+app.put("/api/guidelines/:slug", (req, res) => {
+  const filePath = path.join(guidelinesDir, `${req.params.slug}.md`);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "guidelines not found" }); return; }
+  const { title, content } = req.body;
+  if (!title || typeof title !== "string" || !title.trim()) {
+    res.status(400).json({ error: "title is required" });
+    return;
+  }
+  const md = `# ${title.trim()}\n\n${content ?? ""}`;
+  fs.writeFileSync(filePath, md + "\n");
+  res.json({ slug: req.params.slug });
 });
 
 app.delete("/api/guidelines/:slug", (req, res) => {
@@ -467,12 +493,23 @@ app.get("/api/gaps", (_req, res) => {
 
 const companiesFile = path.join(dataDir, "companies", "all-companies.json");
 
-function readCompanies(): { rank: number; company: string; sector: string; type: string; careersUrl: string }[] {
+interface Company {
+  rank: number;
+  company: string;
+  sector: string;
+  type: string;
+  careersUrl: string;
+  about?: string;
+  isFavorite?: boolean;
+  trending?: boolean;
+}
+
+function readCompanies(): Company[] {
   if (!fs.existsSync(companiesFile)) return [];
   return JSON.parse(fs.readFileSync(companiesFile, "utf-8"));
 }
 
-function writeCompanies(data: { rank: number; company: string; sector: string; type: string; careersUrl: string }[]): void {
+function writeCompanies(data: Company[]): void {
   fs.mkdirSync(path.dirname(companiesFile), { recursive: true });
   fs.writeFileSync(companiesFile, JSON.stringify(data, null, 2) + "\n");
 }
@@ -482,11 +519,19 @@ app.get("/api/companies", (_req, res) => {
 });
 
 app.post("/api/companies", (req, res) => {
-  const { company, sector, type, careersUrl } = req.body;
+  const { company, sector, type, careersUrl, about } = req.body;
   if (!company) { res.status(400).json({ error: "company name is required" }); return; }
   const companies = readCompanies();
   const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
-  const entry = { rank: maxRank + 1, company, sector: sector || "", type: type || "", careersUrl: careersUrl || "" };
+  const entry: Company = {
+    rank: maxRank + 1,
+    company,
+    sector: sector || "",
+    type: type || "",
+    careersUrl: careersUrl || "",
+    about: about || "",
+    isFavorite: false,
+  };
   companies.push(entry);
   writeCompanies(companies);
   res.status(201).json(entry);
@@ -497,11 +542,24 @@ app.put("/api/companies/:rank", (req, res) => {
   const companies = readCompanies();
   const idx = companies.findIndex((c) => c.rank === rank);
   if (idx === -1) { res.status(404).json({ error: "company not found" }); return; }
-  const { company, sector, type, careersUrl } = req.body;
+  const { company, sector, type, careersUrl, about } = req.body;
   if (company !== undefined) companies[idx].company = company;
   if (sector !== undefined) companies[idx].sector = sector;
   if (type !== undefined) companies[idx].type = type;
   if (careersUrl !== undefined) companies[idx].careersUrl = careersUrl;
+  if (about !== undefined) companies[idx].about = about;
+  writeCompanies(companies);
+  res.json(companies[idx]);
+});
+
+app.put("/api/companies/:rank/favorite", (req, res) => {
+  const rank = parseInt(req.params.rank, 10);
+  const companies = readCompanies();
+  const idx = companies.findIndex((c) => c.rank === rank);
+  if (idx === -1) { res.status(404).json({ error: "company not found" }); return; }
+  const { isFavorite } = req.body;
+  if (typeof isFavorite !== "boolean") { res.status(400).json({ error: "isFavorite must be a boolean" }); return; }
+  companies[idx].isFavorite = isFavorite;
   writeCompanies(companies);
   res.json(companies[idx]);
 });
@@ -520,21 +578,24 @@ app.post("/api/companies/lookup", async (req, res) => {
 - "sector": the company's primary industry/sector (e.g., "Enterprise SaaS", "AI / Foundation Models", "Finance / Tech", "Healthcare / MedTech")
 - "type": ownership type — one of "Public", "Private", or "Subsidiary"
 - "careersUrl": the company's careers/jobs page URL (must be a real, working URL)
+- "about": a very short one-liner describing what the company does (e.g., "AI coding platform", "Cloud data warehouse", "Consumer payments app"). Max 6 words. No trailing period.
 
 Return ONLY the JSON object, no markdown, no explanation. Example:
-{"sector": "Cloud / SaaS", "type": "Public", "careersUrl": "https://example.com/careers"}`;
+{"sector": "Cloud / SaaS", "type": "Public", "careersUrl": "https://example.com/careers", "about": "Cloud data warehouse"}`;
 
     const raw = await runClaude(prompt);
     const match = raw.match(/\{[\s\S]*\}/);
     const parsed = match ? JSON.parse(match[0]) : {};
 
     const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
-    const entry = {
+    const entry: Company = {
       rank: maxRank + 1,
       company,
       sector: parsed.sector || "",
       type: parsed.type || "",
       careersUrl: parsed.careersUrl || "",
+      about: parsed.about || "",
+      isFavorite: false,
     };
     companies.push(entry);
     writeCompanies(companies);
@@ -542,7 +603,7 @@ Return ONLY the JSON object, no markdown, no explanation. Example:
   } catch (err) {
     console.error("Company lookup error:", err);
     const maxRank = companies.reduce((max, c) => Math.max(max, c.rank), 0);
-    const entry = { rank: maxRank + 1, company, sector: "", type: "", careersUrl: "" };
+    const entry: Company = { rank: maxRank + 1, company, sector: "", type: "", careersUrl: "", about: "", isFavorite: false };
     companies.push(entry);
     writeCompanies(companies);
     res.status(201).json(entry);

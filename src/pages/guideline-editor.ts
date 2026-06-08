@@ -1,10 +1,12 @@
 import { el } from "../utils/dom";
 
-export async function renderGuidelineEditor(container: HTMLElement): Promise<void> {
+export async function renderGuidelineEditor(container: HTMLElement, slug?: string): Promise<void> {
   container.innerHTML = "";
 
+  const isEdit = !!slug;
+
   const header = el("div", { className: "page-header" },
-    el("h1", {}, "New Guideline")
+    el("h1", {}, "Guideline Details")
   );
   container.appendChild(header);
 
@@ -22,6 +24,24 @@ export async function renderGuidelineEditor(container: HTMLElement): Promise<voi
     className: "input input-textarea guideline-textarea",
     placeholder: "Write your guideline content here (markdown supported)...",
   }) as HTMLTextAreaElement;
+
+  if (isEdit) {
+    try {
+      const resp = await fetch(`/api/guidelines/${slug}`);
+      if (!resp.ok) {
+        alert("Failed to load guideline.");
+        window.location.hash = "#/guidelines";
+        return;
+      }
+      const data: { title: string; body: string } = await resp.json();
+      titleInput.value = data.title;
+      contentArea.value = data.body;
+    } catch {
+      alert("Failed to connect to server.");
+      window.location.hash = "#/guidelines";
+      return;
+    }
+  }
 
   generateBtn.addEventListener("click", async () => {
     const prompt = promptArea.value.trim();
@@ -61,8 +81,10 @@ export async function renderGuidelineEditor(container: HTMLElement): Promise<voi
     saveBtn.setAttribute("disabled", "true");
 
     try {
-      const resp = await fetch("/api/guidelines", {
-        method: "POST",
+      const url = isEdit ? `/api/guidelines/${slug}` : "/api/guidelines";
+      const method = isEdit ? "PUT" : "POST";
+      const resp = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, content: contentArea.value }),
       });
@@ -71,8 +93,7 @@ export async function renderGuidelineEditor(container: HTMLElement): Promise<voi
         alert(data.error ?? "Failed to save guideline");
         return;
       }
-      const { slug } = await resp.json();
-      window.location.hash = `#/guidelines/${slug}`;
+      window.location.hash = "#/guidelines";
     } catch {
       alert("Failed to connect to server.");
     } finally {

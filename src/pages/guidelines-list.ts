@@ -4,7 +4,11 @@ interface GuidelineItem {
   slug: string;
   title: string;
   enabled: boolean;
+  createdDate: string;
 }
+
+type SortKey = "title" | "createdDate" | "enabled";
+type SortDir = "asc" | "desc";
 
 async function saveConfig(enabled: string[]): Promise<void> {
   await fetch("/api/guidelines/config", {
@@ -17,8 +21,12 @@ async function saveConfig(enabled: string[]): Promise<void> {
 export async function renderGuidelinesList(container: HTMLElement): Promise<void> {
   container.innerHTML = "";
 
+  const addBtn = el("button", { className: "btn btn-primary" }, "+ Add Guideline");
+  addBtn.addEventListener("click", () => { window.location.hash = "#/guidelines/new"; });
+
   const header = el("div", { className: "page-header" },
-    el("h1", {}, "Guidelines")
+    el("h1", {}, "Guidelines"),
+    addBtn,
   );
   container.appendChild(header);
 
@@ -40,48 +48,95 @@ export async function renderGuidelinesList(container: HTMLElement): Promise<void
 
   if (guidelines.length === 0) {
     container.appendChild(el("div", { className: "empty-state glass-card" },
-      el("p", {}, "No guidelines yet. Use the + button in the sidebar to add one.")
+      el("p", {}, "No guidelines yet. Click \"+ Add Guideline\" to create one.")
     ));
     return;
   }
 
-  const card = el("div", { className: "glass-card guideline-list" });
+  let sortKey: SortKey = "title";
+  let sortDir: SortDir = "asc";
+  const tableWrap = el("div", { className: "companies-table-wrap" });
+  container.appendChild(tableWrap);
 
-  const table = el("table", { className: "guideline-table" });
-  const thead = el("thead", {},
-    el("tr", {},
-      el("th", {}, "Guideline"),
-      el("th", { className: "guideline-col-enabled" }, "Enabled")
-    )
-  );
-  table.appendChild(thead);
-
-  const tbody = el("tbody");
-  for (const g of guidelines) {
-    const checkbox = el("input", { type: "checkbox", className: "guideline-checkbox" }) as HTMLInputElement;
-    checkbox.checked = g.enabled;
-
-    checkbox.addEventListener("change", () => {
-      const enabled = guidelines
-        .filter(item => {
-          if (item.slug === g.slug) return checkbox.checked;
-          const cb = card.querySelector(`[data-slug="${item.slug}"] input`) as HTMLInputElement | null;
-          return cb ? cb.checked : item.enabled;
-        })
-        .map(item => item.slug);
-      saveConfig(enabled);
+  function sortData() {
+    guidelines.sort((a, b) => {
+      let va: string | number | boolean = a[sortKey];
+      let vb: string | number | boolean = b[sortKey];
+      if (typeof va === "string") va = va.toLowerCase();
+      if (typeof vb === "string") vb = vb.toLowerCase();
+      if (va < vb) return sortDir === "asc" ? -1 : 1;
+      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      return 0;
     });
-
-    const link = el("a", { href: `#/guidelines/${g.slug}`, className: "guideline-list-link" }, g.title);
-    const checkCell = el("td", { className: "guideline-col-enabled" });
-    checkCell.appendChild(checkbox);
-
-    const row = el("tr", { className: "guideline-list-item" }, el("td", {}, link), checkCell);
-    row.setAttribute("data-slug", g.slug);
-    tbody.appendChild(row);
   }
-  table.appendChild(tbody);
-  card.appendChild(table);
 
-  container.appendChild(card);
+  function renderTable() {
+    tableWrap.innerHTML = "";
+
+    const table = el("table", { className: "md-table companies-table" });
+    const thead = el("thead", {});
+    const headerRow = el("tr", {});
+
+    const columns: { key: SortKey; label: string; className?: string }[] = [
+      { key: "title", label: "Guideline" },
+      { key: "createdDate", label: "Created" },
+      { key: "enabled", label: "Enabled", className: "guideline-col-enabled" },
+    ];
+
+    for (const col of columns) {
+      const arrow = sortKey === col.key ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+      const th = el("th", { className: `sortable-th${col.className ? " " + col.className : ""}` }, col.label + arrow);
+      th.addEventListener("click", () => {
+        if (sortKey === col.key) {
+          sortDir = sortDir === "asc" ? "desc" : "asc";
+        } else {
+          sortKey = col.key;
+          sortDir = "asc";
+        }
+        sortData();
+        renderTable();
+      });
+      headerRow.appendChild(th);
+    }
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = el("tbody", {});
+    for (const g of guidelines) {
+      const nameLink = el("a", { href: `#/guidelines/${g.slug}`, className: "job-link" }, g.title);
+
+      const editBtn = el("button", { className: "btn-icon btn-edit company-edit-btn", title: "Edit" }, "✎");
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.hash = `#/guidelines/edit/${g.slug}`;
+      });
+
+      const nameCell = el("span", { className: "company-name-cell" }, nameLink, editBtn);
+
+      const checkbox = el("input", { type: "checkbox", className: "guideline-checkbox" }) as HTMLInputElement;
+      checkbox.checked = g.enabled;
+      checkbox.addEventListener("change", () => {
+        g.enabled = checkbox.checked;
+        const enabledSlugs = guidelines.filter(item => item.enabled).map(item => item.slug);
+        saveConfig(enabledSlugs);
+      });
+      const checkCell = el("td", { className: "guideline-col-enabled" });
+      checkCell.appendChild(checkbox);
+
+      tbody.appendChild(
+        el("tr", {},
+          el("td", {}, nameCell),
+          el("td", {}, g.createdDate || ""),
+          checkCell,
+        )
+      );
+    }
+
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+  }
+
+  sortData();
+  renderTable();
 }
