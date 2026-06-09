@@ -43,23 +43,24 @@ All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cov
 
 ### Frontend (`src/`)
 
-- `main.ts` — Entry point, hash-based routing (`#/` → home, `#/add` → add role, `#/edit/:id` → role details, `#/master-resume` → master resume, `#/gaps` → resume gaps, `#/companies` → companies list, `#/guidelines` → guidelines list, `#/guidelines/new` → create guideline, `#/guidelines/:slug` → view guideline). Renders the nav bar on every route change.
+- `main.ts` — Entry point, hash-based routing (`#/` → opportunities, `#/applied` → applied jobs, `#/add` → add role, `#/edit/:id` → role details, `#/master-resume` → master resume, `#/gaps` → resume gaps, `#/companies` → companies list, `#/guidelines` → guidelines list, `#/guidelines/new` → create guideline, `#/guidelines/edit/:slug` → edit guideline, `#/guidelines/:slug` → view guideline). Renders the nav bar on every route change.
 - `types.ts` — Canonical `JobApplication` interface (duplicated in `server/index.ts` — keep both in sync when changing fields).
 - `store.ts` — Async CRUD via `fetch` to `/api/jobs` endpoints. All functions return Promises.
 - `pages/add-role.ts` — Add/edit form ("Role Details" in edit mode). URL paste → client-side parse → debounced server extraction. Company field has autocomplete dropdown from the companies list (`/api/companies`) — if a typed company isn't in the list, it's auto-added via AI lookup on form submit. Contains six collapsible sections in edit mode (see Role Details sections below).
 - `pages/master-resume.ts` — View master resume (rendered markdown) or upload a new one (file upload → AI conversion to markdown if not `.md`).
-- `pages/guideline-editor.ts` — Form to create new guidelines (auto-slugifies title). Includes AI prompt field to auto-generate guideline content.
+- `pages/guideline-editor.ts` — Create or edit guidelines (auto-slugifies title on create). Includes AI prompt field to auto-generate guideline content.
 - `pages/guidelines-list.ts` — Guidelines index page with enable/disable checkboxes (enabled guidelines are injected into resume generation prompts).
 - `pages/guidelines.ts` — Single guideline viewer with delete option.
-- `pages/companies.ts` — Companies directory table with sortable columns (rank, company, sector, type, roles). Add/edit company modals. Shows job count per company. Company names link to careers URLs.
-- `components/nav.ts` — Left sidebar nav. Static items (My Applications, Master Resume, Resume Gaps, Companies) + dynamic Guidelines section fetched from API.
+- `pages/companies.ts` — Companies directory table with sortable columns (rank, company, sector, about, roles, favorite). Add/edit company modals. Shows job count per company. Company names link to careers URLs. Includes Favorites (★) and Trending toggles plus search filter. Star button toggles `isFavorite` via `PUT /api/companies/:rank/favorite`.
+- `components/nav.ts` — Collapsible left sidebar nav with static `NAV` config: "Jobs" section (Applied, Opportunities), "Resume" section (Master Resume, Resume Gaps, Guidelines), and Companies. No longer dynamically fetches guidelines.
 - `components/resume-viewer.ts` — Slide-in overlay pane for viewing generated resumes/blurbs/cover letters, with Export PDF (triggers `window.print()` with print-optimized CSS).
 - `pages/analysis-modal.ts` — Modal overlay for displaying AI resume review results, with optional re-analyze callback.
-- `pages/home.ts` — Home timeline listing all jobs with sortable columns (Added, Company, Title, Location, Posted, Applied). Default sort: Added date descending. Title column links to job posting. Applied column has checkbox to mark as applied today.
+- `pages/home.ts` — Exports `renderHome` (Opportunities — jobs without `applicationDate`, shown at `#/`) and `renderApplied` (jobs with `applicationDate`, shown at `#/applied`). Both share the same row renderer with sortable columns (Added, Company, Title, Location, Posted, Applied). Title column links to job posting. Applied column has checkbox to mark as applied today.
 - `pages/gaps.ts` — Renders consolidated resume gaps from `/api/gaps` as markdown.
 - `utils/dom.ts` — `el()` helper for type-safe DOM element creation.
 - `utils/markdown.ts` — Shared `renderMarkdown()` used by multiple pages and components.
 - `utils/url-parser.ts` — Client-side URL pattern parser (Greenhouse, Lever, Ashby, Workday, SmartRecruiters, LinkedIn, Indeed).
+- `utils/toast.ts` — `showToast(message)` for transient notifications.
 - `styles/main.css` — Glass-inspired theme with CSS custom properties. Includes `@media print` rules for resume PDF export.
 
 ### Role Details page sections (`pages/add-role.ts`)
@@ -78,7 +79,9 @@ The edit-mode page has six collapsible `<details>` sections below the main form,
 - `index.ts` — Express app with all routes:
   - `GET/POST/PUT/DELETE /api/jobs` — CRUD backed by `data/jobs/jobs.json`. POST/PUT use `pickJobFields()` to allowlist fields (update `JOB_FIELDS` array when adding fields).
   - `GET /api/extract?url=...` — Extract job details from a URL via Puppeteer.
+  - `POST /api/fetch-job-description/:id` — Re-scrape and persist the job description for an existing job.
   - `POST /api/analyze` — AI resume analysis. Saves review to `reviews.json`, consolidates gaps via AI into categorized `resume-gap.md`, sets `hasAiReview` flag.
+  - `GET /api/reviews/:id` — Fetch saved AI reviews for a job.
   - `POST /api/generate-resume` — Generate tailored resume. Saves versioned `.md` to `data/resumes/`.
   - `GET /api/generated-resumes/:jobId[/:filename]` — List or view generated resumes for a job.
   - `POST /api/generate-referral-blurb` — Generate referral blurb using job context + referral fields. Saves versioned `.md` to `data/referral-blurbs/`.
@@ -87,10 +90,11 @@ The edit-mode page has six collapsible `<details>` sections below the main form,
   - `GET /api/cover-letters/:jobId[/:filename]` — List or view cover letters for a job.
   - `GET/POST/PUT/DELETE /api/custom-questions/:jobId[/:questionId]` — Custom Q&A CRUD. Stored in `data/jobs/custom-questions.json`.
   - `POST /api/custom-questions/:jobId/:questionId/generate` — AI-generate answer for a custom question.
-  - `GET/POST /api/companies` — Companies list CRUD backed by `data/companies/all-companies.json`.
-  - `PUT /api/companies/:rank` — Update a company by rank.
-  - `POST /api/companies/lookup` — AI-powered company lookup: given a name, uses `runClaude()` to detect sector, type, and careers URL, then adds to the list.
-  - `GET/POST/PUT/DELETE /api/guidelines[/:slug]` — Guidelines CRUD with enable/disable config.
+  - `GET/POST /api/companies` — Companies list CRUD backed by `data/companies/all-companies.json`. Company shape: `{ rank, company, sector, type, careersUrl, about?, isFavorite?, trending? }`.
+  - `PUT /api/companies/:rank` — Update a company by rank (company/sector/type/careersUrl/about).
+  - `PUT /api/companies/:rank/favorite` — Toggle a company's `isFavorite` flag.
+  - `POST /api/companies/lookup` — AI-powered company lookup: given a name, uses `runClaude()` to detect sector, type, careers URL, and a short `about` one-liner, then adds to the list.
+  - `GET/POST/PUT/DELETE /api/guidelines[/:slug]` — Guidelines CRUD. `PUT /api/guidelines/config` updates the enable/disable map.
   - `POST /api/guidelines/generate` — AI-generate guideline content from a user prompt.
   - `GET/POST /api/master-resume` — View or upload master resume (POST converts non-`.md` files to markdown via AI).
   - `GET /api/gaps` — Serve consolidated resume gaps.
@@ -125,7 +129,7 @@ Note: `addedDate` is auto-set server-side on job creation (not user-editable). I
 
 1. Create `src/pages/{name}.ts` exporting an async `render{Name}(container: HTMLElement)` function
 2. Add route in `src/main.ts` (hash-based, order matters — more specific routes before general ones)
-3. Add nav item in `src/components/nav.ts` (`STATIC_ITEMS` array for top-level, or dynamic section)
+3. Add entry to the `NAV` config in `src/components/nav.ts` (either top-level `NavLink` or inside an existing `NavSection`)
 
 ### Adding a new AI generation feature
 
