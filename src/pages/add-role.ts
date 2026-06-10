@@ -119,7 +119,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   }
 
   const header = el("div", { className: "page-header" },
-    el("h1", {}, isEdit ? "Role Details" : "Add New Role"),
+    el("h1", {}, isEdit ? "Job Details" : "Add New Role"),
     headerButtons
   );
   container.appendChild(header);
@@ -403,8 +403,14 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     window.location.hash = "#/";
   });
 
-  container.appendChild(form);
-  container.appendChild(pastAppsSection);
+  // --- Job Details section (form + past applications) ---
+  const jobDetailsSection = el("details", { className: "collapsible-section glass-card", open: "" });
+  const jobDetailsBody = el("div", { className: "collapsible-body" });
+  const jobDetailsSummary = el("summary", { className: "collapsible-header" },
+    el("span", {}, "Job Details"),
+  );
+  jobDetailsBody.append(form, pastAppsSection);
+  jobDetailsSection.append(jobDetailsSummary, jobDetailsBody);
 
   // --- Job Description section ---
   const jobDescSection = el("details", { className: "collapsible-section glass-card" });
@@ -468,7 +474,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   jobDescSection.appendChild(jobDescSummary);
   jobDescSection.appendChild(jobDescBody);
-  container.appendChild(jobDescSection);
 
   // --- AI Resume Review section ---
   const reviewSection = el("details", { className: "collapsible-section glass-card" });
@@ -497,7 +502,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   reviewSection.appendChild(reviewSummary);
   reviewSection.appendChild(reviewBody);
-  container.appendChild(reviewSection);
 
   if (isEdit && existing?.hasAiReview) {
     fetch(`/api/reviews/${editId}`).then(async (resp) => {
@@ -620,7 +624,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   resumeBody.append(feedbackInput, resumeContent, pastResumes);
   resumeSection.appendChild(resumeSummary);
   resumeSection.appendChild(resumeBody);
-  container.appendChild(resumeSection);
 
   // --- Referral section ---
   const referralSection = el("details", { className: "collapsible-section glass-card" });
@@ -736,8 +739,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   if (existing?.referralName) referralSection.setAttribute("open", "");
 
-  container.appendChild(referralSection);
-
   // --- Cover Letter section ---
   const coverLetterSection = el("details", { className: "collapsible-section glass-card" });
   const coverLetterBody = el("div", { className: "collapsible-body" });
@@ -842,7 +843,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   );
   coverLetterSection.appendChild(coverLetterSummary);
   coverLetterSection.appendChild(coverLetterBody);
-  container.appendChild(coverLetterSection);
 
   // --- Custom Questions section ---
   const questionsSection = el("details", { className: "collapsible-section glass-card" });
@@ -967,7 +967,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   questionsBody.append(addRow, questionsList);
 
   const questionsSummary = el("summary", { className: "collapsible-header" },
-    el("span", {}, "Custom Questions"),
+    el("span", {}, "Custom Application Questions"),
   );
   questionsSection.appendChild(questionsSummary);
   questionsSection.appendChild(questionsBody);
@@ -980,7 +980,20 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     questionInput.placeholder = "Save the application first to add questions";
   }
 
-  container.appendChild(questionsSection);
+  // --- Top-level blocks ---
+  const buildBlock = (title: string, children: HTMLElement[]): HTMLElement => {
+    const blockBody = el("div", { className: "block-body" }, ...children);
+    const blockSummary = el("summary", { className: "block-header" },
+      el("span", {}, title),
+    );
+    const block = el("details", { className: "block-section", open: "" });
+    block.append(blockSummary, blockBody);
+    return block;
+  };
+
+  container.appendChild(buildBlock("About", [jobDetailsSection, jobDescSection]));
+  container.appendChild(buildBlock("Job Resume", [reviewSection, resumeSection]));
+  container.appendChild(buildBlock("Application Materials", [referralSection, coverLetterSection, questionsSection]));
 
   if (bottomActions) {
     container.appendChild(bottomActions);

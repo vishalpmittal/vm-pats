@@ -260,6 +260,42 @@ h3 {
   align-items: center;
 }
 
+/* ── Top-level Blocks ── */
+.block-section {
+  margin-top: 24px;
+}
+
+.block-header {
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--glass-border);
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.block-header > span::before {
+  content: "▸ ";
+  font-size: 0.9rem;
+  margin-right: 4px;
+}
+
+.block-section[open] > .block-header > span::before {
+  content: "▾ ";
+}
+
+.block-header::-webkit-details-marker {
+  display: none;
+}
+
+.block-body {
+  padding-top: 4px;
+  padding-left: 12px;
+}
+
 /* ── Collapsible Sections ── */
 .collapsible-section {
   margin-top: 16px;
