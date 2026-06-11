@@ -217,8 +217,8 @@ export async function renderCompanies(container: HTMLElement): Promise<void> {
     ];
 
     for (const col of columns) {
-      const arrow = sortKey === col.key ? (sortDir === "asc" ? " ▲" : " ▼") : "";
-      const th = el("th", { className: "sortable-th" }, col.label + arrow);
+      const arrow = sortKey === col.key ? (sortDir === "asc" ? "▲ " : "▼ ") : "";
+      const th = el("th", { className: "sortable-th" }, arrow + col.label);
       th.addEventListener("click", () => {
         if (sortKey === col.key) {
           sortDir = sortDir === "asc" ? "desc" : "asc";

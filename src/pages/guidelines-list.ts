@@ -84,8 +84,8 @@ export async function renderGuidelinesList(container: HTMLElement): Promise<void
     ];
 
     for (const col of columns) {
-      const arrow = sortKey === col.key ? (sortDir === "asc" ? " ▲" : " ▼") : "";
-      const th = el("th", { className: `sortable-th${col.className ? " " + col.className : ""}` }, col.label + arrow);
+      const arrow = sortKey === col.key ? (sortDir === "asc" ? "▲ " : "▼ ") : "";
+      const th = el("th", { className: `sortable-th${col.className ? " " + col.className : ""}` }, arrow + col.label);
       th.addEventListener("click", () => {
         if (sortKey === col.key) {
           sortDir = sortDir === "asc" ? "desc" : "asc";

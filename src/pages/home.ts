@@ -3,15 +3,15 @@ import { el } from "../utils/dom";
 import { showToast } from "../utils/toast";
 import type { JobApplication } from "../types";
 
-type DateField = "addedDate" | "postingDate" | "applicationDate";
-type JobListMode = "opportunities" | "applied";
+type DateField = "addedDate" | "postingDate" | "applicationDate" | "interviewDate";
+type JobListMode = "opportunities" | "applied" | "in-interview";
 
 interface ModeConfig {
   title: string;
   filter: (j: JobApplication) => boolean;
   defaultDateField: DateField;
   emptyMessage: string;
-  hideAppliedPill?: boolean;
+  dateFilterFields: { key: DateField; label: string }[];
   showAddButton?: boolean;
 }
 
@@ -21,21 +21,64 @@ const MODES: Record<JobListMode, ModeConfig> = {
     filter: (j) => !j.applicationDate,
     defaultDateField: "addedDate",
     emptyMessage: "No opportunities yet. Click \"+ Add New Role\" to get started.",
-    hideAppliedPill: true,
+    dateFilterFields: [
+      { key: "addedDate", label: "Added" },
+      { key: "postingDate", label: "Posted" },
+    ],
     showAddButton: true,
   },
   applied: {
     title: "Applied",
-    filter: (j) => !!j.applicationDate,
+    filter: (j) => !!j.applicationDate && !j.interviewDate,
     defaultDateField: "applicationDate",
     emptyMessage: "No applied jobs yet. Check off \"Applied\" on a row in Opportunities.",
+    dateFilterFields: [
+      { key: "addedDate", label: "Added" },
+      { key: "interviewDate", label: "In Interview" },
+      { key: "applicationDate", label: "Applied" },
+    ],
+  },
+  "in-interview": {
+    title: "In Interview",
+    filter: (j) => !!j.interviewDate,
+    defaultDateField: "interviewDate",
+    emptyMessage: "No interviews yet. Check off \"In Interview\" on a row in Applied.",
+    dateFilterFields: [
+      { key: "addedDate", label: "Added" },
+      { key: "interviewDate", label: "In Interview" },
+      { key: "applicationDate", label: "Applied" },
+    ],
   },
 };
 
-function renderRow(job: JobApplication, onRefresh: () => void): HTMLElement {
+function renderDateOrCheckbox(
+  job: JobApplication,
+  field: "applicationDate" | "interviewDate",
+  toastMsg: string,
+  title: string,
+  onRefresh: () => void,
+): HTMLElement {
+  if (job[field]) {
+    return el("span", { className: "cell cell-date" }, job[field]!);
+  }
+  const checkbox = el("input", { type: "checkbox", className: "apply-checkbox", title }) as HTMLInputElement;
+  checkbox.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    showToast(toastMsg);
+    await update(job.id, { [field]: new Date().toISOString().slice(0, 10) });
+    onRefresh();
+  });
+  return el("span", { className: "cell cell-date cell-apply" }, checkbox);
+}
+
+function renderRow(job: JobApplication, mode: JobListMode, onRefresh: () => void): HTMLElement {
   const titleCell = job.jobLink
     ? el("a", { href: job.jobLink, target: "_blank", rel: "noopener", className: "job-link" }, job.title)
     : el("span", {}, job.title);
+
+  const middleCell = mode === "opportunities"
+    ? el("span", { className: "cell cell-date" }, job.postingDate || "—")
+    : renderDateOrCheckbox(job, "interviewDate", `Marking ${job.title} at ${job.company} as in interview`, "Mark in interview today", onRefresh);
 
   const row = el(
     "div",
@@ -44,21 +87,8 @@ function renderRow(job: JobApplication, onRefresh: () => void): HTMLElement {
     el("span", { className: "cell cell-company" }, job.company),
     el("span", { className: "cell cell-title" }, titleCell),
     el("span", { className: "cell cell-location" }, job.location || "—"),
-    el("span", { className: "cell cell-date" }, job.postingDate || "—"),
-    (() => {
-      if (job.applicationDate) {
-        return el("span", { className: "cell cell-date" }, job.applicationDate);
-      }
-      const checkbox = el("input", { type: "checkbox", className: "apply-checkbox", title: "Mark as applied today" }) as HTMLInputElement;
-      checkbox.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        showToast(`Moving Job ${job.title} at ${job.company} to Applied`);
-        await update(job.id, { applicationDate: new Date().toISOString().slice(0, 10) });
-        onRefresh();
-      });
-      const cell = el("span", { className: "cell cell-date cell-apply" }, checkbox);
-      return cell;
-    })(),
+    middleCell,
+    renderDateOrCheckbox(job, "applicationDate", `Moving Job ${job.title} at ${job.company} to Applied`, "Mark as applied today", onRefresh),
   );
 
   row.style.cursor = "pointer";
@@ -124,13 +154,7 @@ export async function renderJobList(container: HTMLElement, mode: JobListMode): 
     datePopover.innerHTML = "";
 
     const fieldGroup = el("div", { className: "date-popover-fields" });
-    const fieldOptions: { key: DateField; label: string }[] = [
-      { key: "addedDate", label: "Added" },
-      { key: "postingDate", label: "Posted" },
-      { key: "applicationDate", label: "Applied" },
-    ];
-    for (const opt of fieldOptions) {
-      if (opt.key === "applicationDate" && config.hideAppliedPill) continue;
+    for (const opt of config.dateFilterFields) {
       const pill = el("button", {
         type: "button",
         className: `date-pill${dateField === opt.key ? " active" : ""}`,
@@ -230,19 +254,23 @@ export async function renderJobList(container: HTMLElement, mode: JobListMode): 
       return 0;
     });
 
+    const middleCol: { key: SortKey; label: string; className: string } = mode === "opportunities"
+      ? { key: "postingDate", label: "Posted", className: "cell cell-date" }
+      : { key: "interviewDate", label: "In Interview", className: "cell cell-date" };
+
     const columns: { key: SortKey; label: string; className: string }[] = [
       { key: "addedDate", label: "Added", className: "cell cell-date" },
       { key: "company", label: "Company", className: "cell cell-company" },
       { key: "title", label: "Title", className: "cell cell-title" },
       { key: "location", label: "Location", className: "cell cell-location" },
-      { key: "postingDate", label: "Posted", className: "cell cell-date" },
+      middleCol,
       { key: "applicationDate", label: "Applied", className: "cell cell-date" },
     ];
 
     const listHeader = el("div", { className: "job-row job-row-header" });
     for (const col of columns) {
-      const arrow = sortKey === col.key ? (sortDir === "asc" ? " ▲" : " ▼") : "";
-      const span = el("span", { className: col.className + " sortable-th" }, col.label + arrow);
+      const arrow = sortKey === col.key ? (sortDir === "asc" ? "▲ " : "▼ ") : "";
+      const span = el("span", { className: col.className + " sortable-th" }, arrow + col.label);
       span.addEventListener("click", () => {
         if (sortKey === col.key) {
           sortDir = sortDir === "asc" ? "desc" : "asc";
@@ -265,7 +293,7 @@ export async function renderJobList(container: HTMLElement, mode: JobListMode): 
 
     const list = el("div", { className: "job-list" });
     for (const job of sorted) {
-      list.appendChild(renderRow(job, () => renderJobList(container, mode)));
+      list.appendChild(renderRow(job, mode, () => renderJobList(container, mode)));
     }
     listWrap.appendChild(list);
   }
@@ -275,3 +303,4 @@ export async function renderJobList(container: HTMLElement, mode: JobListMode): 
 
 export const renderHome = (container: HTMLElement) => renderJobList(container, "opportunities");
 export const renderApplied = (container: HTMLElement) => renderJobList(container, "applied");
+export const renderInInterview = (container: HTMLElement) => renderJobList(container, "in-interview");

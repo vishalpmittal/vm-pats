@@ -260,6 +260,215 @@ h3 {
   align-items: center;
 }
 
+/* ── Interview Summary ── */
+.interview-summary {
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.summary-section-title {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.contact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-card-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr;
+  gap: 12px;
+}
+
+.contact-card-title {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.summary-save-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.summary-rounds-title {
+  margin: 18px 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.interview-summary-table {
+  width: 100%;
+}
+
+.summary-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+/* ── Interview Rounds ── */
+.rounds-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.round-card {
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.round-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.round-summary::-webkit-details-marker {
+  display: none;
+}
+
+.round-summary::before {
+  content: "▸";
+  font-size: 0.85rem;
+  margin-right: 8px;
+  color: var(--text-muted);
+}
+
+.round-card[open] > .round-summary::before {
+  content: "▾";
+}
+
+.round-card[open] > .round-summary {
+  margin-bottom: 14px;
+}
+
+.round-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.round-meta-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.form-label.required::after {
+  content: " *";
+  color: #e35d5d;
+  font-weight: 700;
+}
+
+.round-details {
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+.interviewers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.interviewer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.round-add-interviewer {
+  margin-bottom: 14px;
+}
+
+.round-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.round-actions-right {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.prep-files-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prep-file-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+
+.prep-file-time {
+  color: var(--text-muted);
+  min-width: 140px;
+}
+
+/* ── Tab Bar ── */
+.tab-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 16px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  margin-top: 8px;
+}
+
 /* ── Top-level Blocks ── */
 .block-section {
   margin-top: 24px;

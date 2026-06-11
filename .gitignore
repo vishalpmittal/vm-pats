@@ -12,4 +12,6 @@ data/referral-blurbs/*
 !data/referral-blurbs/.gitkeep
 data/cover-letters/*
 !data/cover-letters/.gitkeep
+data/interview-prep/*
+!data/interview-prep/.gitkeep
 data/guidelines/config.json

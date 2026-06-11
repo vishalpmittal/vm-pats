@@ -48,6 +48,410 @@ async function renderPastApplications(container: HTMLElement, company: string, t
   }
 }
 
+interface Interviewer { id: string; name: string; title: string; linkedinUrl: string; }
+interface InterviewRound { id: string; name: string; date: string; startTime: string; duration: string; interviewers: Interviewer[]; details: string; notes: string; createdAt: string; }
+
+async function renderInterviewRounds(container: HTMLElement, jobId: string): Promise<void> {
+  container.innerHTML = "";
+
+  const job = await getById(jobId);
+
+  // --- Summary section: recruiter / hiring manager + rounds table ---
+  const summarySection = el("section", { className: "interview-summary glass-card" });
+
+  const mkContactField = (label: string, value: string, placeholder: string, type: string = "text"): { wrap: HTMLElement; input: HTMLInputElement } => {
+    const input = el("input", { type, placeholder, className: "input", value }) as HTMLInputElement;
+    const wrap = el("div", { className: "form-field" }, el("label", { className: "form-label" }, label), input);
+    return { wrap, input };
+  };
+
+  const recruiterName = mkContactField("Name", job?.recruiterName ?? "", "Recruiter name");
+  const recruiterEmail = mkContactField("Email", job?.recruiterEmail ?? "", "recruiter@example.com", "email");
+  const recruiterLinkedIn = mkContactField("LinkedIn", job?.recruiterLinkedIn ?? "", "https://linkedin.com/in/...", "url");
+
+  const hmName = mkContactField("Name", job?.hiringManagerName ?? "", "Hiring manager name");
+  const hmEmail = mkContactField("Email", job?.hiringManagerEmail ?? "", "hm@example.com", "email");
+  const hmLinkedIn = mkContactField("LinkedIn", job?.hiringManagerLinkedIn ?? "", "https://linkedin.com/in/...", "url");
+
+  const recruiterCard = el("div", { className: "contact-card" },
+    el("h4", { className: "contact-card-title" }, "Recruiter"),
+    el("div", { className: "contact-card-fields" },
+      recruiterName.wrap, recruiterEmail.wrap, recruiterLinkedIn.wrap,
+    ),
+  );
+  const hmCard = el("div", { className: "contact-card" },
+    el("h4", { className: "contact-card-title" }, "Hiring Manager"),
+    el("div", { className: "contact-card-fields" },
+      hmName.wrap, hmEmail.wrap, hmLinkedIn.wrap,
+    ),
+  );
+
+  const saveSummaryBtn = el("button", { className: "btn btn-primary btn-sm", type: "button" }, "Save Summary") as HTMLButtonElement;
+  saveSummaryBtn.addEventListener("click", async () => {
+    saveSummaryBtn.textContent = "Saving...";
+    saveSummaryBtn.setAttribute("disabled", "true");
+    try {
+      await update(jobId, {
+        recruiterName: recruiterName.input.value.trim(),
+        recruiterEmail: recruiterEmail.input.value.trim(),
+        recruiterLinkedIn: recruiterLinkedIn.input.value.trim(),
+        hiringManagerName: hmName.input.value.trim(),
+        hiringManagerEmail: hmEmail.input.value.trim(),
+        hiringManagerLinkedIn: hmLinkedIn.input.value.trim(),
+      });
+      saveSummaryBtn.textContent = "Saved!";
+      setTimeout(() => { saveSummaryBtn.textContent = "Save Summary"; }, 1500);
+    } catch {
+      saveSummaryBtn.textContent = "Error";
+      setTimeout(() => { saveSummaryBtn.textContent = "Save Summary"; }, 1500);
+    } finally {
+      saveSummaryBtn.removeAttribute("disabled");
+    }
+  });
+
+  const summaryTableBody = el("tbody");
+  const summaryTable = el("table", { className: "md-table interview-summary-table" },
+    el("thead", {},
+      el("tr", {},
+        el("th", {}, "Date"),
+        el("th", {}, "Round"),
+        el("th", {}, "Interviewers"),
+      ),
+    ),
+    summaryTableBody,
+  );
+  const summaryEmpty = el("div", { className: "summary-empty hidden" }, "No rounds yet.");
+
+  const refreshSummaryTable = async (): Promise<void> => {
+    summaryTableBody.innerHTML = "";
+    try {
+      const resp = await fetch(`/api/interview-rounds/${jobId}`);
+      if (!resp.ok) return;
+      const data = await resp.json() as { rounds: InterviewRound[] };
+      const sorted = [...data.rounds].sort((a, b) => {
+        if (!a.date && !b.date) return 0;
+        if (!a.date) return -1;
+        if (!b.date) return 1;
+        return b.date.localeCompare(a.date);
+      });
+      if (sorted.length === 0) {
+        summaryTable.classList.add("hidden");
+        summaryEmpty.classList.remove("hidden");
+        return;
+      }
+      summaryTable.classList.remove("hidden");
+      summaryEmpty.classList.add("hidden");
+      for (const r of sorted) {
+        const names = r.interviewers
+          .map((i) => i.name.trim())
+          .filter(Boolean)
+          .join(", ");
+        summaryTableBody.appendChild(
+          el("tr", {},
+            el("td", {}, r.date || "—"),
+            el("td", {}, r.name || "(unnamed)"),
+            el("td", {}, names || "—"),
+          ),
+        );
+      }
+    } catch { /* ignore */ }
+  };
+
+  summarySection.append(
+    el("h3", { className: "summary-section-title" }, "Interview Summary"),
+    el("div", { className: "contact-grid" }, recruiterCard, hmCard),
+    el("div", { className: "summary-save-row" }, saveSummaryBtn),
+    el("h4", { className: "summary-rounds-title" }, "Rounds"),
+    summaryTable,
+    summaryEmpty,
+  );
+
+  container.appendChild(summarySection);
+
+  const roundsList = el("div", { className: "rounds-list" });
+  const addRoundBtn = el("button", { className: "btn btn-primary", type: "button" }, "+ Add Round") as HTMLButtonElement;
+
+  let pendingUnsavedRound: HTMLElement | null = null;
+  const setAddRoundLocked = (locked: boolean): void => {
+    if (locked) {
+      addRoundBtn.setAttribute("disabled", "true");
+      addRoundBtn.title = "Save the previous round first.";
+    } else {
+      addRoundBtn.removeAttribute("disabled");
+      addRoundBtn.removeAttribute("title");
+    }
+  };
+  const clearPendingIfMatches = (card: HTMLElement): void => {
+    if (pendingUnsavedRound === card) {
+      pendingUnsavedRound = null;
+      setAddRoundLocked(false);
+    }
+  };
+
+  const resortRounds = (): void => {
+    const cards = Array.from(roundsList.children) as HTMLElement[];
+    cards.sort((a, b) => {
+      const da = a.dataset.date || "";
+      const db = b.dataset.date || "";
+      if (!da && !db) return 0;
+      if (!da) return -1;
+      if (!db) return 1;
+      return db.localeCompare(da);
+    });
+    for (const card of cards) roundsList.appendChild(card);
+  };
+
+  const renderRoundCard = (round: InterviewRound): void => {
+    const card = el("details", { className: "round-card glass-card" }) as HTMLDetailsElement;
+    card.dataset.date = round.date || "";
+    const interviewers = round.interviewers.map((i) => ({ ...i }));
+    let nameValue = round.name;
+    let dateValue = round.date;
+    let startTimeValue = round.startTime ?? "";
+    let durationValue = round.duration ?? "";
+    let detailsValue = round.details;
+    let notesValue = round.notes ?? "";
+
+    const title = el("span", { className: "round-title" }, nameValue || "New Round");
+    const summary = el("summary", { className: "round-summary" }, title);
+
+    let updatePrepBtn: () => void = () => {};
+
+    const nameInput = el("input", { type: "text", placeholder: "e.g. Phone Screen, Onsite Loop", className: "input", value: nameValue }) as HTMLInputElement;
+    const dateInput = el("input", { type: "date", className: "input", value: dateValue }) as HTMLInputElement;
+    nameInput.addEventListener("input", () => {
+      nameValue = nameInput.value;
+      title.textContent = nameValue || "New Round";
+      updatePrepBtn();
+    });
+    dateInput.addEventListener("input", () => { dateValue = dateInput.value; updatePrepBtn(); });
+
+    const startTimeInput = el("input", { type: "time", className: "input", value: startTimeValue }) as HTMLInputElement;
+    const durationInput = el("input", { type: "number", min: "0", step: "15", placeholder: "minutes", className: "input", value: durationValue }) as HTMLInputElement;
+    startTimeInput.addEventListener("input", () => { startTimeValue = startTimeInput.value; });
+    durationInput.addEventListener("input", () => { durationValue = durationInput.value; });
+
+    const metaRow = el("div", { className: "round-meta-row" },
+      el("div", { className: "form-field" }, el("label", { className: "form-label required" }, "Round Name"), nameInput),
+      el("div", { className: "form-field" }, el("label", { className: "form-label required" }, "Date"), dateInput),
+      el("div", { className: "form-field" }, el("label", { className: "form-label" }, "Start Time"), startTimeInput),
+      el("div", { className: "form-field" }, el("label", { className: "form-label" }, "Duration (min)"), durationInput),
+    );
+
+    const interviewersList = el("div", { className: "interviewers-list" });
+
+    const buildInterviewerRow = (interviewer: Interviewer): HTMLElement => {
+      const nameInput = el("input", { type: "text", placeholder: "Name *", className: "input", value: interviewer.name }) as HTMLInputElement;
+      const titleInput = el("input", { type: "text", placeholder: "Title *", className: "input", value: interviewer.title }) as HTMLInputElement;
+      const linkInput = el("input", { type: "url", placeholder: "LinkedIn URL", className: "input", value: interviewer.linkedinUrl }) as HTMLInputElement;
+      const removeBtn = el("button", { className: "btn btn-danger-glass btn-sm", type: "button", title: "Remove interviewer" }, "×") as HTMLButtonElement;
+
+      nameInput.addEventListener("input", () => { interviewer.name = nameInput.value; updatePrepBtn(); });
+      titleInput.addEventListener("input", () => { interviewer.title = titleInput.value; updatePrepBtn(); });
+      linkInput.addEventListener("input", () => { interviewer.linkedinUrl = linkInput.value; });
+
+      const row = el("div", { className: "interviewer-row" }, nameInput, titleInput, linkInput, removeBtn);
+
+      removeBtn.addEventListener("click", () => {
+        const idx = interviewers.indexOf(interviewer);
+        if (idx >= 0) interviewers.splice(idx, 1);
+        row.remove();
+        updatePrepBtn();
+      });
+
+      return row;
+    };
+
+    for (const i of interviewers) interviewersList.appendChild(buildInterviewerRow(i));
+
+    const addInterviewerBtn = el("button", { className: "btn btn-secondary btn-sm", type: "button" }, "+ Add Interviewer") as HTMLButtonElement;
+    addInterviewerBtn.addEventListener("click", () => {
+      const newInterviewer: Interviewer = { id: crypto.randomUUID(), name: "", title: "", linkedinUrl: "" };
+      interviewers.push(newInterviewer);
+      interviewersList.appendChild(buildInterviewerRow(newInterviewer));
+    });
+
+    const detailsInput = el("textarea", { className: "input input-textarea round-details", rows: "4", placeholder: "Interview guidelines (e.g., 60 min system design over Zoom, share screen with IDE, focus on tradeoffs...)" }) as HTMLTextAreaElement;
+    detailsInput.value = detailsValue;
+    detailsInput.addEventListener("input", () => { detailsValue = detailsInput.value; });
+
+    const notesInput = el("textarea", { className: "input input-textarea round-details", rows: "4", placeholder: "Interview notes — what was asked, how it went, follow-ups..." }) as HTMLTextAreaElement;
+    notesInput.value = notesValue;
+    notesInput.addEventListener("input", () => { notesValue = notesInput.value; });
+
+    const saveBtn = el("button", { className: "btn btn-primary btn-sm", type: "button" }, "Save") as HTMLButtonElement;
+    const prepBtn = el("button", { className: "btn btn-secondary btn-sm", type: "button" }, "Help me prepare") as HTMLButtonElement;
+    const deleteBtn = el("button", { className: "btn btn-danger-glass btn-sm", type: "button" }, "Delete Round") as HTMLButtonElement;
+
+    updatePrepBtn = () => {
+      const ready = nameValue.trim() !== "" && dateValue.trim() !== "" &&
+        interviewers.some((i) => i.name.trim() !== "" && i.title.trim() !== "");
+      if (ready) {
+        prepBtn.removeAttribute("disabled");
+        prepBtn.removeAttribute("title");
+      } else {
+        prepBtn.setAttribute("disabled", "true");
+        prepBtn.title = "Fill in round name, date, and at least one interviewer name + title.";
+      }
+    };
+    updatePrepBtn();
+
+    const prepFilesList = el("div", { className: "prep-files-list" });
+
+    const renderPrepFile = (file: { filename: string; version: number; timestamp: string }): HTMLElement => {
+      const link = el("a", { href: "#", className: "past-resume-link" }, file.filename);
+      link.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const resp = await fetch(`/api/interview-prep/file/${file.filename}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          showResumeViewer(file.filename, data.content);
+        }
+      });
+      const time = file.timestamp ? new Date(file.timestamp).toLocaleString() : "—";
+      return el("div", { className: "prep-file-row" },
+        el("span", { className: "prep-file-time" }, time),
+        link,
+      );
+    };
+
+    const loadPrepFiles = async (): Promise<void> => {
+      prepFilesList.innerHTML = "";
+      try {
+        const resp = await fetch(`/api/interview-prep/${jobId}/${round.id}`);
+        if (!resp.ok) return;
+        const data = await resp.json() as { files: { filename: string; version: number; timestamp: string }[] };
+        for (const f of data.files) prepFilesList.appendChild(renderPrepFile(f));
+      } catch { /* ignore */ }
+    };
+
+    saveBtn.addEventListener("click", async () => {
+      const missing: string[] = [];
+      if (!nameValue.trim()) missing.push("Round Name");
+      if (!dateValue.trim()) missing.push("Date");
+      if (!interviewers.some((i) => i.name.trim() !== "" && i.title.trim() !== "")) {
+        missing.push("at least one Interviewer Name + Title");
+      }
+      if (missing.length > 0) {
+        alert(`Please fill in: ${missing.join(", ")}.`);
+        return;
+      }
+      saveBtn.textContent = "Saving...";
+      saveBtn.setAttribute("disabled", "true");
+      try {
+        const resp = await fetch(`/api/interview-rounds/${jobId}/${round.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: nameValue, date: dateValue, startTime: startTimeValue, duration: durationValue, interviewers, details: detailsValue, notes: notesValue }),
+        });
+        if (resp.ok) {
+          saveBtn.textContent = "Saved!";
+          card.dataset.date = dateValue || "";
+          clearPendingIfMatches(card);
+          resortRounds();
+          refreshSummaryTable();
+          setTimeout(() => { saveBtn.textContent = "Save"; }, 1500);
+        } else {
+          saveBtn.textContent = "Error";
+          setTimeout(() => { saveBtn.textContent = "Save"; }, 1500);
+        }
+      } catch {
+        saveBtn.textContent = "Error";
+        setTimeout(() => { saveBtn.textContent = "Save"; }, 1500);
+      } finally {
+        saveBtn.removeAttribute("disabled");
+      }
+    });
+
+    prepBtn.addEventListener("click", async () => {
+      prepBtn.textContent = "Preparing...";
+      prepBtn.setAttribute("disabled", "true");
+      try {
+        const resp = await fetch(`/api/generate-interview-prep/${jobId}/${round.id}`, { method: "POST" });
+        if (resp.ok) {
+          const data = await resp.json();
+          showResumeViewer(data.filename, data.content);
+          await loadPrepFiles();
+        } else {
+          const err = await resp.json().catch(() => ({}));
+          alert(err.error || "Failed to generate prep document.");
+        }
+      } catch {
+        alert("Failed to connect to server.");
+      } finally {
+        prepBtn.textContent = "Help me prepare";
+        prepBtn.removeAttribute("disabled");
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!confirm(`Delete "${nameValue || "this round"}"?`)) return;
+      await fetch(`/api/interview-rounds/${jobId}/${round.id}`, { method: "DELETE" });
+      card.remove();
+      clearPendingIfMatches(card);
+      refreshSummaryTable();
+    });
+
+    card.append(
+      summary,
+      metaRow,
+      el("label", { className: "form-label required" }, "Interviewers"),
+      interviewersList,
+      el("div", { className: "round-add-interviewer" }, addInterviewerBtn),
+      el("label", { className: "form-label" }, "Interview Guidelines"),
+      detailsInput,
+      el("label", { className: "form-label" }, "Interview Notes"),
+      notesInput,
+      el("div", { className: "round-actions" },
+        deleteBtn,
+        el("div", { className: "round-actions-right" }, prepBtn, saveBtn),
+      ),
+      prepFilesList,
+    );
+
+    roundsList.appendChild(card);
+    loadPrepFiles();
+  };
+
+  addRoundBtn.addEventListener("click", async () => {
+    addRoundBtn.setAttribute("disabled", "true");
+    try {
+      const resp = await fetch(`/api/interview-rounds/${jobId}`, { method: "POST" });
+      if (resp.ok) {
+        const round = (await resp.json()) as InterviewRound;
+        renderRoundCard(round);
+        const newCard = roundsList.lastElementChild as HTMLDetailsElement | null;
+        if (newCard) {
+          newCard.open = true;
+          roundsList.prepend(newCard);
+          pendingUnsavedRound = newCard;
+          setAddRoundLocked(true);
+          refreshSummaryTable();
+          return;
+        }
+      }
+    } finally {
+      if (!pendingUnsavedRound) addRoundBtn.removeAttribute("disabled");
+    }
+  });
+
+  container.append(
+    el("div", { className: "rounds-header" }, addRoundBtn),
+    roundsList,
+  );
+
+  try {
+    const resp = await fetch(`/api/interview-rounds/${jobId}`);
+    if (resp.ok) {
+      const data = (await resp.json()) as { rounds: InterviewRound[] };
+      data.rounds.forEach((r) => renderRoundCard(r));
+      resortRounds();
+    }
+  } catch { /* ignore */ }
+
+  refreshSummaryTable();
+}
+
 async function checkDuplicate(company: string, title: string): Promise<boolean> {
   const all = await getAll();
   const c = company.toLowerCase();
@@ -64,7 +468,9 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   const isEdit = !!existing;
 
   const backBtn = el("button", { className: "btn btn-secondary" }, "← Back");
-  backBtn.addEventListener("click", () => { window.location.hash = "#/"; });
+  backBtn.addEventListener("click", () => {
+    window.location.hash = sessionStorage.getItem("lastJobListHash") || "#/";
+  });
 
   const headerButtons = el("div", { className: "header-actions" }, backBtn);
 
@@ -118,11 +524,41 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     bottomActions = el("div", { className: "edit-actions" }, deleteBtn);
   }
 
-  const header = el("div", { className: "page-header" },
-    el("h1", {}, isEdit ? "Job Details" : "Add New Role"),
-    headerButtons
-  );
+  const showInterviewTabs = isEdit && sessionStorage.getItem("lastJobListHash") === "#/in-interview";
+
+  const headerChildren: HTMLElement[] = [];
+  if (!showInterviewTabs) {
+    headerChildren.push(el("h1", {}, isEdit ? "Job Details" : "Add New Role"));
+  }
+  headerChildren.push(headerButtons);
+  const header = el("div", { className: "page-header" }, ...headerChildren);
   container.appendChild(header);
+
+  const interviewsTabContent = el("div", { className: "tab-content" });
+  const jobDetailsTabContent = el("div", { className: "tab-content hidden" });
+  let blocksTarget: HTMLElement = container;
+
+  if (showInterviewTabs) {
+    const interviewsTab = el("button", { className: "tab active", type: "button" }, "Interviews");
+    const jobDetailsTab = el("button", { className: "tab", type: "button" }, "Job Details");
+    const tabBar = el("div", { className: "tab-bar" }, interviewsTab, jobDetailsTab);
+
+    const setActive = (which: "interviews" | "details") => {
+      interviewsTab.classList.toggle("active", which === "interviews");
+      jobDetailsTab.classList.toggle("active", which === "details");
+      interviewsTabContent.classList.toggle("hidden", which !== "interviews");
+      jobDetailsTabContent.classList.toggle("hidden", which !== "details");
+    };
+    interviewsTab.addEventListener("click", () => setActive("interviews"));
+    jobDetailsTab.addEventListener("click", () => setActive("details"));
+
+    container.appendChild(tabBar);
+    container.appendChild(interviewsTabContent);
+    container.appendChild(jobDetailsTabContent);
+    blocksTarget = jobDetailsTabContent;
+
+    if (editId) renderInterviewRounds(interviewsTabContent, editId);
+  }
 
   const form = el("form", { className: "add-form glass-card" });
   const dupWarning = el("div", { className: "dup-warning hidden" },
@@ -211,6 +647,13 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     type: "date",
     name: "applicationDate",
     value: existing?.applicationDate ?? "",
+    className: "input",
+  }) as HTMLInputElement;
+
+  const interviewDateInput = el("input", {
+    type: "date",
+    name: "interviewDate",
+    value: existing?.interviewDate ?? "",
     className: "input",
   }) as HTMLInputElement;
 
@@ -304,12 +747,13 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     dupWarning,
     field("Location", locationInput),
     field("Posting Date", postingDateInput),
-    field("Application Date", appDateInput),
-    field("Notes", notesInput),
     ...((isEdit && existing?.addedDate) ? [(() => {
       const addedInput = el("input", { type: "date", className: "input", value: existing.addedDate, disabled: "true" }) as HTMLInputElement;
       return field("Added", addedInput);
     })()] : []),
+    field("Application Date", appDateInput),
+    field("In Interview", interviewDateInput),
+    field("Notes", notesInput),
     submitBtn
   );
 
@@ -388,6 +832,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
       location: locationInput.value.trim(),
       postingDate: postingDateInput.value,
       applicationDate: appDateInput.value,
+      interviewDate: interviewDateInput.value,
       notes: notesInput.value.trim(),
       referralName: referralNameInput.value.trim(),
       referralLinkedIn: referralLinkedInInput.value.trim(),
@@ -404,7 +849,11 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   });
 
   // --- Job Details section (form + past applications) ---
-  const jobDetailsSection = el("details", { className: "collapsible-section glass-card", open: "" });
+  const lastList = sessionStorage.getItem("lastJobListHash");
+  const jobDetailsOpen = !isEdit || lastList === "#/" || lastList === null;
+  const jobDetailsAttrs: Record<string, string> = { className: "collapsible-section glass-card" };
+  if (jobDetailsOpen) jobDetailsAttrs.open = "";
+  const jobDetailsSection = el("details", jobDetailsAttrs);
   const jobDetailsBody = el("div", { className: "collapsible-body" });
   const jobDetailsSummary = el("summary", { className: "collapsible-header" },
     el("span", {}, "Job Details"),
@@ -737,8 +1186,6 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   referralSection.appendChild(referralSummary);
   referralSection.appendChild(referralBody);
 
-  if (existing?.referralName) referralSection.setAttribute("open", "");
-
   // --- Cover Letter section ---
   const coverLetterSection = el("details", { className: "collapsible-section glass-card" });
   const coverLetterBody = el("div", { className: "collapsible-body" });
@@ -991,11 +1438,11 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     return block;
   };
 
-  container.appendChild(buildBlock("About", [jobDetailsSection, jobDescSection]));
-  container.appendChild(buildBlock("Job Resume", [reviewSection, resumeSection]));
-  container.appendChild(buildBlock("Application Materials", [referralSection, coverLetterSection, questionsSection]));
+  blocksTarget.appendChild(buildBlock("About", [jobDetailsSection, jobDescSection]));
+  blocksTarget.appendChild(buildBlock("Job Resume", [reviewSection, resumeSection]));
+  blocksTarget.appendChild(buildBlock("Application Materials", [referralSection, coverLetterSection, questionsSection]));
 
   if (bottomActions) {
-    container.appendChild(bottomActions);
+    blocksTarget.appendChild(bottomActions);
   }
 }

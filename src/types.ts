@@ -14,4 +14,11 @@ export interface JobApplication {
   referralContext?: string;
   addedDate?: string;
   jobDescription?: string;
+  interviewDate?: string;
+  recruiterName?: string;
+  recruiterEmail?: string;
+  recruiterLinkedIn?: string;
+  hiringManagerName?: string;
+  hiringManagerEmail?: string;
+  hiringManagerLinkedIn?: string;
 }

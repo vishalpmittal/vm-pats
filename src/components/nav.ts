@@ -20,6 +20,7 @@ const NAV: NavEntry[] = [
   {
     label: "Jobs",
     children: [
+      { label: "In Interview", hash: "#/in-interview" },
       { label: "Applied", hash: "#/applied" },
       { label: "Opportunities", hash: "#/" },
     ],

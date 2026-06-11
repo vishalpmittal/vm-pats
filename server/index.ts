@@ -9,6 +9,7 @@ import { generateResumeContent, generateResumeFilename, findResumesForJob } from
 import { runClaude } from "./claude.js";
 import { generateReferralBlurb, generateBlurbFilename, findBlurbsForJob } from "./referral-blurb.js";
 import { generateCoverLetter, generateCoverLetterFilename, findCoverLettersForJob } from "./cover-letter.js";
+import { generateInterviewPrep, generatePrepFilename, findPrepFilesForRound } from "./interview-prep.js";
 
 interface JobApplication {
   id: string;
@@ -26,13 +27,22 @@ interface JobApplication {
   referralContext: string;
   addedDate: string;
   jobDescription: string;
+  interviewDate: string;
+  recruiterName: string;
+  recruiterEmail: string;
+  recruiterLinkedIn: string;
+  hiringManagerName: string;
+  hiringManagerEmail: string;
+  hiringManagerLinkedIn: string;
 }
 
 const JOB_FIELDS: ReadonlyArray<keyof Omit<JobApplication, "id">> = [
   "company", "title", "jobLink", "location",
   "postingDate", "applicationDate", "notes", "hasAiReview",
   "referralName", "referralLinkedIn", "referralRelation", "referralContext",
-  "addedDate", "jobDescription",
+  "addedDate", "jobDescription", "interviewDate",
+  "recruiterName", "recruiterEmail", "recruiterLinkedIn",
+  "hiringManagerName", "hiringManagerEmail", "hiringManagerLinkedIn",
 ];
 
 function pickJobFields(body: Record<string, unknown>): Partial<Omit<JobApplication, "id">> {
@@ -59,7 +69,9 @@ const resumesDir = path.join(dataDir, "resumes");
 const guidelinesDir = path.join(dataDir, "guidelines");
 const blurbsDir = path.join(dataDir, "referral-blurbs");
 const coverLettersDir = path.join(dataDir, "cover-letters");
+const interviewPrepDir = path.join(dataDir, "interview-prep");
 const customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
+const interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
 
 function initDataDir(): void {
   fs.mkdirSync(path.join(dataDir, "jobs"), { recursive: true });
@@ -67,9 +79,11 @@ function initDataDir(): void {
   fs.mkdirSync(guidelinesDir, { recursive: true });
   fs.mkdirSync(blurbsDir, { recursive: true });
   fs.mkdirSync(coverLettersDir, { recursive: true });
+  fs.mkdirSync(interviewPrepDir, { recursive: true });
   if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]\n");
   if (!fs.existsSync(reviewsFile)) fs.writeFileSync(reviewsFile, "{}\n");
   if (!fs.existsSync(customQuestionsFile)) fs.writeFileSync(customQuestionsFile, "{}\n");
+  if (!fs.existsSync(interviewRoundsFile)) fs.writeFileSync(interviewRoundsFile, "{}\n");
 
   const repoGuidelinesDir = path.join(__dirname, "..", "data", "guidelines");
   if (fs.existsSync(repoGuidelinesDir) && repoGuidelinesDir !== guidelinesDir) {
@@ -127,6 +141,18 @@ function readCustomQuestions(): Record<string, CustomQuestion[]> {
 
 function writeCustomQuestions(data: Record<string, CustomQuestion[]>): void {
   fs.writeFileSync(customQuestionsFile, JSON.stringify(data, null, 2) + "\n");
+}
+
+interface Interviewer { id: string; name: string; title: string; linkedinUrl: string; }
+interface InterviewRound { id: string; name: string; date: string; startTime: string; duration: string; interviewers: Interviewer[]; details: string; notes: string; createdAt: string; }
+
+function readInterviewRounds(): Record<string, InterviewRound[]> {
+  if (!fs.existsSync(interviewRoundsFile)) return {};
+  return JSON.parse(fs.readFileSync(interviewRoundsFile, "utf-8")) as Record<string, InterviewRound[]>;
+}
+
+function writeInterviewRounds(data: Record<string, InterviewRound[]>): void {
+  fs.writeFileSync(interviewRoundsFile, JSON.stringify(data, null, 2) + "\n");
 }
 
 const GAP_REGEX = /##\s*\d+\.\s*Key Gaps\s*\n([\s\S]*?)(?=\n##\s*\d+\.|$)/i;
@@ -204,6 +230,13 @@ app.post("/api/jobs", (req, res) => {
     referralRelation: fields.referralRelation ?? "",
     referralContext: fields.referralContext ?? "",
     jobDescription: fields.jobDescription ?? "",
+    interviewDate: fields.interviewDate ?? "",
+    recruiterName: fields.recruiterName ?? "",
+    recruiterEmail: fields.recruiterEmail ?? "",
+    recruiterLinkedIn: fields.recruiterLinkedIn ?? "",
+    hiringManagerName: fields.hiringManagerName ?? "",
+    hiringManagerEmail: fields.hiringManagerEmail ?? "",
+    hiringManagerLinkedIn: fields.hiringManagerLinkedIn ?? "",
     addedDate: new Date().toISOString().slice(0, 10),
     id: crypto.randomUUID(),
   };
@@ -886,6 +919,125 @@ ${aiReview || "(No review available)"}
   } catch (err) {
     console.error("Custom question generation error:", err);
     res.status(500).json({ error: "Failed to generate answer" });
+  }
+});
+
+app.get("/api/interview-rounds/:jobId", (req, res) => {
+  const rounds = readInterviewRounds()[req.params.jobId] ?? [];
+  res.json({ rounds });
+});
+
+app.post("/api/interview-rounds/:jobId", (req, res) => {
+  const all = readInterviewRounds();
+  const entry: InterviewRound = {
+    id: crypto.randomUUID(),
+    name: "",
+    date: new Date().toISOString().slice(0, 10),
+    startTime: "",
+    duration: "",
+    interviewers: [{ id: crypto.randomUUID(), name: "", title: "", linkedinUrl: "" }],
+    details: "",
+    notes: "",
+    createdAt: new Date().toISOString(),
+  };
+  if (!all[req.params.jobId]) all[req.params.jobId] = [];
+  all[req.params.jobId].push(entry);
+  writeInterviewRounds(all);
+  res.status(201).json(entry);
+});
+
+app.put("/api/interview-rounds/:jobId/:roundId", (req, res) => {
+  const { name, date, startTime, duration, interviewers, details, notes } = req.body;
+  const all = readInterviewRounds();
+  const rounds = all[req.params.jobId] ?? [];
+  const round = rounds.find((r) => r.id === req.params.roundId);
+  if (!round) { res.status(404).json({ error: "round not found" }); return; }
+  if (typeof name === "string") round.name = name;
+  if (typeof date === "string") round.date = date;
+  if (typeof startTime === "string") round.startTime = startTime;
+  if (typeof duration === "string") round.duration = duration;
+  if (Array.isArray(interviewers)) round.interviewers = interviewers;
+  if (typeof details === "string") round.details = details;
+  if (typeof notes === "string") round.notes = notes;
+  writeInterviewRounds(all);
+  res.json(round);
+});
+
+app.delete("/api/interview-rounds/:jobId/:roundId", (req, res) => {
+  const all = readInterviewRounds();
+  const rounds = all[req.params.jobId] ?? [];
+  const idx = rounds.findIndex((r) => r.id === req.params.roundId);
+  if (idx === -1) { res.status(404).json({ error: "round not found" }); return; }
+  rounds.splice(idx, 1);
+  writeInterviewRounds(all);
+  res.json({ ok: true });
+});
+
+app.get("/api/interview-prep/file/:filename", (req, res) => {
+  const filePath = path.join(interviewPrepDir, req.params.filename);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "file not found" }); return; }
+  res.json({ content: fs.readFileSync(filePath, "utf-8") });
+});
+
+app.get("/api/interview-prep/:jobId/:roundId", (req, res) => {
+  res.json({ files: findPrepFilesForRound(req.params.roundId, interviewPrepDir) });
+});
+
+app.post("/api/generate-interview-prep/:jobId/:roundId", async (req, res) => {
+  const { jobId, roundId } = req.params;
+
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+
+  const allRounds = readInterviewRounds();
+  const rounds = allRounds[jobId] ?? [];
+  const round = rounds.find((r) => r.id === roundId);
+  if (!round) { res.status(404).json({ error: "round not found" }); return; }
+
+  const masterResume = fs.existsSync(resumeFile) ? fs.readFileSync(resumeFile, "utf-8") : "";
+  const reviews = readReviews();
+  const aiReview = reviews[jobId]?.text ?? "";
+
+  let description = job.jobDescription || "";
+  if (!description && job.jobLink) {
+    try {
+      description = await scrapeJobDescription(job.jobLink);
+    } catch {
+      description = "(Could not fetch job description)";
+    }
+  }
+
+  const priorRounds = rounds
+    .filter((r) => r.id !== roundId && r.date && (!round.date || r.date < round.date))
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((r) => ({ name: r.name, date: r.date, details: r.details, notes: r.notes }));
+
+  console.log(`Generating interview prep for: ${job.company} — round "${round.name || roundId.slice(0, 8)}"`);
+  try {
+    const content = await generateInterviewPrep({
+      company: job.company,
+      title: job.title,
+      location: job.location,
+      description,
+      masterResume,
+      aiReview,
+      roundName: round.name,
+      roundDate: round.date,
+      roundStartTime: round.startTime,
+      roundDuration: round.duration,
+      roundDetails: round.details,
+      roundNotes: round.notes,
+      interviewers: round.interviewers.map((i) => ({ name: i.name, title: i.title, linkedinUrl: i.linkedinUrl })),
+      priorRounds,
+    });
+    const filename = generatePrepFilename(job.company, round.name, round.id, interviewPrepDir);
+    fs.mkdirSync(interviewPrepDir, { recursive: true });
+    fs.writeFileSync(path.join(interviewPrepDir, filename), content + "\n");
+    res.json({ filename, content });
+  } catch (err) {
+    console.error("Interview prep generation error:", err);
+    res.status(500).json({ error: "Failed to generate interview prep" });
   }
 });
 
