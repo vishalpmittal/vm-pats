@@ -42,6 +42,17 @@ async function runClaudeSDK(prompt: string): Promise<string> {
   return text.trim();
 }
 
+// Strip a single wrapping markdown code fence if the model returned the whole
+// response inside one (e.g. ```markdown\n...\n```). Only strips when the entire
+// response is one fenced block — inner fences in mixed-content responses are left alone.
+function stripWrappingFence(text: string): string {
+  const trimmed = text.trim();
+  const match = trimmed.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```$/);
+  if (!match) return text;
+  if (match[1].includes("```")) return text;
+  return match[1].trim();
+}
+
 export async function runClaude(prompt: string): Promise<string> {
   if (cliAvailable === null) {
     cliAvailable = await checkCliAvailable();
@@ -54,15 +65,16 @@ export async function runClaude(prompt: string): Promise<string> {
     }
   }
 
+  let result: string;
   if (cliAvailable) {
-    return runClaudeCLI(prompt);
+    result = await runClaudeCLI(prompt);
+  } else if (process.env.ANTHROPIC_API_KEY) {
+    result = await runClaudeSDK(prompt);
+  } else {
+    throw new Error(
+      "No AI backend configured. Either install the claude CLI or set the ANTHROPIC_API_KEY environment variable."
+    );
   }
 
-  if (process.env.ANTHROPIC_API_KEY) {
-    return runClaudeSDK(prompt);
-  }
-
-  throw new Error(
-    "No AI backend configured. Either install the claude CLI or set the ANTHROPIC_API_KEY environment variable."
-  );
+  return stripWrappingFence(result);
 }

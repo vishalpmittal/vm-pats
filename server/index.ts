@@ -516,6 +516,54 @@ Output ONLY the markdown — no explanations or commentary.`);
   }
 });
 
+app.post("/api/master-resume/backup", (_req, res) => {
+  if (!fs.existsSync(resumeFile)) {
+    res.status(404).json({ error: "No master resume found" });
+    return;
+  }
+
+  const content = fs.readFileSync(resumeFile, "utf-8");
+
+  const nameMatch = content.match(/^#\s+(.+)$/m);
+  const nameParts = (nameMatch ? nameMatch[1].trim() : "Unknown").split(/\s+/);
+  const firstName = nameParts[0] ?? "Unknown";
+  const lastName = nameParts[nameParts.length - 1] ?? "";
+
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+
+  const filename = `${timestamp}-Master-Resume-${firstName}-${lastName}.md`;
+  fs.writeFileSync(path.join(dataDir, "resumes", filename), content);
+  res.json({ filename });
+});
+
+app.get("/api/master-resume/backups", (_req, res) => {
+  const resumesDir = path.join(dataDir, "resumes");
+  const files = fs.existsSync(resumesDir) ? fs.readdirSync(resumesDir) : [];
+  const backups = files
+    .filter((f) => /^\d{8}-\d{6}-Master-Resume-.+\.md$/.test(f))
+    .sort()
+    .reverse();
+  res.json({ backups });
+});
+
+app.post("/api/master-resume/restore/:filename", (req, res) => {
+  const { filename } = req.params;
+  if (!/^\d{8}-\d{6}-Master-Resume-.+\.md$/.test(filename)) {
+    res.status(400).json({ error: "Invalid backup filename" });
+    return;
+  }
+  const backupPath = path.join(dataDir, "resumes", filename);
+  if (!fs.existsSync(backupPath)) {
+    res.status(404).json({ error: "Backup file not found" });
+    return;
+  }
+  const content = fs.readFileSync(backupPath, "utf-8");
+  fs.writeFileSync(resumeFile, content);
+  res.json({ ok: true });
+});
+
 // --- Resume Gaps ---
 
 app.get("/api/gaps", (_req, res) => {

@@ -36,26 +36,28 @@ Vanilla TypeScript frontend (no frameworks) bundled by Vite. Express 5 backend u
 
 `runClaude(prompt): Promise<string>` is the single entry point for all AI features. On first call it auto-detects which backend to use:
 1. If `claude` CLI is on PATH → uses CLI (`claude -p` with 180s timeout)
-2. If CLI not found but `ANTHROPIC_API_KEY` is set → uses `@anthropic-ai/sdk` (Sonnet, 8192 max tokens)
+2. If CLI not found but `ANTHROPIC_API_KEY` is set → uses `@anthropic-ai/sdk` (`claude-sonnet-4-20250514`, 8192 max tokens)
 3. If neither → throws with setup instructions
+
+All responses pass through `stripWrappingFence()`, which strips a single outermost markdown code fence if the entire response is wrapped in one (inner fences in mixed-content responses are preserved).
 
 All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cover-letter.ts`, endpoint handlers) go through `runClaude()`.
 
 ### Frontend (`src/`)
 
-- `main.ts` — Entry point, hash-based routing (`#/` → opportunities, `#/applied` → applied jobs, `#/add` → add role, `#/edit/:id` → role details, `#/master-resume` → master resume, `#/gaps` → resume gaps, `#/companies` → companies list, `#/guidelines` → guidelines list, `#/guidelines/new` → create guideline, `#/guidelines/edit/:slug` → edit guideline, `#/guidelines/:slug` → view guideline). Renders the nav bar on every route change.
+- `main.ts` — Entry point, hash-based routing (`#/` → opportunities, `#/applied` → applied jobs, `#/in-interview` → in-interview jobs, `#/add` → add role, `#/edit/:id` → role details, `#/master-resume` → master resume, `#/gaps` → resume gaps, `#/companies` → companies list, `#/guidelines` → guidelines list, `#/guidelines/new` → create guideline, `#/guidelines/edit/:slug` → edit guideline, `#/guidelines/:slug` → view guideline). Renders the nav bar on every route change.
 - `types.ts` — Canonical `JobApplication` interface (duplicated in `server/index.ts` — keep both in sync when changing fields).
 - `store.ts` — Async CRUD via `fetch` to `/api/jobs` endpoints. All functions return Promises.
-- `pages/add-role.ts` — Add/edit form ("Role Details" in edit mode). URL paste → client-side parse → debounced server extraction. Company field has autocomplete dropdown from the companies list (`/api/companies`) — if a typed company isn't in the list, it's auto-added via AI lookup on form submit. Contains six collapsible sections in edit mode (see Role Details sections below).
+- `pages/add-role.ts` — Add/edit form ("Role Details" in edit mode). URL paste → client-side parse → debounced server extraction. Company field has autocomplete dropdown from the companies list (`/api/companies`) — if a typed company isn't in the list, it's auto-added via AI lookup on form submit. In edit mode, renders an **Interview Summary** section (rounds table + per-round detail panels with AI prep generation) plus three top-level collapsible blocks — **About**, **Job Resume**, **Application Materials** — each containing related sub-sections (see Role Details sections below).
 - `pages/master-resume.ts` — View master resume (rendered markdown) or upload a new one (file upload → AI conversion to markdown if not `.md`).
 - `pages/guideline-editor.ts` — Create or edit guidelines (auto-slugifies title on create). Includes AI prompt field to auto-generate guideline content.
 - `pages/guidelines-list.ts` — Guidelines index page with enable/disable checkboxes (enabled guidelines are injected into resume generation prompts).
 - `pages/guidelines.ts` — Single guideline viewer with delete option.
 - `pages/companies.ts` — Companies directory table with sortable columns (rank, company, sector, about, roles, favorite). Add/edit company modals. Shows job count per company. Company names link to careers URLs. Includes Favorites (★) and Trending toggles plus search filter. Star button toggles `isFavorite` via `PUT /api/companies/:rank/favorite`.
-- `components/nav.ts` — Collapsible left sidebar nav with static `NAV` config: "Jobs" section (Applied, Opportunities), "Resume" section (Master Resume, Resume Gaps, Guidelines), and Companies. No longer dynamically fetches guidelines.
+- `components/nav.ts` — Collapsible left sidebar nav with static `NAV` config: "Jobs" section (In Interview, Applied, Opportunities), "Resume" section (Master Resume, Resume Gaps, Guidelines), and Companies. No longer dynamically fetches guidelines.
 - `components/resume-viewer.ts` — Slide-in overlay pane for viewing generated resumes/blurbs/cover letters, with Export PDF (triggers `window.print()` with print-optimized CSS).
 - `pages/analysis-modal.ts` — Modal overlay for displaying AI resume review results, with optional re-analyze callback.
-- `pages/home.ts` — Exports `renderHome` (Opportunities — jobs without `applicationDate`, shown at `#/`) and `renderApplied` (jobs with `applicationDate`, shown at `#/applied`). Both share the same row renderer with sortable columns (Added, Company, Title, Location, Posted, Applied). Title column links to job posting. Applied column has checkbox to mark as applied today.
+- `pages/home.ts` — Job list page driven by a `renderJobList(container, mode)` factory with three modes: `renderHome` (Opportunities — jobs without `applicationDate`, `#/`), `renderApplied` (jobs with `applicationDate` but no `interviewDate`, `#/applied`), and `renderInInterview` (jobs with `interviewDate`, `#/in-interview`). Shared row renderer with sortable columns (Added, Company, Title, Location, Posted, Applied, and — in applied/in-interview modes — In Interview). Title column links to job posting. The Applied column has a checkbox that marks the job as applied today; the In Interview column does the same for `interviewDate`.
 - `pages/gaps.ts` — Renders consolidated resume gaps from `/api/gaps` as markdown.
 - `utils/dom.ts` — `el()` helper for type-safe DOM element creation.
 - `utils/markdown.ts` — Shared `renderMarkdown()` used by multiple pages and components.
@@ -65,14 +67,22 @@ All callers (`job-analyzer.ts`, `resume-generator.ts`, `referral-blurb.ts`, `cov
 
 ### Role Details page sections (`pages/add-role.ts`)
 
-The edit-mode page has six collapsible `<details>` sections below the main form, all following the same pattern (spinner + action button in header, content in body):
+The edit-mode page has an **Interview Summary** section at the top, followed by three top-level collapsible blocks. Each sub-section is itself a `<details>` element following the same pattern (spinner + action button in header, content in body).
 
-1. **Job Description** — Displays the full job description (scraped at extraction time and stored as markdown on the job). Read-only, no action button.
-2. **AI Resume Review** — Analyze resume against job posting. Saves to `reviews.json`.
-3. **Resume for Role** — Generate tailored resume with feedback textarea. Versioned files in `data/resumes/`, past versions in table, side-pane viewer.
-4. **Referral** — Referrer name/LinkedIn/relation/context fields (two-per-row grid). "Generate Blurb" saves referral fields first, then generates a 3-paragraph referral blurb with referrer details appended at the bottom. Filename includes referrer name. Versioned files in `data/referral-blurbs/`, past versions in table, side-pane viewer.
-5. **Cover Letter** — Notes textarea for additional context. "Generate" button creates a 3-paragraph cover letter. Versioned files in `data/cover-letters/`, past versions in table, side-pane viewer.
-6. **Custom Questions** — Add questions via text input, each renders as a card with editable answer textarea, per-question "Generate" (AI), "Save", and "Delete" buttons. Persisted to `data/jobs/custom-questions.json`.
+**Interview Summary** (above the blocks) — Rounds table with name/date/time/duration. Each row expands into a panel for editing round details, interviewers (name/title/LinkedIn), notes, and a "Generate Interview Prep" button. Generated prep files are versioned per round in `data/interview-prep/` and listed in a per-round past-versions table with a side-pane viewer.
+
+**Block: About**
+1. **Job Details Summary** — Read-only summary of the saved job (top of block).
+2. **Job Description** — Displays the full job description (scraped at extraction time and stored as markdown on the job). Read-only, no action button.
+
+**Block: Job Resume**
+3. **AI Resume Review** — Analyze resume against job posting. Saves to `reviews.json`.
+4. **Resume for Role** — Generate tailored resume with feedback textarea. Versioned files in `data/resumes/`, past versions in table, side-pane viewer.
+
+**Block: Application Materials**
+5. **Referral** — Referrer name/LinkedIn/relation/context fields (two-per-row grid). "Generate Blurb" saves referral fields first, then generates a 3-paragraph referral blurb with referrer details appended at the bottom. Filename includes referrer name. Versioned files in `data/referral-blurbs/`, past versions in table, side-pane viewer.
+6. **Cover Letter** — Notes textarea for additional context. "Generate" button creates a 3-paragraph cover letter. Versioned files in `data/cover-letters/`, past versions in table, side-pane viewer.
+7. **Custom Questions** — Add questions via text input, each renders as a card with editable answer textarea, per-question "Generate" (AI), "Save", and "Delete" buttons. Persisted to `data/jobs/custom-questions.json`.
 
 ### Backend (`server/`)
 
@@ -90,6 +100,8 @@ The edit-mode page has six collapsible `<details>` sections below the main form,
   - `GET /api/cover-letters/:jobId[/:filename]` — List or view cover letters for a job.
   - `GET/POST/PUT/DELETE /api/custom-questions/:jobId[/:questionId]` — Custom Q&A CRUD. Stored in `data/jobs/custom-questions.json`.
   - `POST /api/custom-questions/:jobId/:questionId/generate` — AI-generate answer for a custom question.
+  - `GET/POST /api/interview-rounds/:jobId` — List or create interview rounds for a job. `PUT/DELETE /api/interview-rounds/:jobId/:roundId` — update or remove a round. Rounds have `{ id, name, date, startTime, duration, interviewers[], details, notes, createdAt }`. Stored in `data/jobs/interview-rounds.json` keyed by jobId.
+  - `GET /api/interview-prep/:jobId/:roundId` — List generated prep files for a round. `GET /api/interview-prep/file/:filename` — view a single prep file. `POST /api/generate-interview-prep/:jobId/:roundId` — AI-generate interview prep using job context + round details + interviewers + resume. Versioned `.md` files saved in `data/interview-prep/`.
   - `GET/POST /api/companies` — Companies list CRUD backed by `data/companies/all-companies.json`. Company shape: `{ rank, company, sector, type, careersUrl, about?, isFavorite?, trending? }`.
   - `PUT /api/companies/:rank` — Update a company by rank (company/sector/type/careersUrl/about).
   - `PUT /api/companies/:rank/favorite` — Toggle a company's `isFavorite` flag.
@@ -105,6 +117,7 @@ The edit-mode page has six collapsible `<details>` sections below the main form,
 - `resume-generator.ts` — Builds generation prompt (master resume + enabled guidelines + AI review + job description + user feedback) and handles versioned filename generation (`{yyyymmdd}-{company}-{abbrev}-VishalM-resume-v{N}.md`).
 - `referral-blurb.ts` — Builds referral blurb prompt (referrer info + job context + resume) and handles versioned filename/find functions.
 - `cover-letter.ts` — Builds cover letter prompt (job context + resume + referrer info + notes) and handles versioned filename/find functions.
+- `interview-prep.ts` — Builds interview prep prompt (job context + round details + interviewer names/titles/LinkedIn + resume) and handles versioned filename/find functions (filename includes company + round name + roundId prefix).
 
 ### Data flow
 
@@ -115,6 +128,7 @@ The edit-mode page has six collapsible `<details>` sections below the main form,
 5. Referral blurb → server reads job + referral fields + master resume + AI review + scraped description → `runClaude()` → saved as versioned `.md` in `data/referral-blurbs/`
 6. Cover letter → same context as blurb + user notes → `runClaude()` → saved as versioned `.md` in `data/cover-letters/`
 7. Custom questions → per-question AI generation using job context + resume → answer saved to `data/jobs/custom-questions.json`
+8. Interview prep → server reads job + round (date/duration/details/notes) + interviewers + master resume → `runClaude()` → saved as versioned `.md` in `data/interview-prep/`, displayed in slide-in viewer
 
 ### Adding a new field to JobApplication
 
@@ -123,7 +137,7 @@ Three places must be updated:
 2. `server/index.ts` — the server interface AND the `JOB_FIELDS` array
 3. `server/index.ts` — the `POST /api/jobs` handler defaults
 
-Note: `addedDate` is auto-set server-side on job creation (not user-editable). It's displayed read-only on the edit page and as a sortable column on the home page.
+Note: `addedDate` is auto-set server-side on job creation (not user-editable). It's displayed read-only on the edit page and as a sortable column on the home page. `applicationDate` and `interviewDate` are stage markers — a job's presence on Opportunities / Applied / In Interview pages is derived from which of these are set.
 
 ### Adding a new page
 
@@ -145,7 +159,11 @@ Guidelines are markdown files in `data/guidelines/`. A `config.json` file tracks
 
 ### Data notes
 
-Contents of `data/jobs/`, `data/resumes/`, `data/referral-blurbs/`, `data/cover-letters/`, and `data/companies/` are gitignored (only `.gitkeep` files are tracked). The `data/` directory is mounted as a Docker volume in production. The `PATS_DATA_DIR` env var overrides the data path (defaults to `./data` relative to project root). The server auto-initializes the data directory on startup (creates folders, seeds empty JSON files, copies bundled guidelines).
+Contents of `data/jobs/`, `data/resumes/`, `data/referral-blurbs/`, `data/cover-letters/`, `data/interview-prep/`, and `data/companies/` are gitignored (only `.gitkeep` files are tracked). The `data/` directory is mounted as a Docker volume in production. The `PATS_DATA_DIR` env var overrides the data path (defaults to `./data` relative to project root). The server auto-initializes the data directory on startup (creates folders, seeds empty JSON files including `interview-rounds.json`, copies bundled guidelines).
+
+### Utility scripts (`scripts/`)
+
+Standalone `tsx` scripts for one-off data maintenance — not part of the runtime. Examples: `import-applications.ts` and `analyze-applications-import.ts` (import historical applications), `backfill-company-about.ts` / `backfill-missing-fields.ts` (AI backfills on existing records), `find-duplicates.ts` (detect duplicate jobs), `import-trending-companies.ts` / `mark-trending-companies.ts` (companies dataset maintenance), `verify-company-urls.sh` / `recheck-broken-urls.sh` (URL health checks), `preview-applications-html.ts` (debug HTML extraction). Run with `npx tsx scripts/{name}.ts`.
 
 ### Important: stale `.js` files in `src/`
 

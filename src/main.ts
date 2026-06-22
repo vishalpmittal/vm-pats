@@ -6,6 +6,7 @@ import { renderGuidelinesList } from "./pages/guidelines-list";
 import { renderGaps } from "./pages/gaps";
 import { renderCompanies } from "./pages/companies";
 import { renderMasterResume } from "./pages/master-resume";
+import { renderResumeBackups } from "./pages/resume-backups";
 import { renderNav } from "./components/nav";
 
 const app = document.getElementById("app")!;
@@ -27,6 +28,8 @@ async function route(): Promise<void> {
     await renderApplied(app);
   } else if (hash === "#/in-interview") {
     await renderInInterview(app);
+  } else if (hash === "#/master-resume/backups") {
+    await renderResumeBackups(app);
   } else if (hash === "#/master-resume") {
     await renderMasterResume(app);
   } else if (hash === "#/gaps") {
