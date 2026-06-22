@@ -6,7 +6,7 @@ import { extractJobDetails } from "./extractor.js";
 import { scrapeJobDescription } from "./scraper.js";
 import { analyzeResume } from "./job-analyzer.js";
 import { generateResumeContent, generateResumeFilename, findResumesForJob } from "./resume-generator.js";
-import { runClaude } from "./claude.js";
+import { runClaude, configureAiBackend, clearAiBackendConfig, type AiProvider } from "./claude.js";
 import { generateReferralBlurb, generateBlurbFilename, findBlurbsForJob } from "./referral-blurb.js";
 import { generateCoverLetter, generateCoverLetterFilename, findCoverLettersForJob } from "./cover-letter.js";
 import { generateInterviewPrep, generatePrepFilename, findPrepFilesForRound } from "./interview-prep.js";
@@ -127,6 +127,23 @@ function initDataDir(): void {
 }
 
 initDataDir();
+
+// Load AI backend config from pats.config.json
+function loadAiConfig(): void {
+  const cfg = readConfig();
+  const provider = cfg.aiProvider as AiProvider | undefined;
+  const key = provider === "anthropic"
+    ? cfg.anthropicApiKey as string | undefined
+    : provider === "google"
+    ? cfg.googleApiKey as string | undefined
+    : undefined;
+  if (provider && key) {
+    configureAiBackend(provider, key);
+    console.log(`[AI] Using configured provider: ${provider}`);
+  }
+}
+
+loadAiConfig();
 
 app.use(express.json());
 
@@ -1154,6 +1171,43 @@ app.post("/api/settings/data-dir", (req, res) => {
   initDataDir();
   writeConfig({ ...readConfig(), dataDir: resolved });
   res.json({ ok: true, dataDir: resolved });
+});
+
+app.get("/api/settings/ai", (_req, res) => {
+  const cfg = readConfig();
+  res.json({
+    provider: (cfg.aiProvider as string | undefined) ?? null,
+    hasAnthropicKey: typeof cfg.anthropicApiKey === "string" && cfg.anthropicApiKey.length > 0,
+    hasGoogleKey: typeof cfg.googleApiKey === "string" && cfg.googleApiKey.length > 0,
+  });
+});
+
+app.post("/api/settings/ai", (req, res) => {
+  const { provider, apiKey } = req.body as { provider?: unknown; apiKey?: unknown };
+  if (provider !== "anthropic" && provider !== "google") {
+    res.status(400).json({ error: "provider must be 'anthropic' or 'google'" });
+    return;
+  }
+  const cfg = readConfig();
+  if (typeof apiKey === "string" && apiKey.trim()) {
+    if (provider === "anthropic") cfg.anthropicApiKey = apiKey.trim();
+    else cfg.googleApiKey = apiKey.trim();
+  }
+  const activeKey = provider === "anthropic" ? cfg.anthropicApiKey : cfg.googleApiKey;
+  if (!activeKey || typeof activeKey !== "string") {
+    res.status(400).json({ error: "API key is required for the selected provider" });
+    return;
+  }
+  cfg.aiProvider = provider;
+  writeConfig(cfg);
+  clearAiBackendConfig();
+  configureAiBackend(provider as AiProvider, activeKey);
+  res.json({
+    ok: true,
+    provider,
+    hasAnthropicKey: typeof cfg.anthropicApiKey === "string" && cfg.anthropicApiKey.length > 0,
+    hasGoogleKey: typeof cfg.googleApiKey === "string" && cfg.googleApiKey.length > 0,
+  });
 });
 
 // --- Static files ---
