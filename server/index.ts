@@ -60,18 +60,48 @@ const PORT = parseInt(process.env.PORT ?? "3001", 10);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, "..", "dist");
-const dataDir = path.resolve(process.env.PATS_DATA_DIR ?? path.join(__dirname, "..", "data"));
-const dataFile = path.join(dataDir, "jobs", "jobs.json");
-const reviewsFile = path.join(dataDir, "jobs", "reviews.json");
-const resumeFile = path.join(dataDir, "resumes", "master-resume.md");
-const gapFile = path.join(dataDir, "resumes", "resume-gap.md");
-const resumesDir = path.join(dataDir, "resumes");
-const guidelinesDir = path.join(dataDir, "guidelines");
-const blurbsDir = path.join(dataDir, "referral-blurbs");
-const coverLettersDir = path.join(dataDir, "cover-letters");
-const interviewPrepDir = path.join(dataDir, "interview-prep");
-const customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
-const interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
+const configFile = path.join(__dirname, "..", "pats.config.json");
+
+function readConfig(): Record<string, unknown> {
+  try { return fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, "utf-8")) : {}; }
+  catch { return {}; }
+}
+
+function writeConfig(data: Record<string, unknown>): void {
+  fs.writeFileSync(configFile, JSON.stringify(data, null, 2) + "\n");
+}
+
+const config = readConfig();
+let dataDir = path.resolve(
+  process.env.PATS_DATA_DIR ??
+  (typeof config.dataDir === "string" && config.dataDir ? config.dataDir : path.join(__dirname, "..", "data"))
+);
+let dataFile = path.join(dataDir, "jobs", "jobs.json");
+let reviewsFile = path.join(dataDir, "jobs", "reviews.json");
+let resumeFile = path.join(dataDir, "resumes", "master-resume.md");
+let gapFile = path.join(dataDir, "resumes", "resume-gap.md");
+let resumesDir = path.join(dataDir, "resumes");
+let guidelinesDir = path.join(dataDir, "guidelines");
+let blurbsDir = path.join(dataDir, "referral-blurbs");
+let coverLettersDir = path.join(dataDir, "cover-letters");
+let interviewPrepDir = path.join(dataDir, "interview-prep");
+let customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
+let interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
+
+function updateDataPaths(newDir: string): void {
+  dataDir = newDir;
+  dataFile = path.join(dataDir, "jobs", "jobs.json");
+  reviewsFile = path.join(dataDir, "jobs", "reviews.json");
+  resumeFile = path.join(dataDir, "resumes", "master-resume.md");
+  gapFile = path.join(dataDir, "resumes", "resume-gap.md");
+  resumesDir = path.join(dataDir, "resumes");
+  guidelinesDir = path.join(dataDir, "guidelines");
+  blurbsDir = path.join(dataDir, "referral-blurbs");
+  coverLettersDir = path.join(dataDir, "cover-letters");
+  interviewPrepDir = path.join(dataDir, "interview-prep");
+  customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
+  interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
+}
 
 function initDataDir(): void {
   fs.mkdirSync(path.join(dataDir, "jobs"), { recursive: true });
@@ -1105,6 +1135,25 @@ app.get("/api/generated-resumes/:jobId/:filename", (req, res) => {
   if (!fs.existsSync(filePath)) { res.status(404).json({ error: "file not found" }); return; }
   const content = fs.readFileSync(filePath, "utf-8");
   res.json({ content });
+});
+
+// --- Settings ---
+
+app.get("/api/settings", (_req, res) => {
+  res.json({ dataDir });
+});
+
+app.post("/api/settings/data-dir", (req, res) => {
+  const { path: newPath } = req.body as { path?: unknown };
+  if (!newPath || typeof newPath !== "string" || !newPath.trim()) {
+    res.status(400).json({ error: "path is required" });
+    return;
+  }
+  const resolved = path.resolve(newPath.trim());
+  updateDataPaths(resolved);
+  initDataDir();
+  writeConfig({ ...readConfig(), dataDir: resolved });
+  res.json({ ok: true, dataDir: resolved });
 });
 
 // --- Static files ---

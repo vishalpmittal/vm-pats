@@ -34,6 +34,12 @@ const NAV: NavEntry[] = [
     ],
   },
   { label: "Companies", hash: "#/companies" },
+  {
+    label: "Configuration",
+    children: [
+      { label: "Settings", hash: "#/settings" },
+    ],
+  },
 ];
 
 function isActive(hash: string): boolean {

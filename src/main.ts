@@ -7,6 +7,7 @@ import { renderGaps } from "./pages/gaps";
 import { renderCompanies } from "./pages/companies";
 import { renderMasterResume } from "./pages/master-resume";
 import { renderResumeBackups } from "./pages/resume-backups";
+import { renderSettings } from "./pages/settings";
 import { renderNav } from "./components/nav";
 
 const app = document.getElementById("app")!;
@@ -44,6 +45,8 @@ async function route(): Promise<void> {
     await renderGuidelineEditor(app, hash.slice("#/guidelines/edit/".length));
   } else if (hash.startsWith("#/guidelines/")) {
     await renderGuidelines(app, hash.slice("#/guidelines/".length));
+  } else if (hash === "#/settings") {
+    await renderSettings(app);
   } else {
     await renderHome(app);
   }
