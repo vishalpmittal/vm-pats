@@ -3,6 +3,7 @@ import { el } from "../utils/dom";
 import { renderMarkdown } from "../utils/markdown";
 import { parseJobUrl } from "../utils/url-parser";
 import { showResumeViewer } from "../components/resume-viewer";
+import { showToast } from "../utils/toast";
 
 async function renderPastApplications(container: HTMLElement, company: string, title: string, excludeId?: string): Promise<void> {
   container.innerHTML = "";
@@ -325,6 +326,65 @@ async function renderInterviewRounds(container: HTMLElement, jobId: string): Pro
       } catch { /* ignore */ }
     };
 
+    // --- Post-interview transcript upload ---
+    const transcriptInput = el("input", { type: "file", accept: ".txt,.md,.vtt,.srt,.text", className: "transcript-file-input" }) as HTMLInputElement;
+    const uploadBtn = el("button", { className: "btn btn-secondary btn-sm", type: "button" }, "Upload Transcript") as HTMLButtonElement;
+    const transcriptFilesList = el("div", { className: "prep-files-list" });
+
+    const renderTranscriptFile = (file: { filename: string; version: number; timestamp: string }): HTMLElement => {
+      const link = el("a", { href: "#", className: "past-resume-link" }, file.filename);
+      link.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const resp = await fetch(`/api/interview-transcripts/file/${file.filename}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          showResumeViewer(file.filename, data.content);
+        }
+      });
+      const time = file.timestamp ? new Date(file.timestamp).toLocaleString() : "—";
+      return el("div", { className: "prep-file-row" },
+        el("span", { className: "prep-file-time" }, time),
+        link,
+      );
+    };
+
+    const loadTranscriptFiles = async (): Promise<void> => {
+      transcriptFilesList.innerHTML = "";
+      try {
+        const resp = await fetch(`/api/interview-transcripts/${jobId}/${round.id}`);
+        if (!resp.ok) return;
+        const data = await resp.json() as { files: { filename: string; version: number; timestamp: string }[] };
+        for (const f of data.files) transcriptFilesList.appendChild(renderTranscriptFile(f));
+      } catch { /* ignore */ }
+    };
+
+    uploadBtn.addEventListener("click", async () => {
+      const file = transcriptInput.files?.[0];
+      if (!file) { alert("Choose a transcript file first."); return; }
+      uploadBtn.textContent = "Uploading...";
+      uploadBtn.setAttribute("disabled", "true");
+      try {
+        const content = await file.text();
+        const resp = await fetch(`/api/interview-transcripts/${jobId}/${round.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content, filename: file.name }),
+        });
+        if (resp.ok) {
+          transcriptInput.value = "";
+          await loadTranscriptFiles();
+        } else {
+          const err = await resp.json().catch(() => ({}));
+          alert(err.error || "Failed to upload transcript.");
+        }
+      } catch {
+        alert("Failed to upload transcript.");
+      } finally {
+        uploadBtn.textContent = "Upload Transcript";
+        uploadBtn.removeAttribute("disabled");
+      }
+    });
+
     saveBtn.addEventListener("click", async () => {
       const missing: string[] = [];
       if (!nameValue.trim()) missing.push("Round Name");
@@ -363,7 +423,9 @@ async function renderInterviewRounds(container: HTMLElement, jobId: string): Pro
       }
     });
 
-    prepBtn.addEventListener("click", async () => {
+    prepBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       prepBtn.textContent = "Preparing...";
       prepBtn.setAttribute("disabled", "true");
       try {
@@ -392,25 +454,52 @@ async function renderInterviewRounds(container: HTMLElement, jobId: string): Pro
       refreshSummaryTable();
     });
 
+    // Interview Prep subsection: guidelines + generated prep docs
+    const prepSubsection = el("details", { className: "round-subsection" },
+      el("summary", { className: "round-subsection-header" },
+        el("span", {}, "Interview Prep"),
+        el("div", { className: "section-actions" }, prepBtn),
+      ),
+      el("div", { className: "round-subsection-body" },
+        el("label", { className: "form-label" }, "Interview Guidelines"),
+        detailsInput,
+        el("label", { className: "form-label" }, "Generated Prep Documents"),
+        prepFilesList,
+      ),
+    ) as HTMLDetailsElement;
+    prepSubsection.open = true;
+
+    // Post-Interview Analysis subsection: notes + transcript upload
+    const analysisSubsection = el("details", { className: "round-subsection" },
+      el("summary", { className: "round-subsection-header" },
+        el("span", {}, "Post-Interview Analysis"),
+      ),
+      el("div", { className: "round-subsection-body" },
+        el("label", { className: "form-label" }, "Interview Notes"),
+        notesInput,
+        el("label", { className: "form-label" }, "Interview Transcript"),
+        el("div", { className: "transcript-upload" }, transcriptInput, uploadBtn),
+        transcriptFilesList,
+      ),
+    ) as HTMLDetailsElement;
+
     card.append(
       summary,
       metaRow,
       el("label", { className: "form-label required" }, "Interviewers"),
       interviewersList,
       el("div", { className: "round-add-interviewer" }, addInterviewerBtn),
-      el("label", { className: "form-label" }, "Interview Guidelines"),
-      detailsInput,
-      el("label", { className: "form-label" }, "Interview Notes"),
-      notesInput,
+      prepSubsection,
+      analysisSubsection,
       el("div", { className: "round-actions" },
         deleteBtn,
-        el("div", { className: "round-actions-right" }, prepBtn, saveBtn),
+        el("div", { className: "round-actions-right" }, saveBtn),
       ),
-      prepFilesList,
     );
 
     roundsList.appendChild(card);
     loadPrepFiles();
+    loadTranscriptFiles();
   };
 
   addRoundBtn.addEventListener("click", async () => {
@@ -866,6 +955,9 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
   const jobDescBody = el("div", { className: "collapsible-body" });
   const jobDescSpinner = el("span", { className: "section-spinner" });
   const fetchDescBtn = el("button", { className: "btn btn-primary btn-sm" }, existing?.jobDescription ? "Refetch" : "Fetch") as HTMLButtonElement;
+  const editDescBtn = el("button", { className: "btn btn-secondary btn-sm" }, "Edit") as HTMLButtonElement;
+
+  let descEditing = false;
 
   const renderJobDesc = (md: string) => {
     jobDescBody.innerHTML = renderMarkdown(md);
@@ -873,6 +965,55 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
     extractedJobDescription = md;
     fetchDescBtn.textContent = "Refetch";
   };
+
+  const enterDescEdit = () => {
+    descEditing = true;
+    jobDescBody.classList.remove("guidelines-content");
+    jobDescBody.innerHTML = "";
+    const ta = el("textarea", {
+      className: "input input-textarea job-desc-editor",
+      placeholder: "Paste the job description here (Markdown supported)…",
+    }) as HTMLTextAreaElement;
+    ta.value = extractedJobDescription;
+    jobDescBody.appendChild(ta);
+    ta.focus();
+    editDescBtn.textContent = "Save";
+    fetchDescBtn.style.display = "none";
+    if (!jobDescSection.open) jobDescSection.open = true;
+  };
+
+  const saveDescEdit = async () => {
+    const ta = jobDescBody.querySelector("textarea") as HTMLTextAreaElement | null;
+    const md = ta ? ta.value.trim() : extractedJobDescription;
+    extractedJobDescription = md;
+    descEditing = false;
+    editDescBtn.textContent = "Edit";
+    fetchDescBtn.style.display = "";
+    if (md) {
+      renderJobDesc(md);
+    } else {
+      jobDescBody.classList.remove("guidelines-content");
+      jobDescBody.textContent = "No job description available.";
+    }
+    if (isEdit && editId) {
+      editDescBtn.setAttribute("disabled", "true");
+      try {
+        await update(editId, { jobDescription: md });
+        showToast("Job description saved.");
+      } catch {
+        showToast("Failed to save job description.");
+      } finally {
+        editDescBtn.removeAttribute("disabled");
+      }
+    }
+  };
+
+  editDescBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (descEditing) saveDescEdit();
+    else enterDescEdit();
+  });
 
   const fetchJobDesc = async () => {
     if (isEdit && editId) {
@@ -909,7 +1050,7 @@ export async function renderAddRole(container: HTMLElement, editId?: string): Pr
 
   const jobDescSummary = el("summary", { className: "collapsible-header" },
     el("span", {}, "Job Description", jobDescSpinner),
-    fetchDescBtn
+    el("div", { className: "section-actions" }, editDescBtn, fetchDescBtn)
   );
 
   if (existing?.jobDescription) {

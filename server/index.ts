@@ -10,6 +10,7 @@ import { runClaude, configureAiBackend, clearAiBackendConfig, type AiProvider } 
 import { generateReferralBlurb, generateBlurbFilename, findBlurbsForJob } from "./referral-blurb.js";
 import { generateCoverLetter, generateCoverLetterFilename, findCoverLettersForJob } from "./cover-letter.js";
 import { generateInterviewPrep, generatePrepFilename, findPrepFilesForRound } from "./interview-prep.js";
+import { transcriptFilename, findTranscriptsForRound } from "./interview-transcript.js";
 
 interface JobApplication {
   id: string;
@@ -85,6 +86,7 @@ let guidelinesDir = path.join(dataDir, "guidelines");
 let blurbsDir = path.join(dataDir, "referral-blurbs");
 let coverLettersDir = path.join(dataDir, "cover-letters");
 let interviewPrepDir = path.join(dataDir, "interview-prep");
+let interviewTranscriptsDir = path.join(dataDir, "interview-transcripts");
 let customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
 let interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
 
@@ -99,6 +101,7 @@ function updateDataPaths(newDir: string): void {
   blurbsDir = path.join(dataDir, "referral-blurbs");
   coverLettersDir = path.join(dataDir, "cover-letters");
   interviewPrepDir = path.join(dataDir, "interview-prep");
+  interviewTranscriptsDir = path.join(dataDir, "interview-transcripts");
   customQuestionsFile = path.join(dataDir, "jobs", "custom-questions.json");
   interviewRoundsFile = path.join(dataDir, "jobs", "interview-rounds.json");
 }
@@ -110,6 +113,7 @@ function initDataDir(): void {
   fs.mkdirSync(blurbsDir, { recursive: true });
   fs.mkdirSync(coverLettersDir, { recursive: true });
   fs.mkdirSync(interviewPrepDir, { recursive: true });
+  fs.mkdirSync(interviewTranscriptsDir, { recursive: true });
   if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]\n");
   if (!fs.existsSync(reviewsFile)) fs.writeFileSync(reviewsFile, "{}\n");
   if (!fs.existsSync(customQuestionsFile)) fs.writeFileSync(customQuestionsFile, "{}\n");
@@ -145,7 +149,7 @@ function loadAiConfig(): void {
 
 loadAiConfig();
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 function readJobs(): JobApplication[] {
   if (!fs.existsSync(dataFile)) return [];
@@ -1076,6 +1080,40 @@ app.get("/api/interview-prep/file/:filename", (req, res) => {
 
 app.get("/api/interview-prep/:jobId/:roundId", (req, res) => {
   res.json({ files: findPrepFilesForRound(req.params.roundId, interviewPrepDir) });
+});
+
+// --- Interview transcripts ---
+
+app.get("/api/interview-transcripts/file/:filename", (req, res) => {
+  const filePath = path.join(interviewTranscriptsDir, path.basename(req.params.filename));
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "file not found" }); return; }
+  res.json({ content: fs.readFileSync(filePath, "utf-8") });
+});
+
+app.get("/api/interview-transcripts/:jobId/:roundId", (req, res) => {
+  res.json({ files: findTranscriptsForRound(req.params.roundId, interviewTranscriptsDir) });
+});
+
+app.post("/api/interview-transcripts/:jobId/:roundId", (req, res) => {
+  const { jobId, roundId } = req.params;
+  const { content, filename } = req.body as { content?: string; filename?: string };
+  if (typeof content !== "string" || content.trim() === "") {
+    res.status(400).json({ error: "content is required" }); return;
+  }
+
+  const jobs = readJobs();
+  const job = jobs.find((j) => j.id === jobId);
+  if (!job) { res.status(404).json({ error: "job not found" }); return; }
+
+  const rounds = readInterviewRounds()[jobId] ?? [];
+  const round = rounds.find((r) => r.id === roundId);
+  if (!round) { res.status(404).json({ error: "round not found" }); return; }
+
+  const ext = filename && filename.includes(".") ? filename.split(".").pop()! : "txt";
+  const outName = transcriptFilename(job.company, round.name, round.id, ext, interviewTranscriptsDir);
+  fs.mkdirSync(interviewTranscriptsDir, { recursive: true });
+  fs.writeFileSync(path.join(interviewTranscriptsDir, outName), content);
+  res.status(201).json({ filename: outName });
 });
 
 app.post("/api/generate-interview-prep/:jobId/:roundId", async (req, res) => {

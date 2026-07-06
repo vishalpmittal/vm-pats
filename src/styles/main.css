@@ -551,6 +551,65 @@ h3 {
   min-width: 140px;
 }
 
+/* ── Round subsections ── */
+.round-subsection {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.round-subsection-header {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.round-subsection-header::-webkit-details-marker {
+  display: none;
+}
+
+.round-subsection-header > span:first-child::before {
+  content: "▸";
+  font-size: 0.8rem;
+  margin-right: 8px;
+  color: var(--text-muted);
+}
+
+.round-subsection[open] > .round-subsection-header > span:first-child::before {
+  content: "▾";
+}
+
+.round-subsection[open] > .round-subsection-header {
+  margin-bottom: 12px;
+}
+
+.round-subsection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.transcript-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.transcript-file-input {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 /* ── Tab Bar ── */
 .tab-bar {
   display: grid;
@@ -654,6 +713,19 @@ h3 {
 .btn-sm {
   padding: 5px 14px;
   font-size: 0.78rem;
+}
+
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.job-desc-editor {
+  width: 100%;
+  min-height: 320px;
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .section-timestamp {
